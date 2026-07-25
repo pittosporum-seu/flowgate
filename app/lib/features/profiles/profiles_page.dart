@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/state/app_provider.dart';
 import '../../core/theme.dart';
+import '../../l10n/generated/app_localizations.dart';
 import 'model/profile_item.dart';
 import 'profiles_provider.dart';
 import 'server_edit_page.dart';
@@ -25,9 +26,9 @@ class ProfilesPage extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
               child: Row(
                 children: [
-                  const Text(
-                    'Profiles',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context).profiles,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
                       color: FlowGateTheme.textPrimary,
@@ -86,9 +87,9 @@ class ProfilesPage extends ConsumerWidget {
         children: [
           Icon(Icons.dns_outlined, size: 56, color: FlowGateTheme.textTertiary.withValues(alpha: 0.4)),
           const SizedBox(height: 16),
-          const Text(
-            'No nodes yet',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary),
+          Text(
+            AppLocalizations.of(context).noNodesYet,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary),
           ),
           const SizedBox(height: 6),
           const Text(
@@ -207,13 +208,14 @@ class ProfilesPage extends ConsumerWidget {
   }
 
   void _showImportDialog(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final controller = TextEditingController();
     var loading = false;
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          title: const Text('Import Nodes'),
+          title: Text(l.importNodes),
           content: SizedBox(
             width: double.maxFinite,
             child: Column(
@@ -223,9 +225,8 @@ class ProfilesPage extends ConsumerWidget {
                   controller: controller,
                   maxLines: 5,
                   enabled: !loading,
-                  decoration: const InputDecoration(
-                    hintText:
-                        'Subscription URL (https://...)\nor vmess:// vless:// trojan:// ss:// link\nor base64 subscription content',
+                  decoration: InputDecoration(
+                    hintText: l.importHint,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -233,7 +234,7 @@ class ProfilesPage extends ConsumerWidget {
                   alignment: Alignment.centerLeft,
                   child: TextButton.icon(
                     icon: const Icon(Icons.paste_rounded, size: 16),
-                    label: const Text('Paste from clipboard'),
+                    label: Text(l.pasteFromClipboard),
                     onPressed: loading
                         ? null
                         : () async {
@@ -246,16 +247,16 @@ class ProfilesPage extends ConsumerWidget {
                 ),
                 if (loading) ...[
                   const SizedBox(height: 8),
-                  const Row(
+                  Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
-                      SizedBox(width: 12),
-                      Text('Fetching subscription...',
-                          style: TextStyle(fontSize: 13)),
+                      const SizedBox(width: 12),
+                      Text(l.fetchingSubscription,
+                          style: const TextStyle(fontSize: 13)),
                     ],
                   ),
                 ],
@@ -265,7 +266,7 @@ class ProfilesPage extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: loading ? null : () => Navigator.pop(ctx),
-              child: const Text('Cancel'),
+              child: Text(l.cancel),
             ),
             FilledButton(
               onPressed: loading
@@ -282,8 +283,8 @@ class ProfilesPage extends ConsumerWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(count > 0
-                                  ? 'Imported $count node(s)'
-                                  : 'No valid nodes found'),
+                                  ? l.importedCount(count)
+                                  : l.noValidNodes),
                             ),
                           );
                         }
@@ -291,12 +292,12 @@ class ProfilesPage extends ConsumerWidget {
                         setDialogState(() => loading = false);
                         if (ctx.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Import failed: $e')),
+                            SnackBar(content: Text(l.importFailed(e.toString()))),
                           );
                         }
                       }
                     },
-              child: const Text('Import'),
+              child: Text(l.import),
             ),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/state/app_provider.dart';
 import '../../core/state/app_state.dart';
 import '../../core/theme.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// Dashboard - 连接控制 + 实时流量监控
 class DashboardPage extends ConsumerStatefulWidget {
@@ -116,12 +117,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }
 
   Widget _buildDuration(AppState app) {
+    final l = AppLocalizations.of(context);
     final statusText = switch (app.connectionState) {
-      VpnConnectionState.connected => 'Connected',
-      VpnConnectionState.connecting => 'Connecting...',
-      VpnConnectionState.disconnecting => 'Disconnecting...',
-      VpnConnectionState.error => 'Error',
-      VpnConnectionState.disconnected => 'Disconnected',
+      VpnConnectionState.connected => l.connected,
+      VpnConnectionState.connecting => l.connecting,
+      VpnConnectionState.disconnecting => l.disconnecting,
+      VpnConnectionState.error => l.error,
+      VpnConnectionState.disconnected => l.disconnected,
     };
     final color = app.isRunning ? FlowGateTheme.success : FlowGateTheme.textSecondary;
     return Center(
@@ -154,6 +156,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }
 
   Widget _buildStatusCards(AppState app) {
+    final l = AppLocalizations.of(context);
     final running = app.isRunning;
     return Row(
       children: [
@@ -161,7 +164,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           child: _MetricCard(
             icon: Icons.speed_rounded,
             iconColor: FlowGateTheme.primary,
-            label: 'Latency',
+            label: l.latency,
             value: running && app.latencyMs != null ? '${app.latencyMs}' : '--',
             unit: 'ms',
           ),
@@ -171,7 +174,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           child: _MetricCard(
             icon: Icons.arrow_downward_rounded,
             iconColor: FlowGateTheme.success,
-            label: running ? formatSpeed(app.traffic.downlinkSpeed) : 'Down',
+            label: running ? formatSpeed(app.traffic.downlinkSpeed) : l.down,
             value: formatBytes(app.traffic.downlinkBytes),
             unit: '',
           ),
@@ -181,7 +184,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           child: _MetricCard(
             icon: Icons.arrow_upward_rounded,
             iconColor: FlowGateTheme.secondary,
-            label: running ? formatSpeed(app.traffic.uplinkSpeed) : 'Up',
+            label: running ? formatSpeed(app.traffic.uplinkSpeed) : l.up,
             value: formatBytes(app.traffic.uplinkBytes),
             unit: '',
           ),
@@ -191,6 +194,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }
 
   Widget _buildTrafficChart(AppState app) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -203,24 +207,24 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         children: [
           Row(
             children: [
-              const Text('Traffic',
-                  style: TextStyle(
+              Text(l.traffic,
+                  style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: FlowGateTheme.textSecondary)),
               const Spacer(),
-              _legendDot(FlowGateTheme.success, 'Down'),
+              _legendDot(FlowGateTheme.success, l.down),
               const SizedBox(width: 12),
-              _legendDot(FlowGateTheme.secondary, 'Up'),
+              _legendDot(FlowGateTheme.secondary, l.up),
             ],
           ),
           const SizedBox(height: 16),
           SizedBox(
             height: 120,
             child: _upHistory.length < 2
-                ? const Center(
-                    child: Text('Connect to see live traffic',
-                        style: TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)))
+                ? Center(
+                    child: Text(l.connectToSeeTraffic,
+                        style: const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)))
                 : LineChart(_chartData()),
           ),
         ],
@@ -276,6 +280,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }
 
   Widget _buildNodeCard(AppState app) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -299,10 +304,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Current Node',
-                    style: TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)),
+                Text(l.currentNode,
+                    style: const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)),
                 const SizedBox(height: 3),
-                Text(app.currentNodeName ?? 'Tap to select',
+                Text(app.currentNodeName ?? l.tapToSelect,
                     style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,

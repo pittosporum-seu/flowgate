@@ -1,0 +1,89 @@
+{
+  "@@locale": "en",
+  "appTitle": "FlowGate",
+  "tabHome": "Home",
+  "tabNodes": "Nodes",
+  "tabRouting": "Routing",
+  "tabSettings": "Settings",
+
+  "currentNode": "Current Node",
+  "tapToSelect": "Tap to select",
+  "latency": "Latency",
+  "down": "Down",
+  "up": "Up",
+  "traffic": "Traffic",
+  "connected": "Connected",
+  "connecting": "Connecting...",
+  "disconnecting": "Disconnecting...",
+  "disconnected": "Disconnected",
+  "error": "Error",
+  "tapToConnect": "Tap to Connect",
+  "connectToSeeTraffic": "Connect to see live traffic",
+
+  "profiles": "Profiles",
+  "importNodes": "Import Nodes",
+  "importHint": "Subscription URL (https://...)\nor vmess:// vless:// trojan:// ss:// link\nor base64 subscription content",
+  "pasteFromClipboard": "Paste from clipboard",
+  "fetchingSubscription": "Fetching subscription...",
+  "cancel": "Cancel",
+  "import": "Import",
+  "importedCount": "Imported {count} node(s)",
+  "@importedCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noValidNodes": "No valid nodes found",
+  "importFailed": "Import failed: {error}",
+  "@importFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "noNodesYet": "No nodes yet",
+
+  "routing": "Routing",
+  "mode": "Mode",
+  "rulePacks": "Rule Packs",
+  "compiledRules": "Compiled Rules",
+  "rulesEmptyHint": "Switch mode or run probe to compile rules",
+  "viewXrayJson": "View Xray routing JSON",
+  "xrayRouting": "Xray routing",
+  "close": "Close",
+
+  "settings": "Settings",
+  "general": "General",
+  "language": "Language",
+  "theme": "Theme",
+  "notifications": "Notifications",
+  "dns": "DNS",
+  "remoteDns": "Remote DNS",
+  "domesticDns": "Domestic DNS",
+  "fakeDns": "FakeDNS",
+  "advanced": "Advanced",
+  "speedTestUrl": "Speed Test URL",
+  "autoUpdate": "Auto Update",
+  "debug": "Debug",
+  "logs": "Logs",
+  "logsSubtitle": "View & share app logs",
+  "about": "About",
+  "version": "Version",
+  "sourceCode": "Source Code",
+  "followSystem": "Follow system",
+  "chinese": "Chinese",
+  "english": "English",
+
+  "copy": "Copy",
+  "share": "Share",
+  "clear": "Clear",
+  "all": "All",
+  "noLogsYet": "No logs yet",
+  "entries": "{count} entries",
+  "@entries": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "logsCopied": "Logs copied to clipboard",
+  "noLogFile": "No log file available"
+}

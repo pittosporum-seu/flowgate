@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/service/log_service.dart';
 import '../../core/theme.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// 日志页：实时查看 + 筛选 + 分享/复制
 class LogPage extends StatefulWidget {
@@ -54,7 +55,7 @@ class _LogPageState extends State<LogPage> {
     if (file == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No log file available')),
+          SnackBar(content: Text(AppLocalizations.of(context).noLogFile)),
         );
       }
       return;
@@ -70,7 +71,7 @@ class _LogPageState extends State<LogPage> {
     await Clipboard.setData(ClipboardData(text: text));
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Logs copied to clipboard')),
+        SnackBar(content: Text(AppLocalizations.of(context).logsCopied)),
       );
     }
   }
@@ -82,14 +83,15 @@ class _LogPageState extends State<LogPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final list = _filtered;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Logs'),
+        title: Text(l.logs),
         actions: [
-          IconButton(icon: const Icon(Icons.copy_rounded), tooltip: 'Copy', onPressed: _copy),
-          IconButton(icon: const Icon(Icons.share_rounded), tooltip: 'Share', onPressed: _share),
-          IconButton(icon: const Icon(Icons.delete_outline_rounded), tooltip: 'Clear', onPressed: _clear),
+          IconButton(icon: const Icon(Icons.copy_rounded), tooltip: l.copy, onPressed: _copy),
+          IconButton(icon: const Icon(Icons.share_rounded), tooltip: l.share, onPressed: _share),
+          IconButton(icon: const Icon(Icons.delete_outline_rounded), tooltip: l.clear, onPressed: _clear),
         ],
       ),
       body: Column(
@@ -99,7 +101,7 @@ class _LogPageState extends State<LogPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                _FilterChip(label: 'All', selected: _filter == null, onTap: () => setState(() => _filter = null)),
+                _FilterChip(label: l.all, selected: _filter == null, onTap: () => setState(() => _filter = null)),
                 const SizedBox(width: 8),
                 ...LogLevel.values.map((lv) => Padding(
                       padding: const EdgeInsets.only(right: 8),
@@ -111,7 +113,7 @@ class _LogPageState extends State<LogPage> {
                       ),
                     )),
                 const Spacer(),
-                Text('${list.length} entries',
+                Text(l.entries(list.length),
                     style: const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)),
               ],
             ),
@@ -120,9 +122,9 @@ class _LogPageState extends State<LogPage> {
           // 日志列表
           Expanded(
             child: list.isEmpty
-                ? const Center(
-                    child: Text('No logs yet',
-                        style: TextStyle(color: FlowGateTheme.textTertiary)))
+                ? Center(
+                    child: Text(l.noLogsYet,
+                        style: const TextStyle(color: FlowGateTheme.textTertiary)))
                 : ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.all(12),

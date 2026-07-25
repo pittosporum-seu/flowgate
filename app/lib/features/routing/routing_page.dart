@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/engine/config_assembler.dart';
 import '../../core/theme.dart';
+import '../../l10n/generated/app_localizations.dart';
 import 'model/routing_models.dart';
 import 'routing_provider.dart';
 
@@ -12,15 +13,16 @@ class RoutingPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final routing = ref.watch(routingProvider);
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
           children: [
-            const Text(
-              'Routing',
-              style: TextStyle(
+            Text(
+              l.routing,
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w800,
                 color: FlowGateTheme.textPrimary,
@@ -29,8 +31,8 @@ class RoutingPage extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             // 模式选择
-            const Text('Mode',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary)),
+            Text(l.mode,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary)),
             const SizedBox(height: 12),
             ...RouteMode.values.map((mode) => _ModeCard(
                   mode: mode,
@@ -111,8 +113,8 @@ class RoutingPage extends ConsumerWidget {
       children: [
         Row(
           children: [
-            const Text('Compiled Rules',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary)),
+            Text(AppLocalizations.of(context).compiledRules,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary)),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -127,8 +129,8 @@ class RoutingPage extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
         if (routing.compiledRules.isEmpty)
-          const Text('Switch mode or run probe to compile rules',
-              style: TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary))
+          Text(AppLocalizations.of(context).rulesEmptyHint,
+              style: const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary))
         else
           Container(
             decoration: BoxDecoration(
@@ -163,7 +165,7 @@ class RoutingPage extends ConsumerWidget {
             child: OutlinedButton.icon(
               onPressed: () => _showXrayJsonDialog(context, routing.compiledRules),
               icon: const Icon(Icons.data_object_rounded, size: 16),
-              label: const Text('View Xray routing JSON'),
+              label: Text(AppLocalizations.of(context).viewXrayJson),
               style: OutlinedButton.styleFrom(
                 foregroundColor: FlowGateTheme.primary,
                 side: const BorderSide(color: FlowGateTheme.line),
@@ -180,7 +182,7 @@ class RoutingPage extends ConsumerWidget {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Xray routing'),
+        title: Text(AppLocalizations.of(context).xrayRouting),
         content: SizedBox(
           width: double.maxFinite,
           child: SingleChildScrollView(
@@ -191,7 +193,7 @@ class RoutingPage extends ConsumerWidget {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context).close)),
         ],
       ),
     );

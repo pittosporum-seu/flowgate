@@ -3,6 +3,7 @@ import '../../features/dashboard/dashboard_page.dart';
 import '../../features/profiles/profiles_page.dart';
 import '../../features/routing/routing_page.dart';
 import '../../features/settings/settings_page.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 /// App 导航骨架 - 手机底部导航 / 桌面侧边导航
 class AppShell extends StatefulWidget {
@@ -29,7 +30,10 @@ class _AppShellState extends State<AppShell> {
     Icons.settings_rounded,
   ];
 
-  static const _labels = ['Home', 'Nodes', 'Routing', 'Settings'];
+  List<String> _labels(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return [l.tabHome, l.tabNodes, l.tabRouting, l.tabSettings];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +43,7 @@ class _AppShellState extends State<AppShell> {
   }
 
   Widget _buildNarrowLayout() {
+    final labels = _labels(context);
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: NavigationBar(
@@ -49,7 +54,7 @@ class _AppShellState extends State<AppShell> {
           (i) => NavigationDestination(
             icon: Icon(_icons[i]),
             selectedIcon: Icon(_icons[i], fill: 1),
-            label: _labels[i],
+            label: labels[i],
           ),
         ),
       ),
@@ -57,6 +62,7 @@ class _AppShellState extends State<AppShell> {
   }
 
   Widget _buildWideLayout() {
+    final labels = _labels(context);
     return Scaffold(
       body: Row(
         children: [
@@ -70,7 +76,7 @@ class _AppShellState extends State<AppShell> {
               (i) => NavigationRailDestination(
                 icon: Icon(_icons[i]),
                 selectedIcon: Icon(_icons[i], fill: 1),
-                label: Text(_labels[i]),
+                label: Text(labels[i]),
               ),
             ),
           ),
