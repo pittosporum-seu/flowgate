@@ -16,8 +16,6 @@ class FlowGateApp extends StatelessWidget {
       title: 'FlowGate',
       debugShowCheckedModeBanner: false,
       theme: FlowGateTheme.lightTheme,
-      darkTheme: FlowGateTheme.darkTheme,
-      themeMode: ThemeMode.dark,
       home: const AppShell(),
     );
   }

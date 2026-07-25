@@ -1,80 +1,101 @@
 import 'package:flutter/material.dart';
+import '../../core/theme.dart';
 
-/// Settings - 分组设置列表
+/// Settings - 现代简约设置页
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+          children: [
+            const Text(
+              'Settings',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: FlowGateTheme.textPrimary,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 24),
+            _section('General', [
+              _item(Icons.language_rounded, 'Language', 'System default'),
+              _item(Icons.dark_mode_rounded, 'Theme', 'Light'),
+              _toggle(Icons.notifications_rounded, 'Notifications', true),
+            ]),
+            _section('DNS', [
+              _item(Icons.dns_rounded, 'Remote DNS', '8.8.8.8'),
+              _item(Icons.home_rounded, 'Domestic DNS', '223.5.5.5'),
+              _toggle(Icons.security_rounded, 'FakeDNS', false),
+            ]),
+            _section('Advanced', [
+              _item(Icons.speed_rounded, 'Speed Test URL', 'gstatic.com/generate_204'),
+              _item(Icons.timer_rounded, 'Auto Update', 'Every 24h'),
+            ]),
+            _section('About', [
+              _item(Icons.info_outline_rounded, 'Version', 'FlowGate 0.0.1'),
+              _item(Icons.code_rounded, 'Source Code', 'github.com/pittosporum-seu'),
+            ]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _section(String title, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10, left: 2),
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: FlowGateTheme.surface,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: FlowGateTheme.line, width: 0.5),
+          ),
+          child: Column(children: children),
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  Widget _item(IconData icon, String title, String subtitle) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+      child: Row(
         children: [
-          _SectionHeader(title: 'General'),
-          _SettingTile(icon: Icons.language_rounded, title: 'Language', subtitle: 'System default'),
-          _SettingTile(icon: Icons.dark_mode_rounded, title: 'Theme', subtitle: 'Dark'),
-          _SettingTile(icon: Icons.notifications_rounded, title: 'Notifications', trailing: Switch(value: true, onChanged: (_) {})),
-          const SizedBox(height: 16),
-          _SectionHeader(title: 'DNS'),
-          _SettingTile(icon: Icons.dns_rounded, title: 'Remote DNS', subtitle: '8.8.8.8'),
-          _SettingTile(icon: Icons.home_rounded, title: 'Domestic DNS', subtitle: '223.5.5.5'),
-          _SettingTile(icon: Icons.security_rounded, title: 'FakeDNS', trailing: Switch(value: false, onChanged: (_) {})),
-          const SizedBox(height: 16),
-          _SectionHeader(title: 'Advanced'),
-          _SettingTile(icon: Icons.speed_rounded, title: 'Speed Test URL', subtitle: 'https://www.gstatic.com/generate_204'),
-          _SettingTile(icon: Icons.timer_rounded, title: 'Auto Update', subtitle: 'Every 24h'),
-          const SizedBox(height: 16),
-          _SectionHeader(title: 'About'),
-          _SettingTile(icon: Icons.info_outline_rounded, title: 'Version', subtitle: 'FlowGate 0.0.1'),
-          _SettingTile(icon: Icons.code_rounded, title: 'Source Code', subtitle: 'github.com/pittosporum-seu/flowgate'),
+          Icon(icon, size: 19, color: FlowGateTheme.textTertiary),
+          const SizedBox(width: 14),
+          Expanded(child: Text(title, style: const TextStyle(fontSize: 14, color: FlowGateTheme.textPrimary))),
+          Text(subtitle, style: const TextStyle(fontSize: 13, color: FlowGateTheme.textTertiary)),
+          const SizedBox(width: 6),
+          const Icon(Icons.chevron_right_rounded, size: 16, color: FlowGateTheme.textTertiary),
         ],
       ),
     );
   }
-}
 
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _toggle(IconData icon, String title, bool value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8, left: 4),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-      ),
-    );
-  }
-}
-
-class _SettingTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final Widget? trailing;
-
-  const _SettingTile({
-    required this.icon,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 4),
-      child: ListTile(
-        leading: Icon(icon, size: 22),
-        title: Text(title),
-        subtitle: subtitle != null ? Text(subtitle!) : null,
-        trailing: trailing ?? const Icon(Icons.chevron_right_rounded, size: 20),
-        onTap: trailing == null ? () {} : null,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 19, color: FlowGateTheme.textTertiary),
+          const SizedBox(width: 14),
+          Expanded(child: Text(title, style: const TextStyle(fontSize: 14, color: FlowGateTheme.textPrimary))),
+          Switch(value: value, onChanged: (_) {}),
+        ],
       ),
     );
   }
