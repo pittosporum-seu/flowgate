@@ -7,6 +7,7 @@ enum ProfileType {
   trojan,
   shadowsocks,
   socks,
+  hysteria2,
 }
 
 extension ProfileTypeExt on ProfileType {
@@ -16,6 +17,7 @@ extension ProfileTypeExt on ProfileType {
         ProfileType.trojan => 'Trojan',
         ProfileType.shadowsocks => 'SS',
         ProfileType.socks => 'SOCKS',
+        ProfileType.hysteria2 => 'HY2',
       };
 
   String get scheme => switch (this) {
@@ -24,6 +26,7 @@ extension ProfileTypeExt on ProfileType {
         ProfileType.trojan => 'trojan://',
         ProfileType.shadowsocks => 'ss://',
         ProfileType.socks => 'socks://',
+        ProfileType.hysteria2 => 'hysteria2://',
       };
 }
 
@@ -45,6 +48,10 @@ class ProfileItem {
   final int? latencyMs;
   final int createdAt;
 
+  /// 完整的 Xray JSON config (来自 flutter_vless getFullConfiguration)
+  /// 连接时直接使用，避免重复解析
+  final String? rawConfig;
+
   const ProfileItem({
     required this.id,
     required this.name,
@@ -62,6 +69,7 @@ class ProfileItem {
     this.subscriptionId,
     this.latencyMs,
     int? createdAt,
+    this.rawConfig,
   }) : createdAt = createdAt ?? 0;
 
   ProfileItem copyWith({
@@ -81,6 +89,7 @@ class ProfileItem {
     String? subscriptionId,
     int? latencyMs,
     int? createdAt,
+    String? rawConfig,
   }) {
     return ProfileItem(
       id: id ?? this.id,
@@ -99,6 +108,7 @@ class ProfileItem {
       subscriptionId: subscriptionId ?? this.subscriptionId,
       latencyMs: latencyMs ?? this.latencyMs,
       createdAt: createdAt ?? this.createdAt,
+      rawConfig: rawConfig ?? this.rawConfig,
     );
   }
 
@@ -119,6 +129,7 @@ class ProfileItem {
         'subscriptionId': subscriptionId,
         'latencyMs': latencyMs,
         'createdAt': createdAt,
+        'rawConfig': rawConfig,
       };
 
   factory ProfileItem.fromJson(Map<String, dynamic> json) => ProfileItem(
@@ -141,5 +152,6 @@ class ProfileItem {
         subscriptionId: json['subscriptionId'] as String?,
         latencyMs: json['latencyMs'] as int?,
         createdAt: json['createdAt'] as int? ?? 0,
+        rawConfig: json['rawConfig'] as String?,
       );
 }

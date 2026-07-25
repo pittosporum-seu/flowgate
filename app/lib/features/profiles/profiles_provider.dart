@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'model/profile_item.dart';
-import 'parser/link_parser.dart';
+import 'parser/vless_import_adapter.dart';
 import 'repository/profile_repository.dart';
 
 /// ProfileRepository 单例
@@ -31,7 +31,7 @@ class ProfilesNotifier extends Notifier<List<ProfileItem>> {
 
   /// 从分享链接导入 (单条)
   Future<ProfileItem?> importLink(String link) async {
-    final profile = LinkParser.parse(link);
+    final profile = VlessImportAdapter.parseSingle(link);
     if (profile == null) return null;
     await add(profile);
     return profile;
@@ -39,7 +39,7 @@ class ProfilesNotifier extends Notifier<List<ProfileItem>> {
 
   /// 从订阅内容批量导入，返回新增数量
   Future<int> importBatch(String content, {String? subscriptionId}) async {
-    final parsed = LinkParser.parseBatch(content);
+    final parsed = VlessImportAdapter.parseBatch(content, subscriptionId: subscriptionId);
     if (parsed.isEmpty) return 0;
 
     final existing = _repo.getAll();
@@ -50,9 +50,6 @@ class ProfilesNotifier extends Notifier<List<ProfileItem>> {
     final fresh = parsed
         .where((p) =>
             !existingKeys.contains('${p.server}:${p.port}:${p.password}'))
-        .map((p) => subscriptionId != null
-            ? p.copyWith(subscriptionId: subscriptionId)
-            : p)
         .toList();
 
     if (fresh.isNotEmpty) {
