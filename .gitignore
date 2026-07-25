@@ -40,3 +40,8 @@ desktop.ini
 # Test fixtures with credentials (never commit)
 app/test/sub_raw.txt
 app/test/*_credential*
+
+# Local build helper scripts (machine-specific paths)
+app/build_apk*.ps1
+# Leftover renamed build dirs (OneDrive lock workaround)
+app/build_old_*/
