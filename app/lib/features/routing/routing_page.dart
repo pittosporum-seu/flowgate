@@ -1,26 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme.dart';
+import 'model/routing_models.dart';
+import 'routing_provider.dart';
 
-/// Routing - 模式选择 (现代简约)
-class RoutingPage extends StatefulWidget {
+/// Routing - 模式选择 + 自适应探测 + 规则预览
+class RoutingPage extends ConsumerWidget {
   const RoutingPage({super.key});
 
   @override
-  State<RoutingPage> createState() => _RoutingPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final routing = ref.watch(routingProvider);
 
-class _RoutingPageState extends State<RoutingPage> {
-  int _selectedMode = 0;
-
-  final _modes = const [
-    _ModeItem(Icons.auto_awesome_rounded, 'Smart', 'CN direct, overseas proxy'),
-    _ModeItem(Icons.public_rounded, 'Global', 'All traffic via proxy'),
-    _ModeItem(Icons.block_rounded, 'Block CN', 'Block CN, proxy others'),
-    _ModeItem(Icons.tune_rounded, 'Custom', 'User-defined rules'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -37,108 +28,196 @@ class _RoutingPageState extends State<RoutingPage> {
             ),
             const SizedBox(height: 24),
             // 模式选择
-            const Text(
-              'Mode',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary),
-            ),
+            const Text('Mode',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary)),
             const SizedBox(height: 12),
-            ...List.generate(_modes.length, (i) {
-              final mode = _modes[i];
-              final selected = i == _selectedMode;
-              return GestureDetector(
-                onTap: () => setState(() => _selectedMode = i),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: selected ? FlowGateTheme.primarySoft : FlowGateTheme.surface,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: selected ? FlowGateTheme.primary.withValues(alpha: 0.4) : FlowGateTheme.line,
-                      width: selected ? 1.5 : 0.5,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: selected ? FlowGateTheme.primary : FlowGateTheme.surfaceAlt,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          mode.icon,
-                          size: 18,
-                          color: selected ? Colors.white : FlowGateTheme.textTertiary,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              mode.title,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: selected ? FlowGateTheme.primary : FlowGateTheme.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              mode.subtitle,
-                              style: const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (selected)
-                        const Icon(Icons.check_circle_rounded, color: FlowGateTheme.primary, size: 20),
-                    ],
-                  ),
-                ),
-              );
-            }),
-            const SizedBox(height: 28),
-            // 规则包
-            const Text(
-              'Rule Packs',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary),
-            ),
-            const SizedBox(height: 12),
-            ...[
-              ('Smart CN', 'Geo-based routing', Icons.map_rounded),
-              ('Service Adaptive', 'AI service detection', Icons.radar_rounded),
-              ('AdBlock', 'Block advertisements', Icons.shield_rounded),
-              ('Streaming', 'Media optimization', Icons.play_circle_outline_rounded),
-            ].map((pack) => Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: FlowGateTheme.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: FlowGateTheme.line, width: 0.5),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(pack.$3, size: 18, color: FlowGateTheme.textTertiary),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(pack.$1, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textPrimary)),
-                            Text(pack.$2, style: const TextStyle(fontSize: 11, color: FlowGateTheme.textTertiary)),
-                          ],
-                        ),
-                      ),
-                      const Icon(Icons.chevron_right_rounded, size: 18, color: FlowGateTheme.textTertiary),
-                    ],
-                  ),
+            ...RouteMode.values.map((mode) => _ModeCard(
+                  mode: mode,
+                  selected: routing.mode == mode,
+                  onTap: () => ref.read(routingProvider.notifier).setMode(mode),
                 )),
+            const SizedBox(height: 28),
+            // 自适应探测
+            _buildAdaptiveSection(context, ref, routing),
+            const SizedBox(height: 28),
+            // 编译后的规则
+            _buildRulesSection(routing),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdaptiveSection(BuildContext context, WidgetRef ref, RoutingState routing) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Text('Service Adaptive',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary)),
+            const Spacer(),
+            SizedBox(
+              height: 32,
+              child: FilledButton.icon(
+                onPressed: routing.isProbing
+                    ? null
+                    : () => ref.read(routingProvider.notifier).probeServices(),
+                icon: routing.isProbing
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    : const Icon(Icons.radar_rounded, size: 16),
+                label: Text(routing.isProbing ? 'Probing' : 'Probe'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: FlowGateTheme.primary,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (routing.decisions.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: FlowGateTheme.surface,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: FlowGateTheme.line, width: 0.5),
+            ),
+            child: const Column(
+              children: [
+                Icon(Icons.radar_rounded, size: 28, color: FlowGateTheme.textTertiary),
+                SizedBox(height: 8),
+                Text('Run a probe to detect\nservice availability',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary, height: 1.5)),
+              ],
+            ),
+          )
+        else
+          ...routing.decisions.map((d) => _DecisionRow(decision: d)),
+      ],
+    );
+  }
+
+  Widget _buildRulesSection(RoutingState routing) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Text('Compiled Rules',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary)),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: FlowGateTheme.surfaceAlt,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text('${routing.compiledRules.length}',
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary)),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (routing.compiledRules.isEmpty)
+          const Text('Switch mode or run probe to compile rules',
+              style: TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary))
+        else
+          Container(
+            decoration: BoxDecoration(
+              color: FlowGateTheme.surface,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: FlowGateTheme.line, width: 0.5),
+            ),
+            child: Column(
+              children: routing.compiledRules
+                  .map((r) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+                        child: Row(
+                          children: [
+                            _OutboundBadge(tag: r.outboundTag),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(r.remarks,
+                                  style: const TextStyle(fontSize: 13, color: FlowGateTheme.textPrimary),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _ModeCard extends StatelessWidget {
+  final RouteMode mode;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _ModeCard({required this.mode, required this.selected, required this.onTap});
+
+  IconData get _icon => switch (mode) {
+        RouteMode.smart => Icons.auto_awesome_rounded,
+        RouteMode.global => Icons.public_rounded,
+        RouteMode.blockCn => Icons.block_rounded,
+        RouteMode.custom => Icons.tune_rounded,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: selected ? FlowGateTheme.primarySoft : FlowGateTheme.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: selected ? FlowGateTheme.primary.withValues(alpha: 0.4) : FlowGateTheme.line,
+            width: selected ? 1.5 : 0.5,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: selected ? FlowGateTheme.primary : FlowGateTheme.surfaceAlt,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(_icon, size: 18, color: selected ? Colors.white : FlowGateTheme.textTertiary),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(mode.label,
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: selected ? FlowGateTheme.primary : FlowGateTheme.textPrimary)),
+                  const SizedBox(height: 2),
+                  Text(mode.description,
+                      style: const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)),
+                ],
+              ),
+            ),
+            if (selected) const Icon(Icons.check_circle_rounded, color: FlowGateTheme.primary, size: 20),
           ],
         ),
       ),
@@ -146,9 +225,75 @@ class _RoutingPageState extends State<RoutingPage> {
   }
 }
 
-class _ModeItem {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  const _ModeItem(this.icon, this.title, this.subtitle);
+class _DecisionRow extends StatelessWidget {
+  final ServiceRoutingDecision decision;
+  const _DecisionRow({required this.decision});
+
+  @override
+  Widget build(BuildContext context) {
+    final target = defaultServiceTargets.firstWhere(
+      (t) => t.id == decision.serviceId,
+      orElse: () => ServiceTarget(id: decision.serviceId, title: decision.serviceId),
+    );
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: FlowGateTheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: FlowGateTheme.line, width: 0.5),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(target.title,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textPrimary)),
+          ),
+          _ActionBadge(action: decision.action),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActionBadge extends StatelessWidget {
+  final RouteAction action;
+  const _ActionBadge({required this.action});
+
+  @override
+  Widget build(BuildContext context) {
+    final (label, color, bg) = switch (action) {
+      RouteAction.proxy => ('PROXY', FlowGateTheme.primary, FlowGateTheme.primarySoft),
+      RouteAction.direct => ('DIRECT', FlowGateTheme.success, FlowGateTheme.successSoft),
+      RouteAction.block => ('BLOCK', FlowGateTheme.danger, const Color(0xFFFFE6EA)),
+      RouteAction.unavailable => ('N/A', FlowGateTheme.textTertiary, FlowGateTheme.surfaceAlt),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(8)),
+      child: Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color)),
+    );
+  }
+}
+
+class _OutboundBadge extends StatelessWidget {
+  final OutboundTag tag;
+  const _OutboundBadge({required this.tag});
+
+  @override
+  Widget build(BuildContext context) {
+    final (label, color, bg) = switch (tag) {
+      OutboundTag.proxy => ('PROXY', FlowGateTheme.primary, FlowGateTheme.primarySoft),
+      OutboundTag.direct => ('DIRECT', FlowGateTheme.success, FlowGateTheme.successSoft),
+      OutboundTag.block => ('BLOCK', FlowGateTheme.danger, const Color(0xFFFFE6EA)),
+    };
+    return Container(
+      width: 62,
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
+      child: Text(label,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: color)),
+    );
+  }
 }

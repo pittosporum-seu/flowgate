@@ -4,6 +4,7 @@ import 'core/state/app_provider.dart';
 import 'core/theme.dart';
 import 'features/profiles/profiles_provider.dart';
 import 'features/profiles/repository/profile_repository.dart';
+import 'features/routing/routing_provider.dart';
 import 'shared/widgets/app_shell.dart';
 
 Future<void> main() async {
@@ -36,6 +37,8 @@ class _FlowGateAppState extends ConsumerState<FlowGateApp> {
     super.initState();
     // 启动时恢复持久化状态 (Epic 2.4)
     Future.microtask(() => ref.read(appProvider.notifier).restoreFromStorage());
+    // 恢复路由状态 (Epic 4)
+    Future.microtask(() => ref.read(routingProvider.notifier).restore());
   }
 
   @override
