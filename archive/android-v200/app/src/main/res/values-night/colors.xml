@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_fab_active">#9AA8FF</color>
+    <color name="color_fab_inactive">#5E6878</color>
+    <color name="divider_color_light">#2A3444</color>
+    <color name="flow_bg">#090D14</color>
+    <color name="flow_panel">#121824</color>
+    <color name="flow_card">#171F2B</color>
+    <color name="flow_card_alt">#202A38</color>
+    <color name="flow_glass">#CC171F2B</color>
+    <color name="flow_glass_high">#F01B2432</color>
+    <color name="flow_floating">#1D2735</color>
+    <color name="flow_text_primary">#F3F6FB</color>
+    <color name="flow_text_secondary">#B5C0CF</color>
+    <color name="flow_text_tertiary">#7D899A</color>
+    <color name="flow_accent">#9AA8FF</color>
+    <color name="flow_accent_2">#B69BFF</color>
+    <color name="flow_accent_soft">#283159</color>
+    <color name="flow_success">#64D7C9</color>
+    <color name="flow_success_soft">#193A37</color>
+    <color name="flow_warning">#FFC16D</color>
+    <color name="flow_warning_soft">#3C2B16</color>
+    <color name="flow_danger">#FF8A98</color>
+    <color name="flow_danger_soft">#43212A</color>
+    <color name="flow_line">#2F3B4D</color>
+    <color name="flow_hairline">#66DCE7F2</color>
+    <color name="flow_shadow">#88000000</color>
+    <color name="flow_chat_user">#6F83FF</color>
+    <color name="flow_chat_assistant">#202A38</color>
+    <color name="flow_node_score">#64D7C9</color>
+
+    <!-- Primary colors - main tone: gray -->
+    <color name="md_theme_primary">#9AA8FF</color>
+    <color name="md_theme_onPrimary">#111827</color>
+    <color name="md_theme_primaryContainer">#283159</color>
+    <color name="md_theme_onPrimaryContainer">#E9ECFF</color>
+
+    <!-- Secondary colors - accent color: orange -->
+    <color name="md_theme_secondary">#B69BFF</color>
+    <color name="md_theme_onSecondary">#21143D</color>
+    <color name="md_theme_secondaryContainer">#3A2B63</color>
+    <color name="md_theme_onSecondaryContainer">#F1EAFF</color>
+
+    <!-- Tertiary colors - tertiary color: green -->
+    <color name="md_theme_tertiary">#64D7C9</color>
+    <color name="md_theme_onTertiary">#00382E</color>
+    <color name="md_theme_tertiaryContainer">#005143</color>
+    <color name="md_theme_onTertiaryContainer">#A0F2D0</color>
+
+    <!-- Error colors -->
+    <color name="md_theme_error">#FFB4AB</color>
+    <color name="md_theme_errorContainer">#93000A</color>
+    <color name="md_theme_onError">#690005</color>
+    <color name="md_theme_onErrorContainer">#FFDAD6</color>
+
+    <!-- Background colors -->
+    <color name="md_theme_background">#090D14</color>
+    <color name="md_theme_onBackground">#F3F6FB</color>
+
+    <!-- Surface colors -->
+    <color name="md_theme_surface">#171F2B</color>
+    <color name="md_theme_onSurface">#F3F6FB</color>
+    <color name="md_theme_surfaceVariant">#202A38</color>
+    <color name="md_theme_onSurfaceVariant">#B5C0CF</color>
+    <color name="md_theme_inverseSurface">#E6E1E5</color>
+    <color name="md_theme_inverseOnSurface">#1C1B1F</color>
+
+    <!-- Outline colors -->
+    <color name="md_theme_outline">#8A96A8</color>
+    <color name="md_theme_outlineVariant">#2F3B4D</color>
+
+    <!-- Other colors -->
+    <color name="md_theme_inversePrimary">#4F6BFF</color>
+    <color name="md_theme_shadow">#000000</color>
+    <color name="md_theme_surfaceTint">#9AA8FF</color>
+    <color name="md_theme_scrim">#000000</color>
+</resources>

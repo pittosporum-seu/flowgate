@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group
+        android:id="@+id/group_connect"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_connection_center"
+            android:checked="true"
+            android:icon="@drawable/ic_play_24dp"
+            android:title="@string/flow_nav_connection_center" />
+        <item
+            android:id="@+id/sub_setting"
+            android:icon="@drawable/ic_subscriptions_24dp"
+            android:title="@string/flow_nav_subscriptions" />
+    </group>
+
+    <group android:id="@+id/group_policy">
+        <item
+            android:id="@+id/flow_mode_center"
+            android:icon="@drawable/ic_qu_switch_24dp"
+            android:title="@string/flow_nav_policy" />
+        <item
+            android:id="@+id/flow_ai_assistant"
+            android:icon="@drawable/ic_routing_24dp"
+            android:title="@string/flow_ai_assistant_title" />
+        <item
+            android:id="@+id/flow_ai_models"
+            android:icon="@drawable/ic_settings_24dp"
+            android:title="@string/flow_ai_models_title" />
+        <item
+            android:id="@+id/per_app_proxy_settings"
+            android:icon="@drawable/ic_per_apps_24dp"
+            android:title="@string/flow_nav_app_scope" />
+        <item
+            android:id="@+id/rule_pack_center"
+            android:icon="@drawable/ic_routing_24dp"
+            android:title="@string/flow_nav_rule_packs" />
+        <item
+            android:id="@+id/routing_setting"
+            android:icon="@drawable/ic_settings_24dp"
+            android:title="@string/flow_nav_advanced_routing" />
+        <item
+            android:id="@+id/user_asset_setting"
+            android:icon="@drawable/ic_file_24dp"
+            android:title="@string/flow_nav_rule_files" />
+    </group>
+
+    <group android:id="@+id/group_manage">
+        <item
+            android:id="@+id/logcat"
+            android:icon="@drawable/ic_logcat_24dp"
+            android:title="@string/flow_nav_diagnostics" />
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_settings_24dp"
+            android:title="@string/title_settings" />
+        <item
+            android:id="@+id/backup_restore"
+            android:icon="@drawable/ic_restore_24dp"
+            android:title="@string/flow_nav_backup" />
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_about_24dp"
+            android:title="@string/flow_nav_about" />
+    </group>
+</menu>

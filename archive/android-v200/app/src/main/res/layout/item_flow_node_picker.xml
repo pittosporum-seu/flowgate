@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/padding_spacing_dp6"
+    android:paddingBottom="@dimen/padding_spacing_dp6">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:minHeight="112dp"
+        app:cardBackgroundColor="@color/flow_glass_high"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp"
+        app:rippleColor="@color/flow_accent_soft"
+        app:strokeColor="@color/flow_line"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_spacing_dp16">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/flow_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Hong Kong Premium OpenAI" />
+
+                <TextView
+                    android:id="@+id/tv_current"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding_spacing_dp8"
+                    android:background="@drawable/flow_glass_chip"
+                    android:paddingStart="@dimen/padding_spacing_dp10"
+                    android:paddingTop="@dimen/padding_spacing_dp4"
+                    android:paddingEnd="@dimen/padding_spacing_dp10"
+                    android:paddingBottom="@dimen/padding_spacing_dp4"
+                    android:text="@string/flow_node_current_badge"
+                    android:textColor="@color/flow_accent"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_spacing_dp6"
+                android:ellipsize="middle"
+                android:maxLines="1"
+                android:textColor="@color/flow_text_secondary"
+                android:textSize="12sp"
+                tools:text="VLESS / hk.example.com:443 / subscription A" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_spacing_dp12"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_delay"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/flow_glass_chip_success"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:paddingStart="@dimen/padding_spacing_dp10"
+                        android:paddingTop="@dimen/padding_spacing_dp5"
+                        android:paddingEnd="@dimen/padding_spacing_dp10"
+                        android:paddingBottom="@dimen/padding_spacing_dp5"
+                        android:textAlignment="center"
+                        android:textColor="@color/flow_success"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="128ms" />
+
+                    <TextView
+                        android:id="@+id/tv_speed"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/padding_spacing_dp8"
+                        android:layout_weight="1"
+                        android:background="@drawable/flow_glass_chip"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:paddingStart="@dimen/padding_spacing_dp10"
+                        android:paddingTop="@dimen/padding_spacing_dp5"
+                        android:paddingEnd="@dimen/padding_spacing_dp10"
+                        android:paddingBottom="@dimen/padding_spacing_dp5"
+                        android:textAlignment="center"
+                        android:textColor="@color/flow_accent"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="42 Mbps" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp6"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/flow_text_tertiary"
+                    android:textSize="11sp"
+                    tools:text="OK" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

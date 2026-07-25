@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flow_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_spacing_dp16">
+
+        <TextView
+            android:id="@+id/tv_model_library_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0"
+            android:text="@string/flow_ai_models_heading"
+            android:textColor="@color/flow_text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_model_library_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_spacing_dp4"
+            android:text="@string/flow_ai_models_subtitle"
+            android:textColor="@color/flow_text_secondary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_current_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_spacing_dp12"
+            android:background="@drawable/flow_glass_panel"
+            android:padding="@dimen/padding_spacing_dp16"
+            android:textColor="@color/flow_text_primary"
+            android:textSize="14sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_xiaomi_codingplan"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="@dimen/padding_spacing_dp12"
+            android:text="@string/flow_ai_xiaomi_quick_setup"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_source_code_24dp"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_profile"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="@dimen/padding_spacing_dp12"
+            android:text="@string/flow_ai_add_profile"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_add_24dp"
+            app:iconGravity="textStart" />
+
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="@dimen/padding_spacing_dp12"
+            android:background="@drawable/flow_glass_input"
+            android:hint="@string/flow_ai_search_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:paddingStart="@dimen/padding_spacing_dp12"
+            android:paddingEnd="@dimen/padding_spacing_dp12"
+            android:singleLine="true"
+            android:textColor="@color/flow_text_primary"
+            android:textColorHint="@color/flow_text_secondary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_spacing_dp10"
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_filter_provider"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="@string/flow_ai_filter_provider_all"
+                android:textAllCaps="false"
+                app:icon="@drawable/ic_outline_filter_alt_24"
+                app:iconGravity="textStart" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_filter_tag"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="@dimen/padding_spacing_dp6"
+                android:text="@string/flow_ai_filter_tag_all"
+                android:textAllCaps="false"
+                app:icon="@drawable/ic_routing_24dp"
+                app:iconGravity="textStart" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/profile_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_spacing_dp12"
+            android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>

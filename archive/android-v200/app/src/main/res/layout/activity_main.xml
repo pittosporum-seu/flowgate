@@ -1,0 +1,834 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flow_bg"
+    android:clipToPadding="false"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/flow_bg"
+        android:elevation="0dp"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            app:navigationIconTint="@color/flow_text_primary"
+            app:titleTextColor="@color/flow_text_primary" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:indicatorColor="@color/flow_accent" />
+
+    <FrameLayout
+        android:id="@+id/main_pages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false">
+
+        <ScrollView
+            android:id="@+id/page_console"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/connect_hub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_spacing_dp16"
+                android:layout_marginTop="@dimen/padding_spacing_dp8"
+                android:layout_marginEnd="@dimen/padding_spacing_dp16"
+                android:layout_marginBottom="@dimen/padding_spacing_dp16"
+                android:background="@drawable/flow_glass_panel"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_spacing_dp16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_flow_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0"
+                            android:text="@string/flow_nav_console"
+                            android:textColor="@color/flow_text_primary"
+                            android:textSize="26sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_flow_subtitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/padding_spacing_dp4"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="@string/flow_connect_hub_subtitle"
+                            android:textColor="@color/flow_text_secondary"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_flow_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/padding_spacing_dp12"
+                        android:background="@drawable/flow_chip_neutral"
+                        android:minWidth="76dp"
+                        android:paddingStart="@dimen/padding_spacing_dp12"
+                        android:paddingTop="@dimen/padding_spacing_dp6"
+                        android:paddingEnd="@dimen/padding_spacing_dp12"
+                        android:paddingBottom="@dimen/padding_spacing_dp6"
+                        android:text="@string/flow_status_disconnected"
+                        android:textAlignment="center"
+                        android:textColor="@color/flow_text_primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_connect"
+                    android:layout_width="match_parent"
+                    android:layout_height="68dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp16"
+                    android:contentDescription="@string/flow_connect"
+                    android:text="@string/flow_connect"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_play_24dp"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/padding_spacing_dp8"
+                    app:iconTint="@color/md_theme_onPrimary" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp14"
+                    android:background="@drawable/flow_glass_card"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_spacing_dp14">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/flow_node_current"
+                        android:textColor="@color/flow_text_secondary"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_flow_node_value"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp4"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/flow_text_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp10"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_flow_delay_value"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/flow_chip_accent"
+                            android:padding="@dimen/padding_spacing_dp8"
+                            android:text="@string/flow_value_empty"
+                            android:textAlignment="center"
+                            android:textColor="@color/flow_accent"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_select_node"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_marginStart="@dimen/padding_spacing_dp8"
+                            android:layout_weight="1"
+                            android:text="@string/flow_select_node"
+                            android:textAllCaps="false"
+                            app:cornerRadius="999dp"
+                            app:icon="@drawable/ic_routing_24dp"
+                            app:iconGravity="textStart" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp16"
+                    android:text="@string/flow_route_mode_title"
+                    android:textColor="@color/flow_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/group_flow_modes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:orientation="vertical"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mode_off"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:checkable="true"
+                        android:text="@string/flow_mode_off"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_stop_24dp"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mode_global"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:checkable="true"
+                        android:text="@string/flow_mode_global"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_cloud_download_24dp"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mode_smart"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:checkable="true"
+                        android:text="@string/flow_mode_smart"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_routing_24dp"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mode_block_cn"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:checkable="true"
+                        android:text="@string/flow_mode_block_cn"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_lock_24dp"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mode_custom"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:checkable="true"
+                        android:text="@string/flow_mode_custom"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_settings_24dp"
+                        app:iconGravity="textStart" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                <TextView
+                    android:id="@+id/tv_flow_mode_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp10"
+                    android:text="@string/flow_mode_smart_summary"
+                    android:textColor="@color/flow_text_secondary"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_flow_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:background="@drawable/flow_chip_warning"
+                    android:padding="@dimen/padding_spacing_dp8"
+                    android:textColor="@color/flow_warning"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_flow_diagnostic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:background="@drawable/flow_chip_accent"
+                    android:padding="@dimen/padding_spacing_dp8"
+                    android:textColor="@color/flow_accent"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/service_availability_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp14"
+                    android:background="@drawable/flow_glass_card"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_spacing_dp14">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/flow_service_availability"
+                        android:textColor="@color/flow_text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_service_deepseek"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp8"
+                        android:background="@drawable/flow_chip_neutral"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="@dimen/padding_spacing_dp10"
+                        android:text="@string/flow_service_line_empty"
+                        android:textColor="@color/flow_text_primary"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_service_openai"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp6"
+                        android:background="@drawable/flow_chip_neutral"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="@dimen/padding_spacing_dp10"
+                        android:text="@string/flow_service_line_empty"
+                        android:textColor="@color/flow_text_primary"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_service_google"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp6"
+                        android:background="@drawable/flow_chip_neutral"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="@dimen/padding_spacing_dp10"
+                        android:text="@string/flow_service_line_empty"
+                        android:textColor="@color/flow_text_primary"
+                        android:textSize="13sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp8"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_service_probe"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:text="@string/flow_service_probe_again"
+                            android:textAllCaps="false"
+                            app:icon="@drawable/ic_check_update_24dp"
+                            app:iconGravity="textStart" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_diagnostics"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_marginStart="@dimen/padding_spacing_dp6"
+                            android:layout_weight="1"
+                            android:text="@string/flow_diagnostics_title"
+                            android:textAllCaps="false"
+                            app:icon="@drawable/ic_logcat_24dp"
+                            app:iconGravity="textStart" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/diagnostic_strip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp14"
+                    android:background="@drawable/flow_glass_card"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_spacing_dp12">
+
+                    <TextView
+                        android:id="@+id/tv_flow_proxy_traffic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/flow_text_primary"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_flow_direct_traffic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp4"
+                        android:textColor="@color/flow_text_primary"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_flow_subscription_update"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp4"
+                        android:textColor="@color/flow_text_secondary"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_flow_subscription_mode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp4"
+                        android:textColor="@color/flow_text_secondary"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_flow_rule_pack"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp4"
+                        android:textColor="@color/flow_text_secondary"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_flow_app_scope"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_spacing_dp4"
+                        android:textColor="@color/flow_text_secondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/page_nodes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/flow_bg"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/padding_spacing_dp16"
+            android:paddingTop="@dimen/padding_spacing_dp8"
+            android:paddingEnd="@dimen/padding_spacing_dp16"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/flow_glass_panel"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_spacing_dp14">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/flow_nodes_title"
+                    android:textColor="@color/flow_text_primary"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp4"
+                    android:text="@string/flow_nodes_summary"
+                    android:textColor="@color/flow_text_secondary"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp10"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_update_subscriptions"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1"
+                        android:text="@string/flow_update_subscriptions"
+                        android:textAllCaps="false"
+                        app:cornerRadius="999dp"
+                        app:icon="@drawable/ic_subscriptions_24dp"
+                        app:iconGravity="textStart" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_node_picker_tab"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginStart="@dimen/padding_spacing_dp8"
+                        android:layout_weight="1"
+                        android:text="@string/flow_select_node"
+                        android:textAllCaps="false"
+                        app:cornerRadius="999dp"
+                        app:icon="@drawable/ic_routing_24dp"
+                        app:iconGravity="textStart" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_spacing_dp8"
+                android:background="@color/flow_bg"
+                app:tabIndicatorFullWidth="false"
+                app:tabMode="scrollable"
+                app:tabTextAppearance="@style/TabLayoutTextStyle" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:scrollbars="vertical" />
+
+            <LinearLayout
+                android:id="@+id/layout_test"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_dp48"
+                android:background="@color/flow_bg"
+                android:clickable="true"
+                android:contentDescription="@string/connection_test_pending"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_test_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/connection_test_pending"
+                    android:textColor="@color/flow_text_secondary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/page_routing"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding_spacing_dp16"
+                android:background="@drawable/flow_glass_panel"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_spacing_dp16">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/flow_nav_routing"
+                    android:textColor="@color/flow_text_primary"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp4"
+                    android:text="@string/flow_routing_summary"
+                    android:textColor="@color/flow_text_secondary"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_per_app"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp14"
+                    android:text="@string/flow_managed_apps"
+                    android:textAllCaps="false"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_per_apps_24dp"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_rule_packs"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:text="@string/flow_rule_packs"
+                    android:textAllCaps="false"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_routing_24dp"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_route_editor"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:text="@string/flow_route_editor"
+                    android:textAllCaps="false"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_edit_24dp"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_route_simulator"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:text="@string/flow_route_simulator"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_check_update_24dp"
+                    app:iconGravity="textStart" />
+            </LinearLayout>
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/page_diagnostics"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding_spacing_dp16"
+                android:background="@drawable/flow_glass_panel"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_spacing_dp16">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/flow_nav_diagnostics"
+                    android:textColor="@color/flow_text_primary"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp4"
+                    android:text="@string/flow_diagnostics_summary"
+                    android:textColor="@color/flow_text_secondary"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_chatgpt_repair"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp14"
+                    android:text="@string/flow_chatgpt_repair"
+                    android:textAllCaps="false"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_fab_check"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_ai_assistant"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:text="@string/flow_ai_assistant_title"
+                    android:textAllCaps="false"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_routing_24dp"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_logcat_tab"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:text="@string/title_logcat"
+                    android:textAllCaps="false"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_logcat_24dp"
+                    app:iconGravity="textStart" />
+            </LinearLayout>
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/page_settings"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding_spacing_dp16"
+                android:background="@drawable/flow_glass_panel"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_spacing_dp16">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/flow_nav_settings"
+                    android:textColor="@color/flow_text_primary"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_spacing_dp4"
+                    android:text="@string/flow_settings_summary"
+                    android:textColor="@color/flow_text_secondary"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_subscription_mode"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp14"
+                    android:text="@string/flow_subscription_mode_button"
+                    android:textAllCaps="false"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_cloud_download_24dp"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_ai_models_tab"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:text="@string/flow_ai_models_title"
+                    android:textAllCaps="false"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_settings_24dp"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_settings_tab"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:text="@string/title_settings"
+                    android:textAllCaps="false"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_settings_24dp"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_backup_tab"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="@dimen/padding_spacing_dp8"
+                    android:text="@string/title_configuration_backup_restore"
+                    android:textAllCaps="false"
+                    app:cornerRadius="999dp"
+                    app:icon="@drawable/ic_backup_24dp"
+                    app:iconGravity="textStart" />
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/pending_restart_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/flow_warning_soft"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/padding_spacing_dp16"
+        android:paddingTop="@dimen/padding_spacing_dp8"
+        android:paddingEnd="@dimen/padding_spacing_dp16"
+        android:paddingBottom="@dimen/padding_spacing_dp8"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_pending_restart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/flow_pending_restart"
+            android:textColor="@color/flow_warning"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_pending_later"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="@string/flow_pending_later"
+            android:textAllCaps="false" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_pending_restart"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="@string/flow_pending_restart_now"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/flow_card"
+        app:itemIconTint="@color/flow_bottom_nav_item"
+        app:itemTextColor="@color/flow_bottom_nav_item"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/menu_flow_bottom_nav" />
+</LinearLayout>

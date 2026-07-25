@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">FlowGate</string>
+    <string name="app_widget_name">Switch</string>
+    <string name="app_tile_name">Switch</string>
+    <string name="app_tile_first_use">First use of this feature, please use the app to add server</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="migration_success">Data migration success!</string>
+    <string name="action_stop_service">Stop service</string>
+    <string name="migration_fail">Data migration failed!</string>
+    <string name="pull_down_to_refresh">Please pull down to refresh!</string>
+
+    <!-- FlowGate dashboard -->
+    <string name="flow_dashboard_title">FlowGate</string>
+    <string name="flow_dashboard_subtitle">Advanced phone VPN panel for routing, subscriptions, diagnostics, and per-app flow.</string>
+    <string name="flow_connect_hub_title">Connect Hub</string>
+    <string name="flow_connect_hub_subtitle">Pick a node, choose a scene, connect.</string>
+    <string name="flow_connect">Connect</string>
+    <string name="flow_disconnect">Disconnect</string>
+    <string name="flow_add_subscription">Add subscription</string>
+    <string name="flow_add_subscription_first">Add a subscription or node first.</string>
+    <string name="flow_nav_connection_center">Connection center</string>
+    <string name="flow_nav_console">Console</string>
+    <string name="flow_nav_nodes">Nodes</string>
+    <string name="flow_nav_routing">Routing</string>
+    <string name="flow_nav_settings">Settings</string>
+    <string name="flow_nav_subscriptions">Subscriptions and nodes</string>
+    <string name="flow_nav_policy">Routing policy</string>
+    <string name="flow_nav_app_scope">Managed apps</string>
+    <string name="flow_nav_rule_packs">Rule packs</string>
+    <string name="flow_nav_advanced_routing">Advanced routing</string>
+    <string name="flow_nav_rule_files">Rule files</string>
+    <string name="flow_nav_diagnostics">Logs and diagnostics</string>
+    <string name="flow_nav_backup">Backup and restore</string>
+    <string name="flow_nav_about">About FlowGate</string>
+    <string name="flow_current_mode">Mode</string>
+    <string name="flow_rule_pack">Rule pack</string>
+    <string name="flow_app_scope">App scope</string>
+    <string name="flow_subscription_count">Subscriptions</string>
+    <string name="flow_mode_off">Off</string>
+    <string name="flow_mode_off_applied">FlowGate is off and will not manage app traffic.</string>
+    <string name="flow_mode_smart">Smart</string>
+    <string name="flow_mode_smart_summary">Mainland and private networks go direct; DeepSeek, OpenAI, Google and model APIs automatically choose a working route.</string>
+    <string name="flow_mode_block_cn">Block CN</string>
+    <string name="flow_mode_block_cn_summary">Mainland domains and IP ranges are blocked; overseas traffic uses the selected node.</string>
+    <string name="flow_mode_global">Global</string>
+    <string name="flow_mode_global_summary">All phone VPN traffic uses the selected proxy node, except private network ranges.</string>
+    <string name="flow_mode_custom">Custom</string>
+    <string name="flow_mode_custom_summary">Keep your current app list and routing rules for manual tuning.</string>
+    <string name="flow_mode_applied">Mode applied. Restarting the VPN will use the new rules.</string>
+    <string name="flow_mode_applied_restart">Mode applied. Restarting VPN now.</string>
+    <string name="flow_mode_switch_title">Switch to %1$s?</string>
+    <string name="flow_mode_switch_message">FlowGate will switch to %1$s, rebuild routing rules, and restart the VPN so service-adaptive decisions take effect.</string>
+    <string name="flow_mode_switch_restart">Switch and restart</string>
+    <string name="flow_update_subscriptions">Update subscriptions</string>
+    <string name="flow_rule_packs">Rule packs</string>
+    <string name="flow_per_app">Managed apps</string>
+    <string name="flow_app_scope_all">All VPN-capable apps are managed</string>
+    <string name="flow_app_scope_selected">%1$d managed apps</string>
+    <string name="flow_app_scope_custom">Custom managed apps</string>
+    <string name="flow_rule_pack_smart_cn">Mainland direct</string>
+    <string name="flow_rule_pack_service_adaptive">Service adaptive</string>
+    <string name="flow_rule_pack_block_cn">Block mainland</string>
+    <string name="flow_rule_pack_google_play">Google Play</string>
+    <string name="flow_rule_pack_adblock">Ad blocking</string>
+    <string name="flow_rule_pack_streaming">Streaming</string>
+    <string name="flow_rule_pack_global">Global proxy</string>
+    <string name="flow_rule_pack_custom">Custom rules</string>
+    <string name="flow_rule_pack_dialog_title">Choose rule pack</string>
+    <string name="flow_rule_pack_applied">Rule pack applied. Restarting the VPN will use the new routing rules.</string>
+    <string name="flow_status_connected">Connected</string>
+    <string name="flow_status_disconnected">Ready</string>
+    <string name="flow_status_connecting">Connecting</string>
+    <string name="flow_status_reconfiguring">Reconfiguring</string>
+    <string name="flow_status_error">Needs check</string>
+    <string name="flow_status_applying">Applying...</string>
+    <string name="flow_node_current">Node</string>
+    <string name="flow_delay_current">Delay</string>
+    <string name="flow_proxy_traffic">Proxy traffic</string>
+    <string name="flow_direct_traffic">Direct traffic</string>
+    <string name="flow_last_subscription_update">Subscription update</string>
+    <string name="flow_subscription_mode">Update path</string>
+    <string name="flow_recent_error">Last issue</string>
+    <string name="flow_value_empty">--</string>
+    <string name="flow_node_none">No node selected</string>
+    <string name="flow_delay_ms">%1$d ms</string>
+    <string name="flow_traffic_format">Up %1$s  Down %2$s</string>
+    <string name="flow_subscription_never">Never updated</string>
+    <string name="flow_rule_pack_summary">%1$s - %2$d rules</string>
+    <string name="flow_rule_pack_smart_cn_summary">China and private ranges direct; adaptive services choose direct or proxy; unmatched traffic goes direct.</string>
+    <string name="flow_rule_pack_service_adaptive_summary">OpenAI, Google, DeepSeek and model API domains follow service availability decisions.</string>
+    <string name="flow_rule_pack_block_cn_summary">Mainland domains and IP ranges are blocked; private ranges stay direct by default.</string>
+    <string name="flow_rule_pack_google_play_summary">Google Play delivery domains use proxy; unmatched traffic goes direct.</string>
+    <string name="flow_rule_pack_adblock_summary">Blocks common ad domains before smart China routing.</string>
+    <string name="flow_rule_pack_streaming_summary">Streaming domains use proxy before smart China routing.</string>
+    <string name="flow_rule_pack_global_summary">Private ranges direct; all other traffic uses proxy.</string>
+    <string name="flow_rule_pack_custom_summary">Current manually edited routing rules.</string>
+    <string name="flow_restore_rule_pack">Restore defaults</string>
+    <string name="flow_subscription_mode_button">Update path</string>
+    <string name="flow_chatgpt_repair">ChatGPT fix</string>
+    <string name="flow_chatgpt_repair_applied">ChatGPT fix applied. Connect or restart the VPN to use it.</string>
+    <string name="flow_chatgpt_repair_restart">ChatGPT fix applied. Restarting VPN now.</string>
+    <string name="flow_chatgpt_repair_status_applied">ChatGPT fix applied: Smart mode is active, OpenAI and Google services are forced through proxy, and stable DNS is active. If SSL still appears, switch nodes or check phone time and other VPN/certificate tools.</string>
+    <string name="flow_chatgpt_repair_status_failed">ChatGPT fix failed: %1$s</string>
+    <string name="flow_subscription_update_dialog_title">Subscription update path</string>
+    <string name="flow_subscription_update_auto">Auto</string>
+    <string name="flow_subscription_update_auto_summary">Try current proxy first, then direct if it fails.</string>
+    <string name="flow_subscription_update_direct">Direct</string>
+    <string name="flow_subscription_update_direct_summary">Fetch subscription URLs without the local proxy.</string>
+    <string name="flow_subscription_update_proxy">Current proxy</string>
+    <string name="flow_subscription_update_proxy_summary">Fetch subscription URLs through the active local proxy only.</string>
+    <string name="flow_mode_apply_failed">Could not apply: %1$s</string>
+    <string name="flow_mode_custom_opened">Custom mode keeps your rules. Edit routing as needed.</string>
+    <string name="flow_rule_block_quic">Block QUIC 443</string>
+    <string name="flow_rule_private_direct">Private networks direct</string>
+    <string name="flow_rule_service_fallback_proxy">Service fallback proxy</string>
+    <string name="flow_rule_overseas_proxy">Overseas services proxy</string>
+    <string name="flow_rule_block_cn">Mainland traffic blocked</string>
+    <string name="flow_service_rule_remarks">%1$s adaptive %2$s</string>
+    <string name="flow_route_action_direct">direct</string>
+    <string name="flow_route_action_proxy">proxy</string>
+    <string name="flow_route_action_block">block</string>
+    <string name="flow_route_action_unavailable">unavailable</string>
+    <string name="flow_service_availability">Service availability</string>
+    <string name="flow_service_line_empty">No service decision yet</string>
+    <string name="flow_service_line_format">%1$s · %2$s</string>
+    <string name="flow_service_not_tested">Not tested</string>
+    <string name="flow_service_direct_available">Direct available</string>
+    <string name="flow_service_proxy_available">Proxy available</string>
+    <string name="flow_service_blocked">Blocked</string>
+    <string name="flow_service_unavailable">Unavailable</string>
+    <string name="flow_service_probe_again">Recheck</string>
+    <string name="flow_service_probe_running">Checking service routes...</string>
+    <string name="flow_service_probe_done">Checked %1$d service route(s).</string>
+    <string name="flow_diagnostics_title">Diagnostics</string>
+    <string name="flow_nodes_title">Nodes</string>
+    <string name="flow_nodes_summary">Manage subscriptions, choose the current node, and run latency or download tests.</string>
+    <string name="flow_route_mode_title">Route mode</string>
+    <string name="flow_routing_summary">Control managed apps, rule packs, custom routing and route simulation without crowding the console.</string>
+    <string name="flow_route_editor">Custom route editor</string>
+    <string name="flow_route_simulator">Route simulator</string>
+    <string name="flow_route_simulator_summary">This preview uses the current mode, managed app scope, rule pack and service decisions to explain the effective route.</string>
+    <string name="flow_diagnostics_summary">Run service probes, copy a redacted report, inspect logs, and ask the AI routing assistant for action cards.</string>
+    <string name="flow_settings_summary">Tune subscription updates, AI models, VPN network behavior, privacy, appearance and backups.</string>
+    <string name="flow_pending_restart">Changes are waiting for a FlowGate restart.</string>
+    <string name="flow_pending_restart_detail">VPN routing, DNS, managed apps, or node changes only take effect after FlowGate reconnects.</string>
+    <string name="flow_pending_later">Later</string>
+    <string name="flow_pending_restart_now">Restart</string>
+    <string name="flow_pending_applies_next_connect">Saved. It will apply on the next connection.</string>
+    <string name="flow_status_no_node">No node</string>
+    <string name="flow_status_requesting_permission">VPN permission</string>
+    <string name="flow_node_switch_title">Switch node?</string>
+    <string name="flow_node_switch_message">Switch to %1$s and reconnect FlowGate now?</string>
+    <string name="flow_diagnostic_report">diagnostic report</string>
+    <string name="flow_diagnostic_connection">Connection</string>
+    <string name="flow_managed_apps">Managed apps</string>
+    <string name="flow_diagnostic_recent_problems">Recent issues</string>
+    <string name="flow_diagnostic_suggestions">Suggestions</string>
+    <string name="flow_diagnostic_no_problem">No obvious issue.</string>
+    <string name="flow_diagnostic_suggestion_smart">Keep Smart mode for service-adaptive routing.</string>
+    <string name="flow_diagnostic_suggestion_node">If OpenAI or Google still fails, switch nodes and recheck.</string>
+    <string name="flow_diagnostic_suggestion_key">If a model API fails, also check its API key and quota.</string>
+    <string name="flow_diagnostic_copy_report">Copy redacted report</string>
+    <string name="flow_service_current_route">Current route</string>
+    <string name="flow_service_direct_test">Direct test</string>
+    <string name="flow_service_proxy_test">Proxy test</string>
+    <string name="flow_service_decision_reason">Decision reason</string>
+    <string name="flow_service_force_direct">Force direct</string>
+    <string name="flow_service_force_proxy">Force proxy</string>
+    <string name="flow_service_restore_auto">Restore auto</string>
+    <string name="flow_probe_success">Success</string>
+    <string name="flow_probe_failed">Failed</string>
+    <string name="flow_rule_final_proxy">Final proxy</string>
+    <string name="flow_rule_final_direct">Final direct</string>
+
+    <!-- Notifications -->
+    <string name="notification_action_stop_v2ray">Stop</string>
+    <string name="toast_permission_denied">Unable to obtain the permission</string>
+    <string name="toast_permission_denied_notification">Unable to obtain the notification permission</string>
+    <string name="notification_action_more">Click for more</string>
+    <string name="toast_services_start">Start Services</string>
+    <string name="toast_services_stop">Stop Services</string>
+    <string name="toast_services_success">Start Services Success</string>
+    <string name="toast_services_failure">Start Services Failure</string>
+
+    <!--ServerActivity-->
+    <string name="title_server">Config</string>
+    <string name="menu_item_add_config">Add config</string>
+    <string name="menu_item_save_config">Save config</string>
+    <string name="menu_item_edit_config">Edit config</string>
+    <string name="menu_item_del_config">Delete config</string>
+    <string name="menu_item_import_config_qrcode">Import from QRcode</string>
+    <string name="menu_item_import_config_clipboard">Import from Clipboard</string>
+    <string name="menu_item_import_config_local">Import from locally</string>
+    <string name="menu_item_import_config_policy_group">Add [Policy group]</string>
+    <string name="menu_item_import_config_proxy_chain">Add [Proxy chain]</string>
+    <string name="menu_item_import_config_manually_vmess">Add [VMess]</string>
+    <string name="menu_item_import_config_manually_vless">Add [VLESS]</string>
+    <string name="menu_item_import_config_manually_ss">Add [Shadowsocks]</string>
+    <string name="menu_item_import_config_manually_socks">Add [SOCKS]</string>
+    <string name="menu_item_import_config_manually_http">Add [HTTP]</string>
+    <string name="menu_item_import_config_manually_trojan">Add [Trojan]</string>
+    <string name="menu_item_import_config_manually_wireguard">Add [Wireguard]</string>
+    <string name="menu_item_import_config_manually_hysteria2">Add [Hysteria2]</string>
+    <string name="del_config_comfirm">Confirm delete ?</string>
+    <string name="del_invalid_config_comfirm">Please test before deleting! Confirm delete ?</string>
+    <string name="server_lab_remarks">remarks</string>
+    <string name="server_lab_address">address</string>
+    <string name="server_lab_port">port</string>
+    <string name="server_lab_id">id</string>
+    <string name="server_lab_alterid">alterId</string>
+    <string name="server_lab_security">security</string>
+    <string name="server_lab_network">Network</string>
+    <string name="server_lab_more_function">Transport</string>
+    <string name="server_lab_head_type">head type</string>
+    <string name="server_lab_mode_type">gRPC mode</string>
+    <string name="server_lab_request_host">host</string>
+    <string name="server_lab_request_host_http">http host</string>
+    <string name="server_lab_request_host_ws">ws host</string>
+    <string name="server_lab_request_host_httpupgrade">httpupgrade host</string>
+    <string name="server_lab_request_host_xhttp">xhttp host</string>
+    <string name="server_lab_request_host_h2">h2 host</string>
+    <string name="server_lab_request_host_quic">QUIC security</string>
+    <string name="server_lab_request_host_grpc">gRPC Authority</string>
+    <string name="server_lab_path">path</string>
+    <string name="server_lab_path_ws">ws path</string>
+    <string name="server_lab_path_httpupgrade">httpupgrade path</string>
+    <string name="server_lab_path_xhttp">xhttp path</string>
+    <string name="server_lab_path_h2">h2 path</string>
+    <string name="server_lab_path_quic">QUIC key</string>
+    <string name="server_lab_path_kcp">kcp seed</string>
+    <string name="server_lab_path_grpc">gRPC serviceName</string>
+    <string name="server_lab_stream_security">TLS</string>
+    <string name="server_lab_stream_fingerprint">Fingerprint</string>
+    <string name="server_lab_stream_alpn">Alpn</string>
+    <string name="server_lab_allow_insecure">allowInsecure</string>
+    <string name="server_lab_sni">SNI</string>
+    <string name="server_lab_address3">address</string>
+    <string name="server_lab_port3">port</string>
+    <string name="server_lab_id3">password</string>
+    <string name="server_lab_security3">security</string>
+    <string name="server_lab_id4">Password(Optional)</string>
+    <string name="server_lab_security4">User(Optional)</string>
+    <string name="server_lab_encryption">encryption</string>
+    <string name="server_lab_flow">flow</string>
+    <string name="server_lab_public_key">PublicKey</string>
+    <string name="server_lab_preshared_key">PreSharedKey(optional)</string>
+    <string name="server_lab_short_id">ShortId</string>
+    <string name="server_lab_spider_x">SpiderX</string>
+    <string name="server_lab_mldsa65_verify">Mldsa65Verify</string>
+    <string name="server_lab_secret_key">SecretKey</string>
+    <string name="server_lab_reserved">Reserved(Optional, separated by commas)</string>
+    <string name="server_lab_local_address">Local address (optional IPv4/IPv6, separated by commas)</string>
+    <string name="server_lab_local_mtu">Mtu(optional, default 1420)</string>
+    <string name="server_lab_kcp_mtu">mKCP MTU (Optional, core default 1350)</string>
+    <string name="server_lab_kcp_tti">mKCP TTI (Optional, core default 50)</string>
+    <string name="toast_success">Success</string>
+    <string name="toast_failure">Failure</string>
+    <string name="toast_none_data">There is nothing</string>
+    <string name="toast_incorrect_protocol">Incorrect protocol</string>
+    <string name="toast_decoding_failed">Decoding failed</string>
+    <string name="title_file_chooser">Select a config</string>
+    <string name="toast_require_file_manager">Please install a File Manager.</string>
+    <string name="server_customize_config">Customize config</string>
+    <string name="toast_config_file_invalid">Invalid config</string>
+    <string name="server_lab_content">Content</string>
+    <string name="toast_none_data_clipboard">There is no data in the clipboard</string>
+    <string name="toast_invalid_url">Invalid URL</string>
+    <string name="toast_insecure_url_protocol">Please do not use the insecure HTTP protocol subscription address</string>
+    <string name="server_lab_need_inbound">Ensure inbounds port is consistent with the settings</string>
+    <string name="toast_malformed_josn">Config malformed</string>
+    <string name="server_lab_request_host6">Host(SNI)(Optional)</string>
+    <string name="toast_action_not_allowed">Action not allowed</string>
+    <string name="server_obfs_password">Obfs password</string>
+    <string name="server_lab_port_hop">Port Hopping(will override the port)</string>
+    <string name="server_lab_port_hop_interval">Port Hopping Interval</string>
+    <string name="server_lab_bandwidth_down">Bandwidth down (Supported units: k/m/g/t)</string>
+    <string name="server_lab_bandwidth_up">Bandwidth up (Supported units: k/m/g/t)</string>
+    <string name="server_lab_xhttp_mode">XHTTP Mode</string>
+    <string name="server_lab_xhttp_extra">XHTTP Extra raw JSON, format: { XHTTPObject }</string>
+    <string name="server_lab_final_mask">finalMask raw JSON, format: { FinalMaskObject }</string>
+    <string name="server_lab_ech_config_list">EchConfigList</string>
+    <string name="server_lab_pinned_ca256">Certificate fingerprint (SHA-256)</string>
+    <string name="server_lab_browser_dialer">Enable Browser Dialer</string>
+    <string name="server_lab_browser_dialer_tip">Only supports xhttp (packet-up) and ws outbound; TLS-related settings may be ignored or conflict</string>
+
+    <!-- UserAssetActivity -->
+    <string name="toast_asset_copy_failed">File copy failed, please use File Manager</string>
+    <string name="menu_item_add_asset">Add asset</string>
+    <string name="menu_item_add_file">Add files</string>
+    <string name="menu_item_add_url">Add URL</string>
+    <string name="menu_item_scan_qrcode">Scan QRcode</string>
+    <string name="title_url">URL</string>
+    <string name="menu_item_download_file">Download files</string>
+    <string name="title_user_asset_add_url">Add asset URL</string>
+    <string name="msg_file_not_found">File not found</string>
+    <string name="msg_remark_is_duplicate">The remarks already exists</string>
+    <string name="asset_geo_files_sources">Geo files source (optional)</string>
+
+    <!-- PerAppProxyActivity -->
+    <string name="msg_dialog_progress">Loading</string>
+    <string name="menu_item_search">Search</string>
+    <string name="menu_item_select_all">Select all</string>
+    <string name="menu_item_invert_selection">Invert selection</string>
+    <string name="msg_enter_keywords">Enter keywords</string>
+    <string name="switch_bypass_apps_mode">Exclude selected apps</string>
+    <string name="menu_item_select_proxy_app">Select common managed apps</string>
+    <string name="msg_downloading_content">Downloading content</string>
+    <string name="menu_item_export_proxy_app">Export to Clipboard</string>
+    <string name="menu_item_import_proxy_app">Import from Clipboard</string>
+    <string name="per_app_proxy_settings">Managed apps</string>
+    <string name="per_app_proxy_settings_enable">Use selected app scope</string>
+    <string name="app_picker_unknown_app">Unknown app (unidentified UID)</string>
+
+    <!-- Preferences -->
+    <string name="title_settings">Settings</string>
+    <string name="title_advanced">Advanced Settings</string>
+    <string name="title_core_settings">Core Settings</string>
+    <string name="title_vpn_settings">VPN Settings</string>
+    <string name="title_pref_per_app_proxy">Managed apps</string>
+    <string name="summary_pref_per_app_proxy">Include mode: selected apps enter FlowGate. Exclude mode: selected apps stay outside FlowGate. Changes require reconnecting VPN.</string>
+    <string name="title_pref_is_booted">Auto connect at startup</string>
+    <string name="summary_pref_is_booted">Automatically connects to the selected server at startup, which may be unsuccessful</string>
+
+    <string name="title_pref_auto_remove_invalid_after_test">Auto delete invalid config after testing</string>
+    <string name="summary_pref_auto_remove_invalid_after_test">Test results may not be accurate; deleted config cannot be recovered.</string>
+    <string name="title_pref_auto_sort_after_test">Auto sort after testing</string>
+    <string name="summary_pref_auto_sort_after_test">Test results may not be accurate;</string>
+
+    <string name="title_mux_settings">Mux Settings</string>
+    <string name="title_pref_mux_enabled">Enable Mux</string>
+    <string name="summary_pref_mux_enabled">Faster, but it may cause unstable connectivity\nCustomize how to handle TCP, UDP and QUIC below</string>
+    <string name="title_pref_mux_concurency">TCP connections（range -1 to 1024）</string>
+    <string name="title_pref_mux_xudp_concurency">XUDP connections（range -1 to 1024）</string>
+    <string name="title_pref_mux_xudp_quic">Handling of QUIC in mux tunnel</string>
+    <string-array name="mux_xudp_quic_entries">
+        <item>reject</item>
+        <item>allow</item>
+        <item>skip</item>
+    </string-array>
+
+    <string name="title_pref_speed_enabled">Enable speed display</string>
+    <string name="summary_pref_speed_enabled">Display current speed in the notification.\nNotification icon would change based on
+        usage.</string>
+
+    <string name="title_pref_sniffing_enabled">Enable Sniffing</string>
+    <string name="summary_pref_sniffing_enabled">Try sniff domain from the packet (default on)</string>
+    <string name="title_pref_route_only_enabled">Enable routeOnly</string>
+    <string name="summary_pref_route_only_enabled">Use the sniffed domain name for routing only, and keep the target address as the IP address.</string>
+
+    <string name="title_pref_local_dns_enabled">Enable local DNS</string>
+    <string name="summary_pref_local_dns_enabled">DNS processed by core‘s DNS module (Recommended if you need routing bypassing LAN and mainland addresses)</string>
+
+    <string name="title_pref_fake_dns_enabled">Enable fake DNS</string>
+    <string name="summary_pref_fake_dns_enabled">Local DNS returns fake IP addresses (faster, but it may not work for some apps)</string>
+
+    <string name="title_pref_ipv6_enabled">Enable IPv6</string>
+    <string name="summary_pref_ipv6_enabled">Add IPv6 address and routes to the VPN interface</string>
+
+    <string name="title_pref_prefer_ipv6">Prefer IPv6</string>
+    <string name="summary_pref_prefer_ipv6">Prefer IPv6 addresses when resolving domain names</string>
+
+    <string name="title_pref_remote_dns">Remote DNS (udp/tcp/https/quic)(Optional)</string>
+    <string name="summary_pref_remote_dns">DNS</string>
+
+    <string name="title_pref_vpn_dns">VPN DNS (only IPv4/v6)</string>
+    <string name="title_pref_vpn_bypass_lan">Does VPN bypass LAN</string>
+
+    <string name="title_pref_vpn_interface_address">VPN Interface Address</string>
+
+    <string name="title_pref_vpn_mtu">VPN MTU (default 1500)</string>
+
+
+    <string name="title_pref_domestic_dns">Domestic DNS (Optional)</string>
+    <string name="summary_pref_domestic_dns">DNS</string>
+
+    <string name="title_pref_dns_hosts">DNS hosts (Format: domain:address,…)</string>
+    <string name="summary_pref_dns_hosts">domain:address,…</string>
+
+    <string name="title_pref_delay_test_url">True delay test url </string>
+    <string name="summary_pref_delay_test_url">Url</string>
+    <string name="title_pref_real_ping_concurrency">True delay test concurrency</string>
+
+    <string name="title_pref_ip_api_url">Current connection info test url</string>
+    <string name="summary_pref_ip_api_url">Url</string>
+
+    <string name="title_pref_proxy_sharing_enabled">Allow connections from the LAN</string>
+    <string name="summary_pref_proxy_sharing_enabled">Other devices can connect to proxy by your IP address through local proxy. Only enable in trusted networks to avoid unauthorized connections</string>
+    <string name="toast_warning_pref_proxysharing_short">Allow connections from the LAN. Make sure you are in a trusted network</string>
+
+    <string name="title_pref_allow_insecure">allowInsecure</string>
+    <string name="summary_pref_allow_insecure">When TLS is selected, allow insecure connections by default</string>
+
+    <string name="title_pref_socks_port">Local proxy port</string>
+    <string name="title_pref_enable_local_proxy">Enable local proxy</string>
+    <string name="summary_pref_enable_local_proxy">When disabled, no SOCKS proxy is available, so subscription updates and similar actions cannot use the proxy</string>
+    <string name="title_pref_socks_enable_udp">SOCKS5 UDP</string>
+    <string name="summary_pref_socks_enable_udp">SOCKS5 authentication is not fully secure when using UDP.</string>
+    <string name="summary_pref_socks_port">Local proxy port</string>
+    <string name="title_pref_dynamic_socks_port">Enable dynamic local proxy port</string>
+    <string name="summary_pref_dynamic_socks_port">Generate a random local proxy port each time the inbound is created</string>
+    <string name="title_pref_socks_username">Local proxy username (optional)</string>
+    <string name="summary_pref_socks_username">Username</string>
+    <string name="title_pref_socks_password">Local proxy password (optional)</string>
+    <string name="summary_pref_socks_password">Password</string>
+
+    <string name="title_pref_local_dns_port">Local DNS port</string>
+    <string name="summary_pref_local_dns_port">Local DNS port</string>
+
+    <string name="title_pref_confirm_remove">Delete config confirmation</string>
+    <string name="summary_pref_confirm_remove">Whether deleting a config requires a second confirmation by the user</string>
+
+    <string name="title_pref_start_scan_immediate">Start scanning immediately</string>
+    <string name="summary_pref_start_scan_immediate">Open the camera to scan immediately at startup, otherwise you can choose to scan the code or select a photo in the toolbar</string>
+
+    <string name="title_pref_append_http_proxy">Append HTTP Proxy to VPN</string>
+    <string name="summary_pref_append_http_proxy">HTTP proxy will be used directly from (browser/ some supported apps), without going through the virtual NIC device (Android 10+)</string>
+
+    <string name="title_pref_double_column_display">Enable double column display</string>
+    <string name="summary_pref_double_column_display">The profile list is displayed in double columns, allowing more content to be displayed on the screen. You need to restart the application to take effect.</string>
+
+    <string name="title_pref_group_all_display">Enable show all groups</string>
+    <string name="summary_pref_group_all_display">Add an extra "All Tabs" page</string>
+
+    <!-- AboutActivity -->
+    <string name="title_pref_feedback">Feedback</string>
+    <string name="summary_pref_feedback">Feedback enhancements or bugs to GitHub</string>
+    <string name="summary_pref_tg_group">Join Telegram Group</string>
+    <string name="toast_tg_app_not_found">Telegram app not found</string>
+    <string name="title_privacy_policy">Privacy policy</string>
+    <string name="title_qr_code">QR code</string>
+    <string name="title_about">About</string>
+    <string name="title_source_code">Source code</string>
+    <string name="title_oss_license">Open Source licenses</string>
+    <string name="title_tg_channel">Telegram channel</string>
+
+    <string name="title_pref_promotion">Source code</string>
+
+    <string name="title_pref_auto_update_subscription">Automatic update subscriptions</string>
+    <string name="summary_pref_auto_update_subscription">Update your subscriptions automatically at set intervals in the background. Depending on the device, this feature may not always work</string>
+    <string name="title_pref_auto_update_interval">Auto Update Interval (Minutes, Min value 15)</string>
+
+    <string name="title_core_loglevel">Log Level</string>
+    <string name="title_outbound_domain_resolve_method">Outbound domain pre-resolve method</string>
+    <string name="title_mode">Mode</string>
+    <string name="title_mode_help">Click me for more help</string>
+    <string name="title_language">Language</string>
+    <string name="title_ui_settings">UI settings</string>
+    <string name="title_pref_ui_mode_night">UI mode settings</string>
+    <string name="title_pref_use_hev_tunnel">Enable Hev TUN Feature</string>
+    <string name="summary_pref_use_hev_tunnel">When enabled, TUN will use hev-socks5-tunnel; otherwise, it will use xray-core.</string>
+    <string name="title_pref_hev_tunnel_loglevel">Hev Tun Log Level</string>
+    <string name="title_pref_hev_tunnel_rw_timeout">Hev Tun read/write timeout (seconds) (tcp,udp default 300,60)</string>
+
+    <string name="title_logcat">Logcat</string>
+    <string name="logcat_copy">Copy</string>
+    <string name="logcat_clear">Clear</string>
+    <string name="title_service_restart">Service restart</string>
+    <string name="title_del_all_config">Delete config</string>
+    <string name="title_del_duplicate_config">Delete duplicate config</string>
+    <string name="title_del_invalid_config">Delete invalid config</string>
+    <string name="title_export_all">Export configs to clipboard</string>
+    <string name="title_sub_setting">Subscription group setting</string>
+    <string name="sub_setting_remarks">remarks</string>
+    <string name="sub_setting_url">Optional URL</string>
+    <string name="sub_setting_user_agent">User Agent</string>
+    <string name="sub_setting_filter">Remarks regular filter</string>
+    <string name="sub_setting_enable">Enable update</string>
+    <string name="sub_auto_update">Enable automatic update</string>
+    <string name="sub_allow_insecure_url">Allow insecure HTTP address</string>
+    <string name="sub_setting_pre_profile">Previous proxy config remarks</string>
+    <string name="sub_setting_next_profile">Next proxy config remarks</string>
+    <string name="sub_setting_pre_profile_tip">The config remarks exist and are unique</string>
+    <string name="toast_invalid_update_interval">Invalid update interval. Minimum is 15 minutes.</string>
+    <string name="title_sub_update">Update subscription</string>
+    <string name="title_ping_all_server">Tcping config</string>
+    <string name="title_real_ping_all_server">Real delay config</string>
+    <string name="title_user_asset_setting">Asset files</string>
+    <string name="title_sort_by_test_results">Sorting by test results</string>
+    <string name="title_filter_config">Filter config</string>
+    <string name="filter_config_all">All</string>
+    <string name="title_del_duplicate_config_count">Delete %d duplicate configs</string>
+    <string name="title_del_config_count">Delete %d configs</string>
+    <string name="title_import_config_count">Import %d configs</string>
+    <string name="title_export_config_count">Export %d configs</string>
+    <string name="title_update_config_count">Update %d configs</string>
+    <string name="title_update_subscription_result">Updated %1$d configs (%2$d success, %3$d failed, %4$d skipped)</string>
+    <string name="title_update_subscription_no_subscription">No subscriptions</string>
+    <string name="toast_server_not_found_in_group">Selected server not found in current group</string>
+    <string name="toast_fragment_not_available">Unable to locate current view</string>
+    <string name="title_locate_selected_config">Locate the selected config</string>
+
+    <string name="tasker_start_service">Start Service</string>
+    <string name="tasker_setting_confirm">Confirm</string>
+
+    <!-- RoutingSettingActivity -->
+    <string name="routing_settings_domain_strategy">Domain strategy</string>
+    <string name="routing_settings_title">Routing Settings</string>
+    <string name="routing_settings_tips">Separated by commas(,), \nchoose domain or ip or process</string>
+    <string name="routing_settings_save">Save</string>
+    <string name="routing_settings_delete">Clear</string>
+    <string name="routing_settings_rule_title">Routing Rule Settings</string>
+    <string name="routing_settings_add_rule">Add rule</string>
+    <string name="routing_settings_import_predefined_rulesets">Import predefined rulesets</string>
+    <string name="routing_settings_import_rulesets_tip">Existing rulesets will be deleted, are you sure to continue?</string>
+    <string name="routing_settings_import_rulesets_from_clipboard">Import ruleset from clipboard</string>
+    <string name="routing_settings_import_rulesets_from_qrcode">Import ruleset from QRcode</string>
+    <string name="routing_settings_export_rulesets_to_clipboard">Export ruleset to clipboard</string>
+    <string name="routing_settings_locked">Locked, keep this rule when import presets</string>
+    <string name="routing_settings_domain">domain</string>
+    <string name="routing_settings_ip">ip</string>
+    <string name="routing_settings_process">process (Package Name — only supported when using Xray TUN, routeOnly enabled, and Android 10+)</string>
+    <string name="routing_settings_port">port</string>
+    <string name="routing_settings_protocol">protocol</string>
+    <string name="routing_settings_protocol_tip">[http,tls,bittorrent]</string>
+    <string name="routing_settings_network">network</string>
+    <string name="routing_settings_network_tip">[udp|tcp]</string>
+    <string name="routing_settings_outbound_tag_hint" translatable="false">proxy / direct / block / &lt;remarks&gt;</string>
+    <string name="routing_settings_outbound_tag">outboundTag</string>
+
+    <string name="connection_test_pending">Check Connectivity</string>
+    <string name="connection_test_testing">Testing…</string>
+    <string name="connection_test_testing_count">Testing %d configs…</string>
+    <string name="connection_test_available">Success: Connection took %dms</string>
+    <string name="connection_test_error">Fail to detect internet connection: %s</string>
+    <string name="connection_test_fail">Internet Unavailable</string>
+    <string name="connection_test_error_status_code">Error code: #%d</string>
+    <string name="connection_connected">Connected, tap to check connection</string>
+    <string name="connection_not_connected">Not connected</string>
+    <string name="connection_runing_task_left">Number of running test tasks: %s</string>
+
+    <string name="import_subscription_success">Subscription imported Successfully</string>
+    <string name="import_subscription_failure">Import subscription failed</string>
+    <string name="title_fragment_settings">Fragment Settings</string>
+    <string name="title_pref_fragment_packets">Fragment Packets</string>
+    <string name="title_pref_fragment_length">Fragment Length (min-max)</string>
+    <string name="title_pref_fragment_interval">Fragment Interval (min-max)</string>
+    <string name="title_pref_fragment_enabled">Enable Fragment</string>
+
+    <string name="update_check_for_update">Check for update</string>
+    <string name="update_already_latest_version">Already on the latest version</string>
+    <string name="update_new_version_found">New version found: %s</string>
+    <string name="update_now">Update now</string>
+    <string name="update_check_pre_release">Check Pre-release</string>
+    <string name="update_checking_for_update">Checking for update…</string>
+
+    <string name="title_policy_group_type">Policy group type</string>
+    <string name="title_policy_group_subscription_id">From subscription group</string>
+    <string name="title_policy_group_subscription_filter">Remarks regular filter</string>
+
+    <string name="server_proxy_chain_members">Proxy chain members</string>
+    <string name="server_proxy_chain_pick_members">Tap here to pick member</string>
+    <string name="server_proxy_chain_member_unselected">Select a member</string>
+    <string name="server_proxy_chain_members_unselected">Please select member for each chain row</string>
+    <string name="server_proxy_chain_members_insufficient">Insufficient members</string>
+    <string name="server_proxy_chain_members_invalid">Invalid chain members: %1$s</string>
+
+    <!-- BackupActivity -->
+    <string name="title_configuration_backup_restore">Backup &amp; Restore</string>
+    <string name="title_configuration_backup">Backup config</string>
+    <string name="title_configuration_restore">Restore config</string>
+    <string name="title_configuration_share">Share config</string>
+    <string name="title_webdav_config_setting">WebDAV Settings</string>
+    <string name="title_webdav_config_setting_unknown">Please configure WebDAV first.</string>
+    <string name="title_webdav_url">WebDAV server URL</string>
+    <string name="title_webdav_user">Username</string>
+    <string name="title_webdav_pass">Password</string>
+    <string name="title_webdav_remote_path">Remote directory (optional)</string>
+
+    <string-array name="share_method">
+        <item>QRcode</item>
+        <item>Export to clipboard</item>
+        <item>Export full config to clipboard</item>
+    </string-array>
+
+    <string-array name="share_method_more">
+        <item>QRcode</item>
+        <item>Export to clipboard</item>
+        <item>Export full config to clipboard</item>
+        <item>Edit</item>
+        <item>Delete</item>
+    </string-array>
+
+    <string-array name="share_sub_method">
+        <item>QRcode</item>
+        <item>Export to clipboard</item>
+    </string-array>
+
+    <string-array name="mode_entries">
+        <item>VPN</item>
+        <item>Proxy only</item>
+    </string-array>
+
+    <string-array name="browser_dialer_mode">
+        <item>Disable</item>
+        <item>OkHttp</item>
+        <item>WebView</item>
+    </string-array>
+
+    <string-array name="ui_mode_night">
+        <item>Follow system</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="preset_rulesets">
+        <item>China Whitelist</item>
+        <item>China Blacklist</item>
+        <item>Global</item>
+        <item>Iran Whitelist</item>
+        <item>Russia Whitelist</item>
+    </string-array>
+
+    <string-array name="vpn_bypass_lan">
+        <item>Follow config</item>
+        <item>Bypass</item>
+        <item>Not Bypass</item>
+    </string-array>
+
+    <string-array name="outbound_domain_resolve_method">
+        <item>Do not resolve</item>
+        <item>Resolve and add to DNS Hosts</item>
+        <item>Resolve and replace domain</item>
+    </string-array>
+
+    <string-array name="policy_group_type">
+        <item>Least Ping</item>
+        <item>Least Load</item>
+        <item>Random</item>
+        <item>Round Robin</item>
+    </string-array>
+
+    <string-array name="config_backup_options">
+        <item>Local</item>
+        <item>WebDAV</item>
+    </string-array>
+
+    <string name="flow_ai_assistant_title">AI Routing Assistant</string>
+    <string name="flow_ai_models_title">AI Model Library</string>
+    <string name="flow_ai_models_heading">Model Profiles</string>
+    <string name="flow_ai_models_subtitle">Pick a provider by use case, configure once, then reuse it for routing analysis.</string>
+    <string name="flow_ai_xiaomi_quick_setup">Set up Xiaomi CodingPlan / MiMo</string>
+    <string name="flow_ai_add_profile">Add model profile</string>
+    <string name="flow_ai_search_hint">Search provider, model, tag, or base URL</string>
+    <string name="flow_ai_filter_provider_all">Provider: All</string>
+    <string name="flow_ai_filter_provider">Provider: %1$s</string>
+    <string name="flow_ai_filter_tag_all">Use case: All</string>
+    <string name="flow_ai_filter_tag">Use case: %1$s</string>
+    <string name="flow_ai_filter_provider_title">Filter by provider</string>
+    <string name="flow_ai_filter_tag_title">Filter by use case</string>
+    <string name="flow_ai_filter_all">All</string>
+    <string name="flow_ai_current_profile">Primary: %1$s\nFallback: %2$s</string>
+    <string name="flow_ai_badge_default">Primary</string>
+    <string name="flow_ai_badge_fallback">Fallback</string>
+    <string name="flow_ai_key_configured">Key configured</string>
+    <string name="flow_ai_key_missing">No key</string>
+    <string name="flow_ai_key_configured_short">Key OK</string>
+    <string name="flow_ai_key_missing_short">No key</string>
+    <string name="flow_ai_profile_meta">Tags: %1$s\nKey: %2$s\nLast: %3$s / %4$d ms</string>
+    <string name="flow_ai_profile_compact_meta">%1$s\nLast: %2$s / %3$d ms</string>
+    <string name="flow_ai_set_default">Set as primary</string>
+    <string name="flow_ai_set_fallback">Set as fallback</string>
+    <string name="flow_ai_api_key">API key</string>
+    <string name="flow_ai_test_profile">Test connection</string>
+    <string name="flow_ai_edit_profile">Edit profile</string>
+    <string name="flow_ai_duplicate_profile">Duplicate profile</string>
+    <string name="flow_ai_delete_profile">Delete profile</string>
+    <string name="flow_ai_configure_profile">Configure</string>
+    <string name="flow_ai_use_profile">Use</string>
+    <string name="flow_ai_more_profile">More</string>
+    <string name="flow_ai_configure_hint">Everything is in one sheet: provider, endpoint, model, tags, temperature, key, and primary/fallback choice.</string>
+    <string name="flow_ai_field_name">Profile name</string>
+    <string name="flow_ai_field_provider">Provider</string>
+    <string name="flow_ai_field_base_url">Base URL</string>
+    <string name="flow_ai_field_model">Model</string>
+    <string name="flow_ai_field_tags">Tags, comma separated</string>
+    <string name="flow_ai_field_temperature">Temperature</string>
+    <string name="flow_ai_field_protocol">Protocol</string>
+    <string name="flow_ai_custom_provider">Custom</string>
+    <string name="flow_ai_api_key_for">API key for %1$s</string>
+    <string name="flow_ai_api_key_hint">Paste API key here</string>
+    <string name="flow_ai_api_key_keep_hint">Leave blank to keep saved key</string>
+    <string name="flow_ai_save_key">Save key</string>
+    <string name="flow_ai_save_profile">Save profile</string>
+    <string name="flow_ai_clear_key">Clear key</string>
+    <string name="flow_ai_delete_confirm">Delete %1$s? Its local API key will also be removed.</string>
+    <string name="flow_ai_test_ok">Model connection OK</string>
+    <string name="flow_ai_test_failed">Model connection failed</string>
+    <string name="flow_ai_tag_routing">Routing</string>
+    <string name="flow_ai_tag_fast">Cheap / fast</string>
+    <string name="flow_ai_tag_reasoning">Reasoning</string>
+    <string name="flow_ai_tag_coding">Coding / Agent</string>
+    <string name="flow_ai_tag_long_context">Long context</string>
+    <string name="flow_ai_tag_custom">Custom</string>
+    <string name="flow_ai_active_model">Current model: %1$s\n%2$s</string>
+    <string name="flow_ai_active_mode">Autonomy: %1$s\nFallback: %2$s</string>
+    <string name="flow_ai_analyze">Analyze recent traffic</string>
+    <string name="flow_ai_chatgpt_diagnose">Diagnose ChatGPT</string>
+    <string name="flow_ai_open_models">Open model library</string>
+    <string name="flow_ai_autonomy_button">Autonomy: %1$s</string>
+    <string name="flow_ai_diagnostics_empty">Run analysis to collect installed apps and recent FlowGate logs.</string>
+    <string name="flow_ai_plan_empty">The model plan will appear here before anything is applied.</string>
+    <string name="flow_ai_apply_plan">Apply routing plan</string>
+    <string name="flow_ai_need_key">Configure an API key for the primary model first.</string>
+    <string name="flow_ai_observation_summary">Observed %1$d apps, %2$d log lines, %3$d VPN-selected apps.</string>
+    <string name="flow_ai_analyzing">Asking the selected model for a routing plan...</string>
+    <string name="flow_ai_analysis_failed">Analysis failed on %1$s: %2$s</string>
+    <string name="flow_ai_plan_parse_failed">The model did not return a valid plan: %1$s\n\n%2$s</string>
+    <string name="flow_ai_plan_from">Plan from %1$s / %2$d ms</string>
+    <string name="flow_ai_apply_confirm">Apply these rules to FlowGate? The VPN will restart when you return if it is running.</string>
+    <string name="flow_ai_apply_failed">Failed to apply plan: %1$s</string>
+    <string name="flow_ai_apply_success">Applied %1$d new routing rule(s).</string>
+    <string name="flow_ai_auto_applied">Auto-apply completed according to the selected autonomy mode.</string>
+    <string name="flow_ai_autonomy_title">AI autonomy</string>
+    <string name="flow_ai_autonomy_preview">Preview and confirm</string>
+    <string name="flow_ai_autonomy_safe_auto">Safe auto</string>
+    <string name="flow_ai_autonomy_full_auto">Real-time full auto</string>
+    <string name="flow_select_node">Select node</string>
+    <string name="flow_ai_change_model">Change model</string>
+    <string name="flow_ai_show_details">Show collected details</string>
+    <string name="flow_ai_hide_details">Hide collected details</string>
+    <string name="flow_ai_timeline_collected">Collected %1$d apps, %2$d log lines, and %3$d selected apps. Ready to analyze.</string>
+    <string name="flow_ai_timeline_ready">Generated %1$d routing action(s) with %2$s in %3$d ms.</string>
+    <string name="flow_ai_plan_action_count">%1$d action(s) ready for review.</string>
+    <string name="flow_ai_action_title">#%1$d %2$s -> %3$s</string>
+    <string name="flow_ai_action_meta">Confidence %1$d%% · %2$s</string>
+    <string name="flow_ai_tool_mode_label">Tool mode: %1$s</string>
+    <string name="flow_ai_field_tool_mode">Tool mode</string>
+    <string name="flow_ai_tool_mode_auto">Auto</string>
+    <string name="flow_ai_tool_mode_function_call">Function call</string>
+    <string name="flow_ai_tool_mode_json_only">JSON only</string>
+    <string name="flow_ai_outbound_proxy">Proxy</string>
+    <string name="flow_ai_outbound_direct">Direct</string>
+    <string name="flow_ai_outbound_block">Block</string>
+    <string name="flow_ai_risk_low">Low risk</string>
+    <string name="flow_ai_risk_medium">Medium</string>
+    <string name="flow_ai_risk_high">High risk</string>
+    <string name="flow_ai_section_basic">Basic</string>
+    <string name="flow_ai_section_advanced">Advanced</string>
+    <string name="flow_ai_section_key">API key</string>
+    <string name="flow_node_picker_title">Choose a node</string>
+    <string name="flow_node_picker_subtitle">Search, test, and switch without leaving the connection flow.</string>
+    <string name="flow_node_search_hint">Search node, protocol, or address</string>
+    <string name="flow_node_test_tcp">TCP ping</string>
+    <string name="flow_node_test_real">Real delay</string>
+    <string name="flow_node_test_download">Download speed</string>
+    <string name="flow_node_sort_best">Fastest first</string>
+    <string name="flow_node_current_badge">Current</string>
+    <string name="flow_node_no_speed">Not tested</string>
+    <string name="flow_node_speed_meta">Down %1$s</string>
+    <string name="flow_node_last_test">Tested %1$s</string>
+    <string name="flow_node_testing_download">Testing download speed for visible nodes...</string>
+    <string name="flow_node_sorted">Nodes sorted by speed and delay.</string>
+    <string name="flow_ai_chat_hint">Ask FlowGate how to route apps, domains, or errors</string>
+    <string name="flow_ai_chat_send">Send</string>
+    <string name="flow_ai_chat_welcome">Tell me what is broken or what you want routed. I will explain it and prepare safe action cards before changing anything.</string>
+    <string name="flow_ai_quick_recent">Analyze 10 min</string>
+    <string name="flow_ai_quick_chatgpt">Why OpenAI proxy?</string>
+    <string name="flow_ai_chat_empty_input">Type a routing question first.</string>
+    <string name="flow_ai_chat_user_recent">Analyze the last 10 minutes of FlowGate traffic and explain service-adaptive routing decisions.</string>
+    <string name="flow_ai_chat_user_chatgpt">Explain why OpenAI or ChatGPT is routed through proxy, and propose only safe previewable actions.</string>
+    <string name="flow_ai_chat_collecting">Collecting local diagnostics...</string>
+    <string name="flow_ai_chat_failed">AI request failed: %1$s</string>
+    <string name="flow_ai_chat_plan_ready">%1$d action(s) ready for review.</string>
+</resources>
