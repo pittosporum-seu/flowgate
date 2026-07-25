@@ -1,21 +1,32 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'app_state.dart';
 
 /// AppState 的 Riverpod Notifier
 /// 当前为 Mock 实现，后续 Epic 5 替换为真实 CoreEngine
 class AppNotifier extends Notifier<AppState> {
+  static const _keyNodeName = 'persisted_node_name';
+  static const _keyLatency = 'persisted_latency';
+
   Timer? _trafficTimer;
   final _random = Random();
 
   @override
   AppState build() {
     ref.onDispose(() => _trafficTimer?.cancel());
-    return const AppState(
-      currentNodeName: 'HK-01 | Azure',
-      latencyMs: 42,
-    );
+    return const AppState();
+  }
+
+  /// 启动时从持久化恢复 (Epic 2.4)
+  Future<void> restoreFromStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final nodeName = prefs.getString(_keyNodeName);
+    final latency = prefs.getInt(_keyLatency);
+    if (nodeName != null) {
+      state = state.copyWith(currentNodeName: nodeName, latencyMs: latency);
+    }
   }
 
   /// 连接/断开切换
@@ -58,14 +69,22 @@ class AppNotifier extends Notifier<AppState> {
     );
   }
 
+  /// 选择节点并持久化
+  Future<void> selectNode(String name) async {
+    state = state.copyWith(currentNodeName: name);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyNodeName, name);
+  }
+
   /// 模拟流量增长 (真实实现: CoreEngine.queryStats 轮询)
   void _startTrafficSimulation() {
     _trafficTimer?.cancel();
-    _trafficTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _trafficTimer = Timer.periodic(const Duration(seconds: 1), (_) async {
       if (!state.isRunning) return;
 
       final upSpeed = 20000 + _random.nextInt(180000); // 20~200 KB/s
       final downSpeed = 80000 + _random.nextInt(900000); // 80~980 KB/s
+      final latency = 38 + _random.nextInt(20);
 
       state = state.copyWith(
         traffic: state.traffic.copyWith(
@@ -74,8 +93,14 @@ class AppNotifier extends Notifier<AppState> {
           uplinkSpeed: upSpeed,
           downlinkSpeed: downSpeed,
         ),
-        latencyMs: 38 + _random.nextInt(20),
+        latencyMs: latency,
       );
+
+      // 定期持久化延迟 (节流: 每 5 次写一次)
+      if (_random.nextInt(5) == 0) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt(_keyLatency, latency);
+      }
     });
   }
 }
