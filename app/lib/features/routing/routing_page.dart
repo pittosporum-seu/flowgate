@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/engine/config_assembler.dart';
 import '../../core/theme.dart';
 import 'model/routing_models.dart';
 import 'routing_provider.dart';
@@ -41,7 +42,7 @@ class RoutingPage extends ConsumerWidget {
             _buildAdaptiveSection(context, ref, routing),
             const SizedBox(height: 28),
             // 编译后的规则
-            _buildRulesSection(routing),
+            _buildRulesSection(context, routing),
           ],
         ),
       ),
@@ -104,7 +105,7 @@ class RoutingPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildRulesSection(RoutingState routing) {
+  Widget _buildRulesSection(BuildContext context, RoutingState routing) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -155,7 +156,44 @@ class RoutingPage extends ConsumerWidget {
                   .toList(),
             ),
           ),
+        const SizedBox(height: 12),
+        if (routing.compiledRules.isNotEmpty)
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => _showXrayJsonDialog(context, routing.compiledRules),
+              icon: const Icon(Icons.data_object_rounded, size: 16),
+              label: const Text('View Xray routing JSON'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: FlowGateTheme.primary,
+                side: const BorderSide(color: FlowGateTheme.line),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
       ],
+    );
+  }
+
+  void _showXrayJsonDialog(BuildContext context, List<RulesetItem> rules) {
+    final json = ConfigAssembler.buildRoutingPreview(rules);
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Xray routing'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: SelectableText(
+              json,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+        ],
+      ),
     );
   }
 }

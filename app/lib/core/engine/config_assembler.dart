@@ -62,14 +62,14 @@ class ConfigAssembler {
     final routing = (config['routing'] as Map<String, dynamic>?) ?? {};
     routing['domainStrategy'] ??= 'AsIs';
 
-    final xrayRules = rules.map(_toXrayRule).toList();
+    final xrayRules = rules.map(toXrayRule).toList();
     routing['rules'] = xrayRules;
 
     config['routing'] = routing;
   }
 
   /// RulesetItem → Xray routing rule
-  static Map<String, dynamic> _toXrayRule(RulesetItem item) {
+  static Map<String, dynamic> toXrayRule(RulesetItem item) {
     final rule = <String, dynamic>{
       'type': 'field',
       'outboundTag': item.outboundTag.value,
@@ -79,5 +79,14 @@ class ConfigAssembler {
     if (item.port != null && item.port!.isNotEmpty) rule['port'] = item.port;
     if (item.network != null && item.network!.isNotEmpty) rule['network'] = item.network;
     return rule;
+  }
+
+  /// 生成 Xray routing 段预览 JSON (供 Routing 页展示)
+  static String buildRoutingPreview(List<RulesetItem> rules) {
+    final routing = {
+      'domainStrategy': 'AsIs',
+      'rules': rules.map(toXrayRule).toList(),
+    };
+    return const JsonEncoder.withIndent('  ').convert(routing);
   }
 }
