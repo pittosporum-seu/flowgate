@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/service/log_service.dart';
+import '../../core/service/subscription_fetcher.dart';
 import 'model/profile_item.dart';
 import 'parser/vless_import_adapter.dart';
 import 'repository/profile_repository.dart';
@@ -37,8 +39,15 @@ class ProfilesNotifier extends Notifier<List<ProfileItem>> {
     return profile;
   }
 
-  /// 从订阅内容批量导入，返回新增数量
-  Future<int> importBatch(String content, {String? subscriptionId}) async {
+  /// 从订阅导入，返回新增数量
+  /// [input] 可以是订阅 URL（自动拉取）或直接的链接/订阅内容
+  Future<int> importBatch(String input, {String? subscriptionId}) async {
+    var content = input;
+    // 如果是 URL，先拉取订阅内容
+    if (SubscriptionFetcher.isUrl(input)) {
+      content = await SubscriptionFetcher.fetch(input);
+    }
+
     final parsed = VlessImportAdapter.parseBatch(content, subscriptionId: subscriptionId);
     if (parsed.isEmpty) return 0;
 
@@ -51,6 +60,9 @@ class ProfilesNotifier extends Notifier<List<ProfileItem>> {
         .where((p) =>
             !existingKeys.contains('${p.server}:${p.port}:${p.password}'))
         .toList();
+
+    LogService.instance.info('Profiles',
+        'import: parsed=${parsed.length} fresh=${fresh.length} url=${SubscriptionFetcher.isUrl(input)}');
 
     if (fresh.isNotEmpty) {
       await _repo.saveAll(fresh);

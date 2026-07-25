@@ -208,57 +208,98 @@ class ProfilesPage extends ConsumerWidget {
 
   void _showImportDialog(BuildContext context, WidgetRef ref) {
     final controller = TextEditingController();
+    var loading = false;
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Import Nodes'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: controller,
-                maxLines: 5,
-                decoration: const InputDecoration(
-                  hintText: 'Paste vmess:// vless:// trojan:// ss:// link\nor base64 subscription content',
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('Import Nodes'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: controller,
+                  maxLines: 5,
+                  enabled: !loading,
+                  decoration: const InputDecoration(
+                    hintText:
+                        'Subscription URL (https://...)\nor vmess:// vless:// trojan:// ss:// link\nor base64 subscription content',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  icon: const Icon(Icons.paste_rounded, size: 16),
-                  label: const Text('Paste from clipboard'),
-                  onPressed: () async {
-                    final data = await Clipboard.getData('text/plain');
-                    if (data?.text != null) controller.text = data!.text!;
-                  },
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    icon: const Icon(Icons.paste_rounded, size: 16),
+                    label: const Text('Paste from clipboard'),
+                    onPressed: loading
+                        ? null
+                        : () async {
+                            final data = await Clipboard.getData('text/plain');
+                            if (data?.text != null) {
+                              setDialogState(() => controller.text = data!.text!);
+                            }
+                          },
+                  ),
                 ),
-              ),
-            ],
+                if (loading) ...[
+                  const SizedBox(height: 8),
+                  const Row(
+                    children: [
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      SizedBox(width: 12),
+                      Text('Fetching subscription...',
+                          style: TextStyle(fontSize: 13)),
+                    ],
+                  ),
+                ],
+              ],
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: loading ? null : () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: loading
+                  ? null
+                  : () async {
+                      final text = controller.text.trim();
+                      if (text.isEmpty) return;
+                      setDialogState(() => loading = true);
+                      try {
+                        final count =
+                            await ref.read(profilesProvider.notifier).importBatch(text);
+                        if (ctx.mounted) {
+                          Navigator.pop(ctx);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(count > 0
+                                  ? 'Imported $count node(s)'
+                                  : 'No valid nodes found'),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        setDialogState(() => loading = false);
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Import failed: $e')),
+                          );
+                        }
+                      }
+                    },
+              child: const Text('Import'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () async {
-              final text = controller.text.trim();
-              if (text.isEmpty) return;
-              final count = await ref.read(profilesProvider.notifier).importBatch(text);
-              if (ctx.mounted) {
-                Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(count > 0 ? 'Imported $count node(s)' : 'No valid nodes found')),
-                );
-              }
-            },
-            child: const Text('Import'),
-          ),
-        ],
       ),
     );
   }

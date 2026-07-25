@@ -5,6 +5,7 @@ import '../../features/profiles/profiles_provider.dart';
 import '../../features/routing/routing_provider.dart';
 import '../engine/config_assembler.dart';
 import '../engine/vless_engine.dart';
+import '../service/log_service.dart';
 import 'app_state.dart';
 
 /// AppState 的 Riverpod Notifier
@@ -14,6 +15,7 @@ class AppNotifier extends Notifier<AppState> {
   static const _keyNodeName = 'persisted_node_name';
 
   VlessEngine get _engine => VlessEngine.instance;
+  final _log = LogService.instance;
 
   @override
   AppState build() {
@@ -59,15 +61,18 @@ class AppNotifier extends Notifier<AppState> {
   Future<void> connect() async {
     final profile = _selectedProfile();
     if (profile == null) {
+      _log.warn('AppNotifier', 'connect: no node selected');
       state = state.copyWith(errorMessage: 'No node selected');
       return;
     }
     final rawConfig = profile.rawConfig;
     if (rawConfig == null || rawConfig.isEmpty) {
+      _log.warn('AppNotifier', 'connect: node config missing for ${profile.name}');
       state = state.copyWith(errorMessage: 'Node config missing');
       return;
     }
 
+    _log.info('AppNotifier', 'connect: node="${profile.name}" mode=proxy-only');
     state = state.copyWith(
       connectionState: VpnConnectionState.connecting,
       errorMessage: null,
@@ -87,6 +92,7 @@ class AppNotifier extends Notifier<AppState> {
         proxyOnly: true, // Windows 先用 proxy-only；Android VPN 后续
       );
     } catch (e) {
+      _log.error('AppNotifier', 'connect failed', e);
       state = state.copyWith(
         connectionState: VpnConnectionState.error,
         errorMessage: e.toString(),
@@ -96,16 +102,19 @@ class AppNotifier extends Notifier<AppState> {
 
   /// 断开代理
   Future<void> disconnect() async {
+    _log.info('AppNotifier', 'disconnect');
     state = state.copyWith(connectionState: VpnConnectionState.disconnecting);
     try {
       await _engine.disconnect();
     } catch (e) {
+      _log.error('AppNotifier', 'disconnect failed', e);
       state = state.copyWith(errorMessage: e.toString());
     }
   }
 
   /// 选择节点并持久化
   Future<void> selectProfile(ProfileItem profile) async {
+    _log.info('AppNotifier', 'selectProfile: "${profile.name}" (${profile.type.label})');
     state = state.copyWith(
       selectedProfileId: profile.id,
       currentNodeName: profile.name,

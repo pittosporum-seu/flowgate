@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/service/log_service.dart';
 import 'core/state/app_provider.dart';
 import 'core/theme.dart';
 import 'features/profiles/profiles_provider.dart';
@@ -10,17 +12,32 @@ import 'shared/widgets/app_shell.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // 初始化日志服务
+  await LogService.instance.init();
+  LogService.instance.info('App', 'FlowGate starting...');
+
+  // 全局异常捕获 → 日志
+  FlutterError.onError = (details) {
+    LogService.instance.error('Flutter', details.exceptionAsString(), details.stack);
+    FlutterError.presentError(details);
+  };
+
   // 初始化 Profile 存储 (Epic 3.2)
   final profileRepo = ProfileRepository();
   await profileRepo.init();
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        profileRepositoryProvider.overrideWithValue(profileRepo),
-      ],
-      child: const FlowGateApp(),
+  runZonedGuarded(
+    () => runApp(
+      ProviderScope(
+        overrides: [
+          profileRepositoryProvider.overrideWithValue(profileRepo),
+        ],
+        child: const FlowGateApp(),
+      ),
     ),
+    (error, stack) {
+      LogService.instance.error('Zone', error.toString(), stack);
+    },
   );
 }
 

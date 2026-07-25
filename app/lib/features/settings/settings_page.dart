@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
+import '../log/log_page.dart';
 
 /// Settings - 现代简约设置页
 class SettingsPage extends StatelessWidget {
@@ -35,6 +36,10 @@ class SettingsPage extends StatelessWidget {
             _section('Advanced', [
               _item(Icons.speed_rounded, 'Speed Test URL', 'gstatic.com/generate_204'),
               _item(Icons.timer_rounded, 'Auto Update', 'Every 24h'),
+            ]),
+            _section('Debug', [
+              _navItem(context, Icons.bug_report_rounded, 'Logs', 'View & share app logs',
+                  () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LogPage()))),
             ]),
             _section('About', [
               _item(Icons.info_outline_rounded, 'Version', 'FlowGate 0.0.1'),
@@ -82,6 +87,26 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(width: 6),
           const Icon(Icons.chevron_right_rounded, size: 16, color: FlowGateTheme.textTertiary),
         ],
+      ),
+    );
+  }
+
+  Widget _navItem(BuildContext context, IconData icon, String title, String subtitle, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+        child: Row(
+          children: [
+            Icon(icon, size: 19, color: FlowGateTheme.textTertiary),
+            const SizedBox(width: 14),
+            Expanded(child: Text(title, style: const TextStyle(fontSize: 14, color: FlowGateTheme.textPrimary))),
+            Text(subtitle, style: const TextStyle(fontSize: 13, color: FlowGateTheme.textTertiary)),
+            const SizedBox(width: 6),
+            const Icon(Icons.chevron_right_rounded, size: 16, color: FlowGateTheme.textTertiary),
+          ],
+        ),
       ),
     );
   }

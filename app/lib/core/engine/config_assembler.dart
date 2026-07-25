@@ -1,5 +1,6 @@
 import 'dart:convert';
 import '../../features/routing/model/routing_models.dart';
+import '../service/log_service.dart';
 
 /// 配置组装器
 /// 将「节点 rawConfig」+「RulePipeline 路由规则」组装为最终 Xray config JSON
@@ -16,6 +17,10 @@ class ConfigAssembler {
 
     _ensureOutbounds(config);
     _injectRouting(config, rules);
+
+    final outbounds = (config['outbounds'] as List?)?.length ?? 0;
+    LogService.instance.info('ConfigAssembler',
+        'Assembled config: rules=${rules.length} outbounds=$outbounds');
 
     return jsonEncode(config);
   }

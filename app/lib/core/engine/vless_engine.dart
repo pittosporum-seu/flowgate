@@ -1,4 +1,5 @@
 import 'package:flutter_vless/flutter_vless.dart';
+import '../service/log_service.dart';
 import '../state/app_state.dart';
 
 /// flutter_vless 核心引擎封装 (单例)
@@ -6,12 +7,18 @@ import '../state/app_state.dart';
 class VlessEngine {
   VlessEngine._internal();
   static final VlessEngine instance = VlessEngine._internal();
+  final _log = LogService.instance;
 
   /// 状态变化回调，由 AppNotifier 订阅
   void Function(VlessStatus status)? onStatus;
 
   late final FlutterVless _vless = FlutterVless(
-    onStatusChanged: (status) => onStatus?.call(status),
+    onStatusChanged: (status) {
+      _log.debug('VlessEngine',
+          'status=${status.state} conn=${status.connectionState.name} '
+          'up=${status.uploadSpeed}B/s down=${status.downloadSpeed}B/s');
+      onStatus?.call(status);
+    },
   );
 
   bool _initialized = false;
@@ -19,13 +26,21 @@ class VlessEngine {
   /// 初始化核心 (幂等)
   Future<void> init() async {
     if (_initialized) return;
-    await _vless.initializeVless(
-      providerBundleIdentifier: 'com.njl.flowgate',
-      groupIdentifier: 'group.com.njl.flowgate',
-      notificationIconResourceType: 'mipmap',
-      notificationIconResourceName: 'ic_launcher',
-    );
-    _initialized = true;
+    _log.info('VlessEngine', 'Initializing core...');
+    try {
+      await _vless.initializeVless(
+        providerBundleIdentifier: 'com.njl.flowgate',
+        groupIdentifier: 'group.com.njl.flowgate',
+        notificationIconResourceType: 'mipmap',
+        notificationIconResourceName: 'ic_launcher',
+      );
+      _initialized = true;
+      final ver = await _vless.getCoreVersion();
+      _log.info('VlessEngine', 'Core initialized, version=$ver');
+    } catch (e) {
+      _log.error('VlessEngine', 'Core init failed', e);
+      rethrow;
+    }
   }
 
   /// 请求 VPN 权限 (VPN 模式需要)
@@ -39,18 +54,36 @@ class VlessEngine {
     List<String> bypassSubnets = const [],
     List<String> blockedApps = const [],
   }) async {
-    await init();
-    await _vless.startVless(
-      remark: remark,
-      config: config,
-      proxyOnly: proxyOnly,
-      bypassSubnets: bypassSubnets,
-      blockedApps: blockedApps,
-    );
+    _log.info('VlessEngine',
+        'connect: remark="$remark" proxyOnly=$proxyOnly configLen=${config.length}');
+    _log.debug('VlessEngine', 'config=$config');
+    try {
+      await init();
+      await _vless.startVless(
+        remark: remark,
+        config: config,
+        proxyOnly: proxyOnly,
+        bypassSubnets: bypassSubnets,
+        blockedApps: blockedApps,
+      );
+      _log.info('VlessEngine', 'startVless called OK');
+    } catch (e) {
+      _log.error('VlessEngine', 'connect failed', e);
+      rethrow;
+    }
   }
 
   /// 停止代理
-  Future<void> disconnect() => _vless.stopVless();
+  Future<void> disconnect() async {
+    _log.info('VlessEngine', 'disconnect');
+    try {
+      await _vless.stopVless();
+      _log.info('VlessEngine', 'stopVless OK');
+    } catch (e) {
+      _log.error('VlessEngine', 'disconnect failed', e);
+      rethrow;
+    }
+  }
 
   /// 测试未连接节点的延迟
   Future<int> testDelay({required String config}) =>
