@@ -5,6 +5,7 @@ import '../../core/state/app_provider.dart';
 import '../../core/theme.dart';
 import 'model/profile_item.dart';
 import 'profiles_provider.dart';
+import 'server_edit_page.dart';
 
 /// Profiles - 节点列表 (真实数据)
 class ProfilesPage extends ConsumerWidget {
@@ -59,7 +60,9 @@ class ProfilesPage extends ConsumerWidget {
                   _HeaderButton(
                     icon: Icons.add_rounded,
                     tooltip: 'Add node',
-                    onPressed: () {},
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const ServerEditPage()),
+                    ),
                   ),
                 ],
               ),
