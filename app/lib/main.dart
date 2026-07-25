@@ -2,10 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/state/app_provider.dart';
 import 'core/theme.dart';
+import 'features/profiles/profiles_provider.dart';
+import 'features/profiles/repository/profile_repository.dart';
 import 'shared/widgets/app_shell.dart';
 
-void main() {
-  runApp(const ProviderScope(child: FlowGateApp()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化 Profile 存储 (Epic 3.2)
+  final profileRepo = ProfileRepository();
+  await profileRepo.init();
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        profileRepositoryProvider.overrideWithValue(profileRepo),
+      ],
+      child: const FlowGateApp(),
+    ),
+  );
 }
 
 class FlowGateApp extends ConsumerStatefulWidget {
