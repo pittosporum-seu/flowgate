@@ -62,8 +62,9 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
-  # Enable l10n code generation (gen-l10n)
-  generate: true
+  # l10n: generated files committed to git (lib/gen_l10n). Run `flutter gen-l10n`
+  # manually after editing ARB files (remove OneDrive read-only attr first).
+  # generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
