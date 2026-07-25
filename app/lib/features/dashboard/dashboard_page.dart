@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/state/app_provider.dart';
+import '../../core/state/app_state.dart';
 import '../../core/theme.dart';
 
-/// Dashboard - 现代简约风格
-class DashboardPage extends StatelessWidget {
+/// Dashboard - 连接状态、流量监控、一键开关
+class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final app = ref.watch(appProvider);
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -14,17 +19,13 @@ class DashboardPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
               _buildHeader(context),
               const SizedBox(height: 40),
-              // 连接按钮
-              const _ConnectButton(),
+              _ConnectButton(state: app.connectionState),
               const SizedBox(height: 40),
-              // 状态卡片
-              _buildStatusCards(context),
+              _buildStatusCards(app),
               const SizedBox(height: 20),
-              // 当前节点
-              _buildNodeCard(context),
+              _buildNodeCard(app),
             ],
           ),
         ),
@@ -35,7 +36,6 @@ class DashboardPage extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     return Row(
       children: [
-        // Logo mark
         Container(
           width: 36,
           height: 36,
@@ -78,7 +78,8 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusCards(BuildContext context) {
+  Widget _buildStatusCards(AppState app) {
+    final running = app.isRunning;
     return Row(
       children: [
         Expanded(
@@ -86,7 +87,7 @@ class DashboardPage extends StatelessWidget {
             icon: Icons.speed_rounded,
             iconColor: FlowGateTheme.primary,
             label: 'Latency',
-            value: '--',
+            value: running && app.latencyMs != null ? '${app.latencyMs}' : '--',
             unit: 'ms',
           ),
         ),
@@ -95,9 +96,9 @@ class DashboardPage extends StatelessWidget {
           child: _MetricCard(
             icon: Icons.arrow_downward_rounded,
             iconColor: FlowGateTheme.success,
-            label: 'Down',
-            value: '0',
-            unit: 'B',
+            label: running ? formatSpeed(app.traffic.downlinkSpeed) : 'Down',
+            value: formatBytes(app.traffic.downlinkBytes),
+            unit: '',
           ),
         ),
         const SizedBox(width: 12),
@@ -105,16 +106,16 @@ class DashboardPage extends StatelessWidget {
           child: _MetricCard(
             icon: Icons.arrow_upward_rounded,
             iconColor: FlowGateTheme.secondary,
-            label: 'Up',
-            value: '0',
-            unit: 'B',
+            label: running ? formatSpeed(app.traffic.uplinkSpeed) : 'Up',
+            value: formatBytes(app.traffic.uplinkBytes),
+            unit: '',
           ),
         ),
       ],
     );
   }
 
-  Widget _buildNodeCard(BuildContext context) {
+  Widget _buildNodeCard(AppState app) {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -134,18 +135,18 @@ class DashboardPage extends StatelessWidget {
             child: const Icon(Icons.dns_rounded, color: FlowGateTheme.primary, size: 20),
           ),
           const SizedBox(width: 14),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Current Node',
                   style: TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary),
                 ),
-                SizedBox(height: 3),
+                const SizedBox(height: 3),
                 Text(
-                  'Tap to select',
-                  style: TextStyle(
+                  app.currentNodeName ?? 'Tap to select',
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: FlowGateTheme.textPrimary,
@@ -161,24 +162,42 @@ class DashboardPage extends StatelessWidget {
   }
 }
 
-/// 大连接按钮 - 渐变圆环
-class _ConnectButton extends StatefulWidget {
-  const _ConnectButton();
+/// 大连接按钮 - 状态驱动
+class _ConnectButton extends ConsumerWidget {
+  final VpnConnectionState state;
+  const _ConnectButton({required this.state});
 
   @override
-  State<_ConnectButton> createState() => _ConnectButtonState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isRunning = state == VpnConnectionState.connected;
+    final isTransitioning = state == VpnConnectionState.connecting ||
+        state == VpnConnectionState.disconnecting;
 
-class _ConnectButtonState extends State<_ConnectButton> {
-  bool _connected = false;
+    final gradient = isRunning
+        ? const LinearGradient(
+            colors: [FlowGateTheme.success, Color(0xFF2DD4A8)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          )
+        : const LinearGradient(
+            colors: [FlowGateTheme.primary, FlowGateTheme.secondary],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          );
 
-  @override
-  Widget build(BuildContext context) {
+    final statusText = switch (state) {
+      VpnConnectionState.connected => 'Connected',
+      VpnConnectionState.connecting => 'Connecting...',
+      VpnConnectionState.disconnecting => 'Disconnecting...',
+      VpnConnectionState.error => 'Error',
+      VpnConnectionState.disconnected => 'Tap to Connect',
+    };
+
     return Center(
       child: Column(
         children: [
           GestureDetector(
-            onTap: () => setState(() => _connected = !_connected),
+            onTap: isTransitioning ? null : () => ref.read(appProvider.notifier).toggleConnection(),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 400),
               curve: Curves.easeOutCubic,
@@ -186,43 +205,41 @@ class _ConnectButtonState extends State<_ConnectButton> {
               height: 150,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: _connected
-                    ? const LinearGradient(
-                        colors: [FlowGateTheme.success, Color(0xFF2DD4A8)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
-                    : const LinearGradient(
-                        colors: [FlowGateTheme.primary, FlowGateTheme.secondary],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                gradient: gradient,
                 boxShadow: [
                   BoxShadow(
-                    color: (_connected ? FlowGateTheme.success : FlowGateTheme.primary)
+                    color: (isRunning ? FlowGateTheme.success : FlowGateTheme.primary)
                         .withValues(alpha: 0.3),
                     blurRadius: 32,
                     offset: const Offset(0, 8),
                   ),
                 ],
               ),
-              child: Icon(
-                _connected ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                size: 56,
-                color: Colors.white,
-              ),
+              child: isTransitioning
+                  ? const Padding(
+                      padding: EdgeInsets.all(50),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      ),
+                    )
+                  : Icon(
+                      isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      size: 56,
+                      color: Colors.white,
+                    ),
             ),
           ),
           const SizedBox(height: 16),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: Text(
-              _connected ? 'Connected' : 'Tap to Connect',
-              key: ValueKey(_connected),
+              statusText,
+              key: ValueKey(statusText),
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: _connected ? FlowGateTheme.success : FlowGateTheme.textSecondary,
+                color: isRunning ? FlowGateTheme.success : FlowGateTheme.textSecondary,
               ),
             ),
           ),
@@ -262,28 +279,22 @@ class _MetricCard extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: iconColor),
           const SizedBox(height: 10),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: value,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: FlowGateTheme.textPrimary,
-                  ),
-                ),
-                TextSpan(
-                  text: ' $unit',
-                  style: const TextStyle(fontSize: 11, color: FlowGateTheme.textTertiary),
-                ),
-              ],
+          Text(
+            unit.isEmpty ? value : '$value $unit',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: FlowGateTheme.textPrimary,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 2),
           Text(
             label,
             style: const TextStyle(fontSize: 11, color: FlowGateTheme.textTertiary),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
