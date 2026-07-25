@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/state/app_provider.dart';
 import '../../core/theme.dart';
-import '../../l10n/generated/app_localizations.dart';
+import '../../gen_l10n/app_localizations.dart';
 import 'model/profile_item.dart';
 import 'profiles_provider.dart';
 import 'server_edit_page.dart';

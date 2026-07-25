@@ -104,6 +104,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mode => 'Mode';
 
   @override
+  String get modeSmart => 'Smart';
+
+  @override
+  String get modeGlobal => 'Global';
+
+  @override
+  String get modeBlockCn => 'Block CN';
+
+  @override
+  String get modeCustom => 'Custom';
+
+  @override
+  String get modeSmartDesc => 'CN direct, overseas proxy';
+
+  @override
+  String get modeGlobalDesc => 'All traffic via proxy';
+
+  @override
+  String get modeBlockCnDesc => 'Block CN, proxy others';
+
+  @override
+  String get modeCustomDesc => 'User-defined rules';
+
+  @override
+  String get serviceAdaptive => 'Service Adaptive';
+
+  @override
+  String get probe => 'Probe';
+
+  @override
+  String get probing => 'Probing';
+
+  @override
+  String get probeHint => 'Run a probe to detect\nservice availability';
+
+  @override
+  String get actionProxy => 'PROXY';
+
+  @override
+  String get actionDirect => 'DIRECT';
+
+  @override
+  String get actionBlock => 'BLOCK';
+
+  @override
+  String get actionUnavailable => 'N/A';
+
+  @override
   String get rulePacks => 'Rule Packs';
 
   @override

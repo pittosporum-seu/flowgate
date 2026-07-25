@@ -104,6 +104,54 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mode => '模式';
 
   @override
+  String get modeSmart => '智能';
+
+  @override
+  String get modeGlobal => '全局';
+
+  @override
+  String get modeBlockCn => '拦截国内';
+
+  @override
+  String get modeCustom => '自定义';
+
+  @override
+  String get modeSmartDesc => '国内直连，海外代理';
+
+  @override
+  String get modeGlobalDesc => '所有流量走代理';
+
+  @override
+  String get modeBlockCnDesc => '拦截国内，其余代理';
+
+  @override
+  String get modeCustomDesc => '用户自定义规则';
+
+  @override
+  String get serviceAdaptive => '服务自适应';
+
+  @override
+  String get probe => '探测';
+
+  @override
+  String get probing => '探测中';
+
+  @override
+  String get probeHint => '运行探测以检测\n服务可用性';
+
+  @override
+  String get actionProxy => '代理';
+
+  @override
+  String get actionDirect => '直连';
+
+  @override
+  String get actionBlock => '拦截';
+
+  @override
+  String get actionUnavailable => '不可用';
+
+  @override
   String get rulePacks => '规则包';
 
   @override

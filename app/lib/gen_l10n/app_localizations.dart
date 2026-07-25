@@ -18,7 +18,7 @@ import 'app_localizations_zh.dart';
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'generated/app_localizations.dart';
+/// import 'gen_l10n/app_localizations.dart';
 ///
 /// return MaterialApp(
 ///   localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -280,6 +280,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mode'**
   String get mode;
+
+  /// No description provided for @modeSmart.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart'**
+  String get modeSmart;
+
+  /// No description provided for @modeGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Global'**
+  String get modeGlobal;
+
+  /// No description provided for @modeBlockCn.
+  ///
+  /// In en, this message translates to:
+  /// **'Block CN'**
+  String get modeBlockCn;
+
+  /// No description provided for @modeCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get modeCustom;
+
+  /// No description provided for @modeSmartDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'CN direct, overseas proxy'**
+  String get modeSmartDesc;
+
+  /// No description provided for @modeGlobalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'All traffic via proxy'**
+  String get modeGlobalDesc;
+
+  /// No description provided for @modeBlockCnDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Block CN, proxy others'**
+  String get modeBlockCnDesc;
+
+  /// No description provided for @modeCustomDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'User-defined rules'**
+  String get modeCustomDesc;
+
+  /// No description provided for @serviceAdaptive.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Adaptive'**
+  String get serviceAdaptive;
+
+  /// No description provided for @probe.
+  ///
+  /// In en, this message translates to:
+  /// **'Probe'**
+  String get probe;
+
+  /// No description provided for @probing.
+  ///
+  /// In en, this message translates to:
+  /// **'Probing'**
+  String get probing;
+
+  /// No description provided for @probeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Run a probe to detect\nservice availability'**
+  String get probeHint;
+
+  /// No description provided for @actionProxy.
+  ///
+  /// In en, this message translates to:
+  /// **'PROXY'**
+  String get actionProxy;
+
+  /// No description provided for @actionDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'DIRECT'**
+  String get actionDirect;
+
+  /// No description provided for @actionBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'BLOCK'**
+  String get actionBlock;
+
+  /// No description provided for @actionUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get actionUnavailable;
 
   /// No description provided for @rulePacks.
   ///

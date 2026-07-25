@@ -12,11 +12,19 @@ class VlessEngine {
   /// 状态变化回调，由 AppNotifier 订阅
   void Function(VlessStatus status)? onStatus;
 
+  VlessConnectionState? _lastConnState;
+
   late final FlutterVless _vless = FlutterVless(
     onStatusChanged: (status) {
-      _log.debug('VlessEngine',
-          'status=${status.state} conn=${status.connectionState.name} '
-          'up=${status.uploadSpeed}B/s down=${status.downloadSpeed}B/s');
+      // 连接状态变化记 info（便于诊断），其余记 debug
+      if (status.connectionState != _lastConnState) {
+        _lastConnState = status.connectionState;
+        _log.info('VlessEngine',
+            'state=${status.state} conn=${status.connectionState.name}');
+      } else {
+        _log.debug('VlessEngine',
+            'status=${status.state} up=${status.uploadSpeed}B/s down=${status.downloadSpeed}B/s');
+      }
       onStatus?.call(status);
     },
   );

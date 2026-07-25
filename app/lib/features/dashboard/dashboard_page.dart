@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/state/app_provider.dart';
 import '../../core/state/app_state.dart';
 import '../../core/theme.dart';
-import '../../l10n/generated/app_localizations.dart';
+import '../../gen_l10n/app_localizations.dart';
 
 /// Dashboard - 连接控制 + 实时流量监控
 class DashboardPage extends ConsumerStatefulWidget {

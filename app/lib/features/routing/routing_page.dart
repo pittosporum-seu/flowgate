@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/engine/config_assembler.dart';
 import '../../core/theme.dart';
-import '../../l10n/generated/app_localizations.dart';
+import '../../gen_l10n/app_localizations.dart';
 import 'model/routing_models.dart';
 import 'routing_provider.dart';
 
@@ -52,13 +52,14 @@ class RoutingPage extends ConsumerWidget {
   }
 
   Widget _buildAdaptiveSection(BuildContext context, WidgetRef ref, RoutingState routing) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Text('Service Adaptive',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary)),
+            Text(l.serviceAdaptive,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: FlowGateTheme.textSecondary)),
             const Spacer(),
             SizedBox(
               height: 32,
@@ -72,7 +73,7 @@ class RoutingPage extends ConsumerWidget {
                         height: 14,
                         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.radar_rounded, size: 16),
-                label: Text(routing.isProbing ? 'Probing' : 'Probe'),
+                label: Text(routing.isProbing ? l.probing : l.probe),
                 style: FilledButton.styleFrom(
                   backgroundColor: FlowGateTheme.primary,
                   padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -91,13 +92,13 @@ class RoutingPage extends ConsumerWidget {
               borderRadius: BorderRadius.circular(18),
               border: Border.all(color: FlowGateTheme.line, width: 0.5),
             ),
-            child: const Column(
+            child: Column(
               children: [
-                Icon(Icons.radar_rounded, size: 28, color: FlowGateTheme.textTertiary),
-                SizedBox(height: 8),
-                Text('Run a probe to detect\nservice availability',
+                const Icon(Icons.radar_rounded, size: 28, color: FlowGateTheme.textTertiary),
+                const SizedBox(height: 8),
+                Text(l.probeHint,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary, height: 1.5)),
+                    style: const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary, height: 1.5)),
               ],
             ),
           )
@@ -216,6 +217,19 @@ class _ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final label = switch (mode) {
+      RouteMode.smart => l.modeSmart,
+      RouteMode.global => l.modeGlobal,
+      RouteMode.blockCn => l.modeBlockCn,
+      RouteMode.custom => l.modeCustom,
+    };
+    final desc = switch (mode) {
+      RouteMode.smart => l.modeSmartDesc,
+      RouteMode.global => l.modeGlobalDesc,
+      RouteMode.blockCn => l.modeBlockCnDesc,
+      RouteMode.custom => l.modeCustomDesc,
+    };
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -246,13 +260,13 @@ class _ModeCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(mode.label,
+                  Text(label,
                       style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: selected ? FlowGateTheme.primary : FlowGateTheme.textPrimary)),
                   const SizedBox(height: 2),
-                  Text(mode.description,
+                  Text(desc,
                       style: const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)),
                 ],
               ),
@@ -302,11 +316,12 @@ class _ActionBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final (label, color, bg) = switch (action) {
-      RouteAction.proxy => ('PROXY', FlowGateTheme.primary, FlowGateTheme.primarySoft),
-      RouteAction.direct => ('DIRECT', FlowGateTheme.success, FlowGateTheme.successSoft),
-      RouteAction.block => ('BLOCK', FlowGateTheme.danger, const Color(0xFFFFE6EA)),
-      RouteAction.unavailable => ('N/A', FlowGateTheme.textTertiary, FlowGateTheme.surfaceAlt),
+      RouteAction.proxy => (l.actionProxy, FlowGateTheme.primary, FlowGateTheme.primarySoft),
+      RouteAction.direct => (l.actionDirect, FlowGateTheme.success, FlowGateTheme.successSoft),
+      RouteAction.block => (l.actionBlock, FlowGateTheme.danger, const Color(0xFFFFE6EA)),
+      RouteAction.unavailable => (l.actionUnavailable, FlowGateTheme.textTertiary, FlowGateTheme.surfaceAlt),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -322,10 +337,11 @@ class _OutboundBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final (label, color, bg) = switch (tag) {
-      OutboundTag.proxy => ('PROXY', FlowGateTheme.primary, FlowGateTheme.primarySoft),
-      OutboundTag.direct => ('DIRECT', FlowGateTheme.success, FlowGateTheme.successSoft),
-      OutboundTag.block => ('BLOCK', FlowGateTheme.danger, const Color(0xFFFFE6EA)),
+      OutboundTag.proxy => (l.actionProxy, FlowGateTheme.primary, FlowGateTheme.primarySoft),
+      OutboundTag.direct => (l.actionDirect, FlowGateTheme.success, FlowGateTheme.successSoft),
+      OutboundTag.block => (l.actionBlock, FlowGateTheme.danger, const Color(0xFFFFE6EA)),
     };
     return Container(
       width: 62,

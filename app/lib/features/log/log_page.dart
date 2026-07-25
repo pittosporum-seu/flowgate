@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/service/log_service.dart';
 import '../../core/theme.dart';
-import '../../l10n/generated/app_localizations.dart';
+import '../../gen_l10n/app_localizations.dart';
 
 /// 日志页：实时查看 + 筛选 + 分享/复制
 class LogPage extends StatefulWidget {

@@ -9,7 +9,7 @@ import 'core/theme.dart';
 import 'features/profiles/profiles_provider.dart';
 import 'features/profiles/repository/profile_repository.dart';
 import 'features/routing/routing_provider.dart';
-import 'l10n/generated/app_localizations.dart';
+import 'gen_l10n/app_localizations.dart';
 import 'shared/widgets/app_shell.dart';
 
 Future<void> main() async {

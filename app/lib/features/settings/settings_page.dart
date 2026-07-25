@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/state/locale_provider.dart';
 import '../../core/theme.dart';
-import '../../l10n/generated/app_localizations.dart';
+import '../../gen_l10n/app_localizations.dart';
 import '../log/log_page.dart';
 
 /// Settings - 现代简约设置页
@@ -127,7 +127,13 @@ class SettingsPage extends ConsumerWidget {
           Icon(icon, size: 19, color: FlowGateTheme.textTertiary),
           const SizedBox(width: 14),
           Expanded(child: Text(title, style: const TextStyle(fontSize: 14, color: FlowGateTheme.textPrimary))),
-          Text(subtitle, style: const TextStyle(fontSize: 13, color: FlowGateTheme.textTertiary)),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(subtitle,
+                textAlign: TextAlign.right,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 13, color: FlowGateTheme.textTertiary)),
+          ),
           const SizedBox(width: 6),
           const Icon(Icons.chevron_right_rounded, size: 16, color: FlowGateTheme.textTertiary),
         ],

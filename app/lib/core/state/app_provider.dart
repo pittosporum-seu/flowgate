@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/profiles/model/profile_item.dart';
@@ -13,24 +14,36 @@ import 'app_state.dart';
 class AppNotifier extends Notifier<AppState> {
   static const _keyProfileId = 'persisted_profile_id';
   static const _keyNodeName = 'persisted_node_name';
+  static const _connectTimeout = Duration(seconds: 20);
 
   VlessEngine get _engine => VlessEngine.instance;
   final _log = LogService.instance;
+  Timer? _connectWatchdog;
 
   @override
   AppState build() {
     // 订阅核心状态变化
     _engine.onStatus = _handleStatus;
-    ref.onDispose(() => _engine.onStatus = null);
+    ref.onDispose(() {
+      _engine.onStatus = null;
+      _connectWatchdog?.cancel();
+    });
     return const AppState();
   }
 
   /// 核心状态回调 → 更新 AppState
   void _handleStatus(status) {
+    final newState = status.toDomainState();
+    // 收到 connected/disconnected 后取消超时看门狗
+    if (newState == VpnConnectionState.connected ||
+        newState == VpnConnectionState.disconnected) {
+      _connectWatchdog?.cancel();
+    }
     state = state.copyWith(
-      connectionState: status.toDomainState(),
+      connectionState: newState,
       traffic: status.toTraffic(),
       durationSeconds: status.duration,
+      errorMessage: newState == VpnConnectionState.connected ? null : state.errorMessage,
     );
   }
 
@@ -47,7 +60,7 @@ class AppNotifier extends Notifier<AppState> {
     }
   }
 
-  /// 连接/断开切换
+  /// 连接/断开切换（connecting 状态下可中断）
   Future<void> toggleConnection() async {
     if (state.isRunning ||
         state.connectionState == VpnConnectionState.connecting) {
@@ -91,6 +104,20 @@ class AppNotifier extends Notifier<AppState> {
         config: config,
         proxyOnly: true, // Windows 先用 proxy-only；Android VPN 后续
       );
+
+      // 超时看门狗：若 20s 内未收到 connected 状态 → 判定超时
+      _connectWatchdog?.cancel();
+      _connectWatchdog = Timer(_connectTimeout, () {
+        if (state.connectionState == VpnConnectionState.connecting) {
+          _log.error('AppNotifier', 'connect timeout after ${_connectTimeout.inSeconds}s');
+          state = state.copyWith(
+            connectionState: VpnConnectionState.error,
+            errorMessage: '连接超时，请检查节点或网络',
+          );
+          // 清理未成功的连接
+          _engine.disconnect().catchError((_) {});
+        }
+      });
     } catch (e) {
       _log.error('AppNotifier', 'connect failed', e);
       state = state.copyWith(
@@ -100,21 +127,32 @@ class AppNotifier extends Notifier<AppState> {
     }
   }
 
-  /// 断开代理
+  /// 断开代理（可中断 connecting）
   Future<void> disconnect() async {
-    _log.info('AppNotifier', 'disconnect');
+    _log.info('AppNotifier', 'disconnect (was ${state.connectionState.name})');
+    _connectWatchdog?.cancel();
     state = state.copyWith(connectionState: VpnConnectionState.disconnecting);
     try {
       await _engine.disconnect();
     } catch (e) {
       _log.error('AppNotifier', 'disconnect failed', e);
-      state = state.copyWith(errorMessage: e.toString());
     }
+    // 不依赖状态回调，直接置为已断开，避免卡在 disconnecting
+    state = state.copyWith(
+      connectionState: VpnConnectionState.disconnected,
+      traffic: state.traffic.copyWith(uplinkSpeed: 0, downlinkSpeed: 0),
+    );
   }
 
   /// 选择节点并持久化
+  /// - connecting 中重选 → 中断并重置为未连接
+  /// - 已连接重选 → 直接切换到新节点
   Future<void> selectProfile(ProfileItem profile) async {
-    _log.info('AppNotifier', 'selectProfile: "${profile.name}" (${profile.type.label})');
+    final wasConnecting = state.connectionState == VpnConnectionState.connecting;
+    final wasConnected = state.isRunning;
+
+    _log.info('AppNotifier',
+        'selectProfile: "${profile.name}" (was ${state.connectionState.name})');
     state = state.copyWith(
       selectedProfileId: profile.id,
       currentNodeName: profile.name,
@@ -122,6 +160,15 @@ class AppNotifier extends Notifier<AppState> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyProfileId, profile.id);
     await prefs.setString(_keyNodeName, profile.name);
+
+    if (wasConnecting) {
+      // 连接中重选 → 中断尝试，重置为未连接
+      await disconnect();
+    } else if (wasConnected) {
+      // 已连接重选 → 断开旧节点并连接新节点
+      await disconnect();
+      await connect();
+    }
   }
 
   /// 测试节点延迟
