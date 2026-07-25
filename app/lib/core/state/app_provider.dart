@@ -28,6 +28,7 @@ class AppNotifier extends Notifier<AppState> {
     state = state.copyWith(
       connectionState: status.toDomainState(),
       traffic: status.toTraffic(),
+      durationSeconds: status.duration,
     );
   }
 

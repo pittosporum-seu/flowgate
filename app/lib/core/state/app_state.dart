@@ -41,6 +41,7 @@ class AppState {
   final VpnConnectionState connectionState;
   final TrafficStats traffic;
   final int? latencyMs;
+  final int durationSeconds;
   final String? selectedProfileId;
   final String? currentNodeName;
   final String? errorMessage;
@@ -49,6 +50,7 @@ class AppState {
     this.connectionState = VpnConnectionState.disconnected,
     this.traffic = const TrafficStats(),
     this.latencyMs,
+    this.durationSeconds = 0,
     this.selectedProfileId,
     this.currentNodeName,
     this.errorMessage,
@@ -60,6 +62,7 @@ class AppState {
     VpnConnectionState? connectionState,
     TrafficStats? traffic,
     int? latencyMs,
+    int? durationSeconds,
     String? selectedProfileId,
     String? currentNodeName,
     String? errorMessage,
@@ -68,6 +71,7 @@ class AppState {
       connectionState: connectionState ?? this.connectionState,
       traffic: traffic ?? this.traffic,
       latencyMs: latencyMs ?? this.latencyMs,
+      durationSeconds: durationSeconds ?? this.durationSeconds,
       selectedProfileId: selectedProfileId ?? this.selectedProfileId,
       currentNodeName: currentNodeName ?? this.currentNodeName,
       errorMessage: errorMessage ?? this.errorMessage,

@@ -1,16 +1,51 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/state/app_provider.dart';
 import '../../core/state/app_state.dart';
 import '../../core/theme.dart';
 
-/// Dashboard - 连接状态、流量监控、一键开关
-class DashboardPage extends ConsumerWidget {
+/// Dashboard - 连接控制 + 实时流量监控
+class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends ConsumerState<DashboardPage> {
+  static const _maxSamples = 30;
+  final List<double> _upHistory = [];
+  final List<double> _downHistory = [];
+  int _lastUp = 0;
+  int _lastDown = 0;
+
+  @override
+  Widget build(BuildContext context) {
     final app = ref.watch(appProvider);
+
+    // 连接时采样流量速率用于曲线
+    ref.listen<AppState>(appProvider, (prev, next) {
+      if (next.isRunning) {
+        final up = next.traffic.uplinkSpeed.toDouble();
+        final down = next.traffic.downlinkSpeed.toDouble();
+        if (up != _lastUp || down != _lastDown) {
+          _lastUp = up.toInt();
+          _lastDown = down.toInt();
+          setState(() {
+            _upHistory.add(up / 1024); // KB/s
+            _downHistory.add(down / 1024);
+            if (_upHistory.length > _maxSamples) _upHistory.removeAt(0);
+            if (_downHistory.length > _maxSamples) _downHistory.removeAt(0);
+          });
+        }
+      } else if (_upHistory.isNotEmpty) {
+        setState(() {
+          _upHistory.clear();
+          _downHistory.clear();
+        });
+      }
+    });
 
     return Scaffold(
       body: SafeArea(
@@ -19,11 +54,19 @@ class DashboardPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(context),
-              const SizedBox(height: 40),
+              _buildHeader(),
+              const SizedBox(height: 32),
               _ConnectButton(state: app.connectionState),
-              const SizedBox(height: 40),
+              const SizedBox(height: 12),
+              _buildDuration(app),
+              if (app.errorMessage != null) ...[
+                const SizedBox(height: 16),
+                _buildError(app.errorMessage!),
+              ],
+              const SizedBox(height: 28),
               _buildStatusCards(app),
+              const SizedBox(height: 20),
+              _buildTrafficChart(app),
               const SizedBox(height: 20),
               _buildNodeCard(app),
             ],
@@ -33,7 +76,7 @@ class DashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Row(
       children: [
         Container(
@@ -48,33 +91,65 @@ class DashboardPage extends ConsumerWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: const Center(
-            child: Text(
-              'F',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -1,
-              ),
-            ),
+            child: Text('F',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -1)),
           ),
         ),
         const SizedBox(width: 12),
-        const Text(
-          'FlowGate',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w800,
-            color: FlowGateTheme.textPrimary,
-            letterSpacing: -0.5,
-          ),
-        ),
+        const Text('FlowGate',
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: FlowGateTheme.textPrimary,
+                letterSpacing: -0.5)),
         const Spacer(),
         IconButton(
           icon: const Icon(Icons.smart_toy_rounded, color: FlowGateTheme.textTertiary),
           onPressed: () {},
         ),
       ],
+    );
+  }
+
+  Widget _buildDuration(AppState app) {
+    final statusText = switch (app.connectionState) {
+      VpnConnectionState.connected => 'Connected',
+      VpnConnectionState.connecting => 'Connecting...',
+      VpnConnectionState.disconnecting => 'Disconnecting...',
+      VpnConnectionState.error => 'Error',
+      VpnConnectionState.disconnected => 'Disconnected',
+    };
+    final color = app.isRunning ? FlowGateTheme.success : FlowGateTheme.textSecondary;
+    return Center(
+      child: Text(
+        app.isRunning ? '$statusText  ·  ${_formatDuration(app.durationSeconds)}' : statusText,
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: color),
+      ),
+    );
+  }
+
+  Widget _buildError(String message) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFE6EA),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.error_outline_rounded, color: FlowGateTheme.danger, size: 18),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(message,
+                style: const TextStyle(fontSize: 12, color: FlowGateTheme.danger)),
+          ),
+        ],
+      ),
     );
   }
 
@@ -115,6 +190,91 @@ class DashboardPage extends ConsumerWidget {
     );
   }
 
+  Widget _buildTrafficChart(AppState app) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: FlowGateTheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: FlowGateTheme.line, width: 0.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('Traffic',
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: FlowGateTheme.textSecondary)),
+              const Spacer(),
+              _legendDot(FlowGateTheme.success, 'Down'),
+              const SizedBox(width: 12),
+              _legendDot(FlowGateTheme.secondary, 'Up'),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 120,
+            child: _upHistory.length < 2
+                ? const Center(
+                    child: Text('Connect to see live traffic',
+                        style: TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)))
+                : LineChart(_chartData()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  LineChartData _chartData() {
+    final upSpots = <FlSpot>[
+      for (var i = 0; i < _upHistory.length; i++) FlSpot(i.toDouble(), _upHistory[i]),
+    ];
+    final downSpots = <FlSpot>[
+      for (var i = 0; i < _downHistory.length; i++) FlSpot(i.toDouble(), _downHistory[i]),
+    ];
+    return LineChartData(
+      lineTouchData: const LineTouchData(enabled: false),
+      gridData: const FlGridData(show: false),
+      titlesData: const FlTitlesData(show: false),
+      borderData: FlBorderData(show: false),
+      lineBarsData: [
+        LineChartBarData(
+          spots: downSpots,
+          isCurved: true,
+          curveSmoothness: 0.2,
+          color: FlowGateTheme.success,
+          barWidth: 2,
+          dotData: const FlDotData(show: false),
+          belowBarData: BarAreaData(
+            show: true,
+            color: FlowGateTheme.success.withValues(alpha: 0.12),
+          ),
+        ),
+        LineChartBarData(
+          spots: upSpots,
+          isCurved: true,
+          curveSmoothness: 0.2,
+          color: FlowGateTheme.secondary,
+          barWidth: 2,
+          dotData: const FlDotData(show: false),
+        ),
+      ],
+    );
+  }
+
+  Widget _legendDot(Color color, String label) {
+    return Row(
+      children: [
+        Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        const SizedBox(width: 5),
+        Text(label, style: const TextStyle(fontSize: 11, color: FlowGateTheme.textTertiary)),
+      ],
+    );
+  }
+
   Widget _buildNodeCard(AppState app) {
     return Container(
       padding: const EdgeInsets.all(18),
@@ -139,19 +299,14 @@ class DashboardPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Current Node',
-                  style: TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary),
-                ),
+                const Text('Current Node',
+                    style: TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)),
                 const SizedBox(height: 3),
-                Text(
-                  app.currentNodeName ?? 'Tap to select',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: FlowGateTheme.textPrimary,
-                  ),
-                ),
+                Text(app.currentNodeName ?? 'Tap to select',
+                    style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: FlowGateTheme.textPrimary)),
               ],
             ),
           ),
@@ -160,9 +315,18 @@ class DashboardPage extends ConsumerWidget {
       ),
     );
   }
+
+  String _formatDuration(int seconds) {
+    final h = seconds ~/ 3600;
+    final m = (seconds % 3600) ~/ 60;
+    final s = seconds % 60;
+    if (h > 0) return '${h}h ${m}m';
+    if (m > 0) return '${m}m ${s}s';
+    return '${s}s';
+  }
 }
 
-/// 大连接按钮 - 状态驱动
+/// 连接按钮 - 状态驱动
 class _ConnectButton extends ConsumerWidget {
   final VpnConnectionState state;
   const _ConnectButton({required this.state});
@@ -177,73 +341,44 @@ class _ConnectButton extends ConsumerWidget {
         ? const LinearGradient(
             colors: [FlowGateTheme.success, Color(0xFF2DD4A8)],
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          )
+            end: Alignment.bottomRight)
         : const LinearGradient(
             colors: [FlowGateTheme.primary, FlowGateTheme.secondary],
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          );
-
-    final statusText = switch (state) {
-      VpnConnectionState.connected => 'Connected',
-      VpnConnectionState.connecting => 'Connecting...',
-      VpnConnectionState.disconnecting => 'Disconnecting...',
-      VpnConnectionState.error => 'Error',
-      VpnConnectionState.disconnected => 'Tap to Connect',
-    };
+            end: Alignment.bottomRight);
 
     return Center(
-      child: Column(
-        children: [
-          GestureDetector(
-            onTap: isTransitioning ? null : () => ref.read(appProvider.notifier).toggleConnection(),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeOutCubic,
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: gradient,
-                boxShadow: [
-                  BoxShadow(
-                    color: (isRunning ? FlowGateTheme.success : FlowGateTheme.primary)
-                        .withValues(alpha: 0.3),
-                    blurRadius: 32,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
+      child: GestureDetector(
+        onTap: isTransitioning
+            ? null
+            : () => ref.read(appProvider.notifier).toggleConnection(),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+          width: 150,
+          height: 150,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: gradient,
+            boxShadow: [
+              BoxShadow(
+                color: (isRunning ? FlowGateTheme.success : FlowGateTheme.primary)
+                    .withValues(alpha: 0.3),
+                blurRadius: 32,
+                offset: const Offset(0, 8),
               ),
-              child: isTransitioning
-                  ? const Padding(
-                      padding: EdgeInsets.all(50),
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 3,
-                      ),
-                    )
-                  : Icon(
-                      isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                      size: 56,
-                      color: Colors.white,
-                    ),
-            ),
+            ],
           ),
-          const SizedBox(height: 16),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: Text(
-              statusText,
-              key: ValueKey(statusText),
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: isRunning ? FlowGateTheme.success : FlowGateTheme.textSecondary,
-              ),
-            ),
-          ),
-        ],
+          child: isTransitioning
+              ? const Padding(
+                  padding: EdgeInsets.all(50),
+                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
+              : Icon(
+                  isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                  size: 56,
+                  color: Colors.white,
+                ),
+        ),
       ),
     );
   }
@@ -279,23 +414,18 @@ class _MetricCard extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: iconColor),
           const SizedBox(height: 10),
-          Text(
-            unit.isEmpty ? value : '$value $unit',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: FlowGateTheme.textPrimary,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          Text(unit.isEmpty ? value : '$value $unit',
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: FlowGateTheme.textPrimary),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
           const SizedBox(height: 2),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 11, color: FlowGateTheme.textTertiary),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          Text(label,
+              style: const TextStyle(fontSize: 11, color: FlowGateTheme.textTertiary),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
         ],
       ),
     );
