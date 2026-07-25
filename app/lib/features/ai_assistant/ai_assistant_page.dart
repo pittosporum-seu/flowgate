@@ -92,7 +92,7 @@ class _AiAssistantPageState extends State<AiAssistantPage> {
               color: theme.colorScheme.surface,
               border: Border(
                 top: BorderSide(
-                  color: theme.colorScheme.onSurface.withOpacity(0.1),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                 ),
               ),
             ),

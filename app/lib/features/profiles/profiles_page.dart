@@ -14,7 +14,7 @@ class ProfilesPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profiles = ref.watch(profilesProvider);
-    final selectedNode = ref.watch(appProvider.select((s) => s.currentNodeName));
+    final selectedId = ref.watch(appProvider.select((s) => s.selectedProfileId));
 
     return Scaffold(
       body: SafeArea(
@@ -71,7 +71,7 @@ class ProfilesPage extends ConsumerWidget {
             Expanded(
               child: profiles.isEmpty
                   ? _buildEmpty(context)
-                  : _buildList(context, ref, profiles, selectedNode),
+                  : _buildList(context, ref, profiles, selectedId),
             ),
           ],
         ),
@@ -105,14 +105,14 @@ class ProfilesPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     List<ProfileItem> profiles,
-    String? selectedNode,
+    String? selectedId,
   ) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       itemCount: profiles.length,
       itemBuilder: (context, index) {
         final p = profiles[index];
-        final active = p.name == selectedNode;
+        final active = p.id == selectedId;
         return Dismissible(
           key: ValueKey(p.id),
           direction: DismissDirection.endToStart,
@@ -128,7 +128,7 @@ class ProfilesPage extends ConsumerWidget {
           ),
           onDismissed: (_) => ref.read(profilesProvider.notifier).remove(p.id),
           child: GestureDetector(
-            onTap: () => ref.read(appProvider.notifier).selectNode(p.name),
+            onTap: () => ref.read(appProvider.notifier).selectProfile(p),
             child: Container(
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(16),

@@ -1,107 +1,139 @@
-import 'dart:async';
-import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../features/profiles/model/profile_item.dart';
+import '../../features/profiles/profiles_provider.dart';
+import '../../features/routing/routing_provider.dart';
+import '../engine/config_assembler.dart';
+import '../engine/vless_engine.dart';
 import 'app_state.dart';
 
 /// AppState 的 Riverpod Notifier
-/// 当前为 Mock 实现，后续 Epic 5 替换为真实 CoreEngine
+/// 通过 VlessEngine (flutter_vless) 驱动真实代理核心
 class AppNotifier extends Notifier<AppState> {
+  static const _keyProfileId = 'persisted_profile_id';
   static const _keyNodeName = 'persisted_node_name';
-  static const _keyLatency = 'persisted_latency';
 
-  Timer? _trafficTimer;
-  final _random = Random();
+  VlessEngine get _engine => VlessEngine.instance;
 
   @override
   AppState build() {
-    ref.onDispose(() => _trafficTimer?.cancel());
+    // 订阅核心状态变化
+    _engine.onStatus = _handleStatus;
+    ref.onDispose(() => _engine.onStatus = null);
     return const AppState();
   }
 
-  /// 启动时从持久化恢复 (Epic 2.4)
+  /// 核心状态回调 → 更新 AppState
+  void _handleStatus(status) {
+    state = state.copyWith(
+      connectionState: status.toDomainState(),
+      traffic: status.toTraffic(),
+    );
+  }
+
+  /// 启动时从持久化恢复
   Future<void> restoreFromStorage() async {
     final prefs = await SharedPreferences.getInstance();
+    final profileId = prefs.getString(_keyProfileId);
     final nodeName = prefs.getString(_keyNodeName);
-    final latency = prefs.getInt(_keyLatency);
-    if (nodeName != null) {
-      state = state.copyWith(currentNodeName: nodeName, latencyMs: latency);
+    if (profileId != null || nodeName != null) {
+      state = state.copyWith(
+        selectedProfileId: profileId,
+        currentNodeName: nodeName,
+      );
     }
   }
 
   /// 连接/断开切换
   Future<void> toggleConnection() async {
-    if (state.isRunning) {
+    if (state.isRunning ||
+        state.connectionState == VpnConnectionState.connecting) {
       await disconnect();
     } else {
       await connect();
     }
   }
 
+  /// 连接代理
   Future<void> connect() async {
-    if (state.connectionState == VpnConnectionState.connecting) return;
-
-    state = state.copyWith(connectionState: VpnConnectionState.connecting);
-
-    // 模拟连接耗时 (真实实现: CoreEngine.start)
-    await Future.delayed(const Duration(milliseconds: 900));
+    final profile = _selectedProfile();
+    if (profile == null) {
+      state = state.copyWith(errorMessage: 'No node selected');
+      return;
+    }
+    final rawConfig = profile.rawConfig;
+    if (rawConfig == null || rawConfig.isEmpty) {
+      state = state.copyWith(errorMessage: 'Node config missing');
+      return;
+    }
 
     state = state.copyWith(
-      connectionState: VpnConnectionState.connected,
-      traffic: const TrafficStats(),
+      connectionState: VpnConnectionState.connecting,
+      errorMessage: null,
     );
 
-    _startTrafficSimulation();
+    try {
+      // 组装最终 Xray config: 节点配置 + 路由规则
+      final routing = ref.read(routingProvider);
+      final config = ConfigAssembler.assemble(
+        profileConfig: rawConfig,
+        rules: routing.compiledRules,
+      );
+
+      await _engine.connect(
+        remark: profile.name,
+        config: config,
+        proxyOnly: true, // Windows 先用 proxy-only；Android VPN 后续
+      );
+    } catch (e) {
+      state = state.copyWith(
+        connectionState: VpnConnectionState.error,
+        errorMessage: e.toString(),
+      );
+    }
   }
 
+  /// 断开代理
   Future<void> disconnect() async {
-    if (state.connectionState == VpnConnectionState.disconnecting) return;
-
     state = state.copyWith(connectionState: VpnConnectionState.disconnecting);
-    _trafficTimer?.cancel();
-
-    // 模拟断开耗时 (真实实现: CoreEngine.stop)
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    state = state.copyWith(
-      connectionState: VpnConnectionState.disconnected,
-      traffic: state.traffic.copyWith(uplinkSpeed: 0, downlinkSpeed: 0),
-    );
+    try {
+      await _engine.disconnect();
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
   }
 
   /// 选择节点并持久化
-  Future<void> selectNode(String name) async {
-    state = state.copyWith(currentNodeName: name);
+  Future<void> selectProfile(ProfileItem profile) async {
+    state = state.copyWith(
+      selectedProfileId: profile.id,
+      currentNodeName: profile.name,
+    );
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyNodeName, name);
+    await prefs.setString(_keyProfileId, profile.id);
+    await prefs.setString(_keyNodeName, profile.name);
   }
 
-  /// 模拟流量增长 (真实实现: CoreEngine.queryStats 轮询)
-  void _startTrafficSimulation() {
-    _trafficTimer?.cancel();
-    _trafficTimer = Timer.periodic(const Duration(seconds: 1), (_) async {
-      if (!state.isRunning) return;
+  /// 测试节点延迟
+  Future<int?> testDelay(ProfileItem profile) async {
+    final rawConfig = profile.rawConfig;
+    if (rawConfig == null || rawConfig.isEmpty) return null;
+    try {
+      await _engine.init();
+      final delay = await _engine.testDelay(config: rawConfig);
+      await ref.read(profilesProvider.notifier).updateLatency(profile.id, delay);
+      return delay;
+    } catch (_) {
+      return null;
+    }
+  }
 
-      final upSpeed = 20000 + _random.nextInt(180000); // 20~200 KB/s
-      final downSpeed = 80000 + _random.nextInt(900000); // 80~980 KB/s
-      final latency = 38 + _random.nextInt(20);
-
-      state = state.copyWith(
-        traffic: state.traffic.copyWith(
-          uplinkBytes: state.traffic.uplinkBytes + upSpeed,
-          downlinkBytes: state.traffic.downlinkBytes + downSpeed,
-          uplinkSpeed: upSpeed,
-          downlinkSpeed: downSpeed,
-        ),
-        latencyMs: latency,
-      );
-
-      // 定期持久化延迟 (节流: 每 5 次写一次)
-      if (_random.nextInt(5) == 0) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt(_keyLatency, latency);
-      }
-    });
+  /// 获取当前选中的节点
+  ProfileItem? _selectedProfile() {
+    final id = state.selectedProfileId;
+    if (id == null) return null;
+    final profiles = ref.read(profilesProvider);
+    return profiles.where((p) => p.id == id).firstOrNull;
   }
 }
 
