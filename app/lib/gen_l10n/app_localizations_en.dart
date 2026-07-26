@@ -107,6 +107,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get testSpeed => 'Test';
 
   @override
+  String get searchNodes => 'Search node name or address';
+
+  @override
+  String get noSearchResult => 'No matching nodes found';
+
+  @override
+  String get testAllSpeeds => 'Test All';
+
+  @override
+  String get testAllStarted => 'Batch speed test started...';
+
+  @override
+  String get testSpeedFailed => 'Test failed';
+
+  @override
+  String get subscriptionUrl => 'Subscription URL (https://...)';
+
+  @override
+  String get rawConfig => 'Or paste node links / base64 content';
+
+  @override
+  String get renameGroup => 'Rename Group';
+
+  @override
+  String get groupName => 'Group name';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteSubscription => 'Delete Subscription';
+
+  @override
+  String deleteSubscriptionConfirm(String name) {
+    return 'Delete subscription \"$name\" and all its nodes?';
+  }
+
+  @override
+  String refreshedNodes(int count) {
+    return 'Refreshed $count node(s)';
+  }
+
+  @override
+  String get refreshFailed => 'Refresh failed';
+
+  @override
   String get routing => 'Routing';
 
   @override

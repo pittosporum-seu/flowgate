@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// FlowGate 主题系统 - 现代简约亮色主题
 class FlowGateTheme {
@@ -47,6 +48,8 @@ class FlowGateTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
+        // 亮色主题用深色状态栏图标，避免白字看不见
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         titleTextStyle: TextStyle(
           color: textPrimary,
           fontSize: 22,

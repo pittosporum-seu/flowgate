@@ -90,13 +90,29 @@ class AppNotifier extends Notifier<AppState> {
       return;
     }
 
-    _log.info('AppNotifier', 'connect: node="${profile.name}" mode=proxy-only');
+    _log.info('AppNotifier', 'connect: node="${profile.name}"');
     state = state.copyWith(
       connectionState: VpnConnectionState.connecting,
       errorMessage: null,
     );
 
     try {
+      // Android VPN 模式：先请求 VPN 权限（会弹系统授权框）
+      // 授权成功 → VPN 模式（真实 VPN，有状态栏图标，全局路由）
+      // 不支持/拒绝 → 回退 proxy-only
+      var proxyOnly = false;
+      try {
+        final granted = await _engine.requestPermission();
+        if (!granted) {
+          _log.warn('AppNotifier', 'VPN permission denied, fallback to proxy-only');
+          proxyOnly = true;
+        }
+      } catch (e) {
+        _log.warn('AppNotifier', 'requestPermission unsupported, fallback to proxy-only', e);
+        proxyOnly = true;
+      }
+      _log.info('AppNotifier', 'connect: mode=${proxyOnly ? "proxy-only" : "vpn"}');
+
       // 组装最终 Xray config: 节点配置 + 路由规则
       final routing = ref.read(routingProvider);
       final config = ConfigAssembler.assemble(
@@ -107,7 +123,7 @@ class AppNotifier extends Notifier<AppState> {
       await _engine.connect(
         remark: profile.name,
         config: config,
-        proxyOnly: true, // Windows 先用 proxy-only；Android VPN 后续
+        proxyOnly: proxyOnly,
       );
 
       // 超时看门狗：若 20s 内未收到 connected 状态 → 判定超时
@@ -176,17 +192,33 @@ class AppNotifier extends Notifier<AppState> {
     }
   }
 
-  /// 测试节点延迟
+  /// 测试节点延迟。返回延迟 ms；失败返回 null（不保存负值）
   Future<int?> testDelay(ProfileItem profile) async {
     final rawConfig = profile.rawConfig;
     if (rawConfig == null || rawConfig.isEmpty) return null;
     try {
       await _engine.init();
       final delay = await _engine.testDelay(config: rawConfig);
-      await ref.read(profilesProvider.notifier).updateLatency(profile.id, delay);
-      return delay;
+      // 只有非负延迟才是有效结果；-1 表示失败，不保存
+      if (delay >= 0) {
+        await ref.read(profilesProvider.notifier).updateLatency(profile.id, delay);
+        return delay;
+      }
+      _log.warn('AppNotifier', 'testDelay failed for ${profile.name} (delay=$delay)');
+      return null;
     } catch (_) {
       return null;
+    }
+  }
+
+  /// 一键测速：逐个测试节点（串行，避免并发冲突）
+  /// [nodes] 为 null 时测所有节点；否则只测指定分组/列表
+  Future<void> testAllDelays([List<ProfileItem>? nodes]) async {
+    final all = ref.read(profilesProvider);
+    final List<ProfileItem> profiles = nodes ?? all;
+    _log.info('AppNotifier', 'testAllDelays: ${profiles.length} nodes');
+    for (final p in profiles) {
+      await testDelay(p);
     }
   }
 

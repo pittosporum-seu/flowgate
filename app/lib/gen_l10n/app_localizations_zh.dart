@@ -107,6 +107,55 @@ class AppLocalizationsZh extends AppLocalizations {
   String get testSpeed => '测速';
 
   @override
+  String get searchNodes => '搜索节点名称或地址';
+
+  @override
+  String get noSearchResult => '未找到匹配的节点';
+
+  @override
+  String get testAllSpeeds => '一键测速';
+
+  @override
+  String get testAllStarted => '开始批量测速...';
+
+  @override
+  String get testSpeedFailed => '测速失败';
+
+  @override
+  String get subscriptionUrl => '订阅链接 (https://...)';
+
+  @override
+  String get rawConfig => '或粘贴节点链接 / base64 内容';
+
+  @override
+  String get renameGroup => '重命名分组';
+
+  @override
+  String get groupName => '分组名称';
+
+  @override
+  String get confirm => '确定';
+
+  @override
+  String get delete => '删除';
+
+  @override
+  String get deleteSubscription => '删除订阅';
+
+  @override
+  String deleteSubscriptionConfirm(String name) {
+    return '确定删除订阅「$name」及其所有节点吗？';
+  }
+
+  @override
+  String refreshedNodes(int count) {
+    return '已刷新 $count 个节点';
+  }
+
+  @override
+  String get refreshFailed => '刷新失败';
+
+  @override
   String get routing => '路由';
 
   @override

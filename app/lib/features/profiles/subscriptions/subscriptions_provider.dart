@@ -107,6 +107,17 @@ class SubscriptionsNotifier extends Notifier<List<SubscriptionItem>> {
     ref.read(profilesProvider.notifier).refresh();
   }
 
+  /// 重命名订阅分组
+  Future<void> renameSubscription(String id, String newName) async {
+    final sub = _subRepo.getById(id);
+    if (sub == null) return;
+    final name = newName.trim();
+    if (name.isEmpty) return;
+    await _subRepo.save(sub.copyWith(name: name));
+    _log.info('Subscriptions', 'renameSubscription: $id -> $name');
+    refresh();
+  }
+
   String _deriveName(String url, int nodeCount) {
     try {
       final host = Uri.parse(url).host;

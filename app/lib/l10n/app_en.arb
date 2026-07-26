@@ -44,6 +44,31 @@
   "manualNodes": "Manual Nodes",
   "refreshSubscription": "Refresh",
   "testSpeed": "Test",
+  "searchNodes": "Search node name or address",
+  "noSearchResult": "No matching nodes found",
+  "testAllSpeeds": "Test All",
+  "testAllStarted": "Batch speed test started...",
+  "testSpeedFailed": "Test failed",
+  "subscriptionUrl": "Subscription URL (https://...)",
+  "rawConfig": "Or paste node links / base64 content",
+  "renameGroup": "Rename Group",
+  "groupName": "Group name",
+  "confirm": "Confirm",
+  "delete": "Delete",
+  "deleteSubscription": "Delete Subscription",
+  "deleteSubscriptionConfirm": "Delete subscription \"{name}\" and all its nodes?",
+  "@deleteSubscriptionConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "refreshedNodes": "Refreshed {count} node(s)",
+  "@refreshedNodes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "refreshFailed": "Refresh failed",
 
   "routing": "Routing",
   "mode": "Mode",

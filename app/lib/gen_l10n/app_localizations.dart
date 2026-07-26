@@ -287,6 +287,96 @@ abstract class AppLocalizations {
   /// **'Test'**
   String get testSpeed;
 
+  /// No description provided for @searchNodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Search node name or address'**
+  String get searchNodes;
+
+  /// No description provided for @noSearchResult.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching nodes found'**
+  String get noSearchResult;
+
+  /// No description provided for @testAllSpeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Test All'**
+  String get testAllSpeeds;
+
+  /// No description provided for @testAllStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch speed test started...'**
+  String get testAllStarted;
+
+  /// No description provided for @testSpeedFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Test failed'**
+  String get testSpeedFailed;
+
+  /// No description provided for @subscriptionUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription URL (https://...)'**
+  String get subscriptionUrl;
+
+  /// No description provided for @rawConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Or paste node links / base64 content'**
+  String get rawConfig;
+
+  /// No description provided for @renameGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename Group'**
+  String get renameGroup;
+
+  /// No description provided for @groupName.
+  ///
+  /// In en, this message translates to:
+  /// **'Group name'**
+  String get groupName;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deleteSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Subscription'**
+  String get deleteSubscription;
+
+  /// No description provided for @deleteSubscriptionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete subscription \"{name}\" and all its nodes?'**
+  String deleteSubscriptionConfirm(String name);
+
+  /// No description provided for @refreshedNodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Refreshed {count} node(s)'**
+  String refreshedNodes(int count);
+
+  /// No description provided for @refreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh failed'**
+  String get refreshFailed;
+
   /// No description provided for @routing.
   ///
   /// In en, this message translates to:
