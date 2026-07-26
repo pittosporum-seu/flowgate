@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_vless/flutter_vless.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/profiles/model/profile_item.dart';
 import '../../features/profiles/profiles_provider.dart';
@@ -32,7 +33,9 @@ class AppNotifier extends Notifier<AppState> {
   }
 
   /// 核心状态回调 → 更新 AppState
-  void _handleStatus(status) {
+  /// 注意：status 必须显式标注为 VlessStatus，否则扩展方法 toDomainState()
+  /// 无法在 dynamic 接收者上分发，会抛 noSuchMethod 导致状态永远不更新
+  void _handleStatus(VlessStatus status) {
     final newState = status.toDomainState();
     // 收到 connected/disconnected 后取消超时看门狗
     if (newState == VpnConnectionState.connected ||
