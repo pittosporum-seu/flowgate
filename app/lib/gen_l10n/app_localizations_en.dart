@@ -98,6 +98,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noNodesYet => 'No nodes yet';
 
   @override
+  String get manualNodes => 'Manual Nodes';
+
+  @override
+  String get refreshSubscription => 'Refresh';
+
+  @override
+  String get testSpeed => 'Test';
+
+  @override
   String get routing => 'Routing';
 
   @override

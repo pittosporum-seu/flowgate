@@ -8,6 +8,8 @@ import 'core/state/locale_provider.dart';
 import 'core/theme.dart';
 import 'features/profiles/profiles_provider.dart';
 import 'features/profiles/repository/profile_repository.dart';
+import 'features/profiles/repository/subscription_repository.dart';
+import 'features/profiles/subscriptions/subscriptions_provider.dart';
 import 'features/routing/routing_provider.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'shared/widgets/app_shell.dart';
@@ -29,11 +31,16 @@ Future<void> main() async {
   final profileRepo = ProfileRepository();
   await profileRepo.init();
 
+  // 初始化订阅存储
+  final subscriptionRepo = SubscriptionRepository();
+  await subscriptionRepo.init();
+
   runZonedGuarded(
     () => runApp(
       ProviderScope(
         overrides: [
           profileRepositoryProvider.overrideWithValue(profileRepo),
+          subscriptionRepositoryProvider.overrideWithValue(subscriptionRepo),
         ],
         child: const FlowGateApp(),
       ),

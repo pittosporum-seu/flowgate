@@ -98,6 +98,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get noNodesYet => '暂无节点';
 
   @override
+  String get manualNodes => '手动节点';
+
+  @override
+  String get refreshSubscription => '刷新';
+
+  @override
+  String get testSpeed => '测速';
+
+  @override
   String get routing => '路由';
 
   @override

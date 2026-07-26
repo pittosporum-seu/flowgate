@@ -31,6 +31,9 @@
   "noValidNodes": "未找到有效节点",
   "importFailed": "导入失败：{error}",
   "noNodesYet": "暂无节点",
+  "manualNodes": "手动节点",
+  "refreshSubscription": "刷新",
+  "testSpeed": "测速",
 
   "routing": "路由",
   "mode": "模式",

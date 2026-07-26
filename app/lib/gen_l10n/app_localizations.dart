@@ -269,6 +269,24 @@ abstract class AppLocalizations {
   /// **'No nodes yet'**
   String get noNodesYet;
 
+  /// No description provided for @manualNodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Nodes'**
+  String get manualNodes;
+
+  /// No description provided for @refreshSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refreshSubscription;
+
+  /// No description provided for @testSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Test'**
+  String get testSpeed;
+
   /// No description provided for @routing.
   ///
   /// In en, this message translates to:

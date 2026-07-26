@@ -62,6 +62,8 @@ class AppNotifier extends Notifier<AppState> {
 
   /// 连接/断开切换（connecting 状态下可中断）
   Future<void> toggleConnection() async {
+    // 正在断开时忽略，避免重复触发
+    if (state.connectionState == VpnConnectionState.disconnecting) return;
     if (state.isRunning ||
         state.connectionState == VpnConnectionState.connecting) {
       await disconnect();

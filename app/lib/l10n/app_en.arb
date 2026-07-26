@@ -41,6 +41,9 @@
     }
   },
   "noNodesYet": "No nodes yet",
+  "manualNodes": "Manual Nodes",
+  "refreshSubscription": "Refresh",
+  "testSpeed": "Test",
 
   "routing": "Routing",
   "mode": "Mode",

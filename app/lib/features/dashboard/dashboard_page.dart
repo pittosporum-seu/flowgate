@@ -354,9 +354,8 @@ class _ConnectButton extends ConsumerWidget {
 
     return Center(
       child: GestureDetector(
-        onTap: isTransitioning
-            ? null
-            : () => ref.read(appProvider.notifier).toggleConnection(),
+        // 连接中也可点击（中断连接）；toggleConnection 会处理各状态
+        onTap: () => ref.read(appProvider.notifier).toggleConnection(),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutCubic,

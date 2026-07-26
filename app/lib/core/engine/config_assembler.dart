@@ -18,9 +18,13 @@ class ConfigAssembler {
     _ensureOutbounds(config);
     _injectRouting(config, rules);
 
-    final outbounds = (config['outbounds'] as List?)?.length ?? 0;
+    final outboundList = (config['outbounds'] as List?) ?? [];
+    final outbounds = outboundList.length;
+    final outboundTags = outboundList
+        .map((o) => '${(o as Map)['protocol']}@${o['tag']}')
+        .join(',');
     LogService.instance.info('ConfigAssembler',
-        'Assembled config: rules=${rules.length} outbounds=$outbounds');
+        'Assembled: rules=${rules.length} outbounds=$outbounds [$outboundTags]');
 
     return jsonEncode(config);
   }
