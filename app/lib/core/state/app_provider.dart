@@ -26,6 +26,13 @@ class AppNotifier extends Notifier<AppState> {
   DateTime? _connectedAt;
   Timer? _durationTicker;
 
+  // 保活心跳：检测 Xray 子进程是否被系统杀死
+  // 小米 HyperOS 等系统会因内存压力杀 Xray 进程，但 Dart 层收不到断开事件
+  DateTime? _lastStatusAt;
+  Timer? _keepaliveTimer;
+  static const _keepaliveInterval = Duration(seconds: 30);
+  static const _keepaliveThreshold = Duration(seconds: 90);
+
   @override
   AppState build() {
     // 订阅核心状态变化
@@ -34,6 +41,7 @@ class AppNotifier extends Notifier<AppState> {
       _engine.onStatus = null;
       _connectWatchdog?.cancel();
       _stopDurationTicker();
+      _stopKeepalive();
     });
     return const AppState();
   }
@@ -57,22 +65,59 @@ class AppNotifier extends Notifier<AppState> {
     _connectedAt = null;
   }
 
+  /// 启动保活心跳：定期检查 Xray 是否还活着
+  void _startKeepalive() {
+    _lastStatusAt = DateTime.now();
+    _keepaliveTimer?.cancel();
+    _keepaliveTimer = Timer.periodic(_keepaliveInterval, (_) {
+      if (state.connectionState != VpnConnectionState.connected) return;
+      final last = _lastStatusAt;
+      if (last == null) return;
+      final elapsed = DateTime.now().difference(last);
+      if (elapsed > _keepaliveThreshold) {
+        _log.warn('AppNotifier',
+            'keepalive: no status callback for ${elapsed.inSeconds}s, Xray likely killed, reconnecting');
+        _reconnect();
+      }
+    });
+  }
+
+  void _stopKeepalive() {
+    _keepaliveTimer?.cancel();
+    _keepaliveTimer = null;
+    _lastStatusAt = null;
+  }
+
+  /// 自动重连：先断开再连接
+  Future<void> _reconnect() async {
+    _stopKeepalive();
+    _stopDurationTicker();
+    state = state.copyWith(connectionState: VpnConnectionState.disconnected, durationSeconds: 0);
+    // 等一下让原生层清理
+    await Future.delayed(const Duration(seconds: 2));
+    await connect();
+  }
+
   /// 核心状态回调 → 更新 AppState
   /// 注意：status 必须显式标注为 VlessStatus，否则扩展方法 toDomainState()
   /// 无法在 dynamic 接收者上分发，会抛 noSuchMethod 导致状态永远不更新
   void _handleStatus(VlessStatus status) {
     final newState = status.toDomainState();
     final wasRunning = state.connectionState == VpnConnectionState.connected;
+    // 每次收到状态回调都更新时间戳（保活心跳用）
+    _lastStatusAt = DateTime.now();
     // 收到 connected/disconnected 后取消超时看门狗
     if (newState == VpnConnectionState.connected ||
         newState == VpnConnectionState.disconnected) {
       _connectWatchdog?.cancel();
     }
-    // 进入 connected：启动本地精确计时；离开 connected：停止并清零
+    // 进入 connected：启动本地精确计时 + 保活心跳
     if (newState == VpnConnectionState.connected && !wasRunning) {
       _startDurationTicker();
+      _startKeepalive();
     } else if (newState != VpnConnectionState.connected && wasRunning) {
       _stopDurationTicker();
+      _stopKeepalive();
     }
     state = state.copyWith(
       connectionState: newState,
@@ -187,6 +232,8 @@ class AppNotifier extends Notifier<AppState> {
   Future<void> disconnect() async {
     _log.info('AppNotifier', 'disconnect (was ${state.connectionState.name})');
     _connectWatchdog?.cancel();
+    _stopKeepalive();
+    _stopDurationTicker();
     state = state.copyWith(connectionState: VpnConnectionState.disconnecting);
     try {
       await _engine.disconnect();
@@ -196,6 +243,7 @@ class AppNotifier extends Notifier<AppState> {
     // 不依赖状态回调，直接置为已断开，避免卡在 disconnecting
     state = state.copyWith(
       connectionState: VpnConnectionState.disconnected,
+      durationSeconds: 0,
       traffic: state.traffic.copyWith(uplinkSpeed: 0, downlinkSpeed: 0),
     );
   }
