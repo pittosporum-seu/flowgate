@@ -21,6 +21,11 @@ class AppNotifier extends Notifier<AppState> {
   final _log = LogService.instance;
   Timer? _connectWatchdog;
 
+  // 本地精确计时：原生 CountDownTimer 用 seconds++ 累加会漂移（走时偏慢），
+  // 改用连接起始时间戳 + 本地 1s 计时器，按墙钟差值计算精确时长
+  DateTime? _connectedAt;
+  Timer? _durationTicker;
+
   @override
   AppState build() {
     // 订阅核心状态变化
@@ -28,8 +33,28 @@ class AppNotifier extends Notifier<AppState> {
     ref.onDispose(() {
       _engine.onStatus = null;
       _connectWatchdog?.cancel();
+      _stopDurationTicker();
     });
     return const AppState();
+  }
+
+  /// 启动本地计时器：每秒按墙钟差值刷新已连接时长
+  void _startDurationTicker() {
+    _connectedAt = DateTime.now();
+    _durationTicker?.cancel();
+    _durationTicker = Timer.periodic(const Duration(seconds: 1), (_) {
+      final at = _connectedAt;
+      if (at == null) return;
+      state = state.copyWith(
+        durationSeconds: DateTime.now().difference(at).inSeconds,
+      );
+    });
+  }
+
+  void _stopDurationTicker() {
+    _durationTicker?.cancel();
+    _durationTicker = null;
+    _connectedAt = null;
   }
 
   /// 核心状态回调 → 更新 AppState
@@ -37,15 +62,25 @@ class AppNotifier extends Notifier<AppState> {
   /// 无法在 dynamic 接收者上分发，会抛 noSuchMethod 导致状态永远不更新
   void _handleStatus(VlessStatus status) {
     final newState = status.toDomainState();
+    final wasRunning = state.connectionState == VpnConnectionState.connected;
     // 收到 connected/disconnected 后取消超时看门狗
     if (newState == VpnConnectionState.connected ||
         newState == VpnConnectionState.disconnected) {
       _connectWatchdog?.cancel();
     }
+    // 进入 connected：启动本地精确计时；离开 connected：停止并清零
+    if (newState == VpnConnectionState.connected && !wasRunning) {
+      _startDurationTicker();
+    } else if (newState != VpnConnectionState.connected && wasRunning) {
+      _stopDurationTicker();
+    }
     state = state.copyWith(
       connectionState: newState,
       traffic: status.toTraffic(),
-      durationSeconds: status.duration,
+      // 时长由本地计时器维护；断开时清零
+      durationSeconds: newState == VpnConnectionState.connected
+          ? state.durationSeconds
+          : 0,
       errorMessage: newState == VpnConnectionState.connected ? null : state.errorMessage,
     );
   }
@@ -198,7 +233,9 @@ class AppNotifier extends Notifier<AppState> {
     if (rawConfig == null || rawConfig.isEmpty) return null;
     try {
       await _engine.init();
-      final delay = await _engine.testDelay(config: rawConfig);
+      // 用测速专用配置（强制走 proxy），避免请求走直连被 GFW 重置
+      final delayConfig = ConfigAssembler.assembleDelayTest(rawConfig);
+      final delay = await _engine.testDelay(config: delayConfig);
       // 只有非负延迟才是有效结果；-1 表示失败，不保存
       if (delay >= 0) {
         await ref.read(profilesProvider.notifier).updateLatency(profile.id, delay);

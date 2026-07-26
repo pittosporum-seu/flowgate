@@ -17,6 +17,8 @@ class ConfigAssembler {
 
     _ensureOutbounds(config);
     _injectRouting(config, rules);
+    _injectPolicyTimeouts(config);
+    _enableSniffing(config);
 
     final outboundList = (config['outbounds'] as List?) ?? [];
     final outbounds = outboundList.length;
@@ -26,6 +28,23 @@ class ConfigAssembler {
     LogService.instance.info('ConfigAssembler',
         'Assembled: rules=${rules.length} outbounds=$outbounds [$outboundTags]');
 
+    return jsonEncode(config);
+  }
+
+  /// 组装测速专用 config：强制所有流量走 proxy 出站
+  /// 避免 AsIs 空规则下默认出站不明确，导致测速请求走直连被 GFW 重置
+  static String assembleDelayTest(String profileConfig) {
+    final config = jsonDecode(profileConfig) as Map<String, dynamic>;
+    _ensureOutbounds(config);
+    _injectPolicyTimeouts(config);
+    _enableSniffing(config);
+    final routing = (config['routing'] as Map<String, dynamic>?) ?? {};
+    routing['domainStrategy'] = 'AsIs';
+    routing['rules'] = [
+      // 兑底规则：所有 TCP/UDP 流量 → proxy（测速必须经过代理节点）
+      {'type': 'field', 'network': 'tcp,udp', 'outboundTag': 'proxy'},
+    ];
+    config['routing'] = routing;
     return jsonEncode(config);
   }
 
@@ -97,5 +116,45 @@ class ConfigAssembler {
       'rules': rules.map(toXrayRule).toList(),
     };
     return const JsonEncoder.withIndent('  ').convert(routing);
+  }
+
+  /// 注入 Xray policy 超时配置：防止空闲连接累积导致 fd 耗尽
+  /// 原生层会注入 policy 但只含 stats 开关，不含超时；这里补充超时参数
+  static void _injectPolicyTimeouts(Map<String, dynamic> config) {
+    final policy = (config['policy'] as Map<String, dynamic>?) ?? {};
+    final levels = (policy['levels'] as Map<String, dynamic>?) ?? {};
+    // level 0 = 默认级别，应用到所有连接
+    final level0 = (levels['0'] as Map<String, dynamic>?) ?? {};
+    level0['handshake'] = 4;        // 握手超时 4s
+    level0['connIdle'] = 30;        // 连接空闲超时 30s
+    level0['uplinkOnly'] = 2;       // 上行结束后 2s 关闭
+    level0['downlinkOnly'] = 4;     // 下行结束后 4s 关闭
+    level0['statsUserUplink'] = true;
+    level0['statsUserDownlink'] = true;
+    levels['0'] = level0;
+    policy['levels'] = levels;
+    // system 级别超时
+    final system = (policy['system'] as Map<String, dynamic>?) ?? {};
+    system['statsInboundUplink'] = true;
+    system['statsInboundDownlink'] = true;
+    system['statsOutboundUplink'] = true;
+    system['statsOutboundDownlink'] = true;
+    policy['system'] = system;
+    config['policy'] = policy;
+  }
+
+  /// 为所有 SOCKS/HTTP inbound 启用 sniffing
+  /// 让 Xray 从 TLS SNI / HTTP Host 中嗅探真实域名，配合路由规则使用
+  static void _enableSniffing(Map<String, dynamic> config) {
+    final inbounds = (config['inbounds'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+    for (final ib in inbounds) {
+      final proto = ib['protocol'];
+      if (proto == 'socks' || proto == 'http') {
+        ib['sniffing'] = {
+          'enabled': true,
+          'destOverride': ['http', 'tls'],
+        };
+      }
+    }
   }
 }
