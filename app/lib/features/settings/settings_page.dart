@@ -39,13 +39,19 @@ class SettingsPage extends ConsumerWidget {
                   (v) => ref.read(settingsProvider.notifier).setNotifications(v)),
             ]),
             _section(l.dns, [
-              _item(Icons.dns_rounded, l.remoteDns, settings.remoteDns),
-              _item(Icons.home_rounded, l.domesticDns, settings.domesticDns),
+              _item(Icons.dns_rounded, l.remoteDns, settings.remoteDns,
+                  onTap: () => _editText(context, ref, l.remoteDns, settings.remoteDns,
+                      (v) => ref.read(settingsProvider.notifier).setRemoteDns(v))),
+              _item(Icons.home_rounded, l.domesticDns, settings.domesticDns,
+                  onTap: () => _editText(context, ref, l.domesticDns, settings.domesticDns,
+                      (v) => ref.read(settingsProvider.notifier).setDomesticDns(v))),
               _toggle(Icons.security_rounded, l.fakeDns, settings.fakeDns,
                   (v) => ref.read(settingsProvider.notifier).setFakeDns(v)),
             ]),
             _section(l.advanced, [
-              _item(Icons.speed_rounded, l.speedTestUrl, settings.speedTestUrl),
+              _item(Icons.speed_rounded, l.speedTestUrl, settings.speedTestUrl,
+                  onTap: () => _editText(context, ref, l.speedTestUrl, settings.speedTestUrl,
+                      (v) => ref.read(settingsProvider.notifier).setSpeedTestUrl(v))),
               _item(Icons.timer_rounded, l.autoUpdate, 'Every 24h'),
             ]),
             _section(l.debug, [
@@ -123,26 +129,55 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  Widget _item(IconData icon, String title, String subtitle) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-      child: Row(
-        children: [
-          Icon(icon, size: 19, color: FlowGateTheme.textTertiary),
-          const SizedBox(width: 14),
-          Expanded(child: Text(title, style: const TextStyle(fontSize: 14, color: FlowGateTheme.textPrimary))),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(subtitle,
-                textAlign: TextAlign.right,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 13, color: FlowGateTheme.textTertiary)),
-          ),
-          const SizedBox(width: 6),
-          const Icon(Icons.chevron_right_rounded, size: 16, color: FlowGateTheme.textTertiary),
+  Widget _item(IconData icon, String title, String subtitle, {VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+        child: Row(
+          children: [
+            Icon(icon, size: 19, color: FlowGateTheme.textTertiary),
+            const SizedBox(width: 14),
+            Expanded(child: Text(title, style: const TextStyle(fontSize: 14, color: FlowGateTheme.textPrimary))),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(subtitle,
+                  textAlign: TextAlign.right,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 13, color: FlowGateTheme.textTertiary)),
+            ),
+            const SizedBox(width: 6),
+            const Icon(Icons.chevron_right_rounded, size: 16, color: FlowGateTheme.textTertiary),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 文本编辑对话框
+  Future<void> _editText(BuildContext context, WidgetRef ref, String title,
+      String current, ValueChanged<String> onSave) async {
+    final controller = TextEditingController(text: current);
+    final l = AppLocalizations.of(context);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(border: OutlineInputBorder()),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.cancel)),
+          FilledButton(
+              onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+              child: Text(l.save)),
         ],
       ),
     );
+    if (result != null && result.isNotEmpty) onSave(result);
   }
 
   Widget _navItem(BuildContext context, IconData icon, String title, String subtitle, VoidCallback onTap) {
