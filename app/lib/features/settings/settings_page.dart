@@ -4,6 +4,7 @@ import '../../core/state/locale_provider.dart';
 import '../../core/theme.dart';
 import '../../gen_l10n/app_localizations.dart';
 import '../log/log_page.dart';
+import 'settings_provider.dart';
 
 /// Settings - 现代简约设置页
 class SettingsPage extends ConsumerWidget {
@@ -13,6 +14,7 @@ class SettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final locale = ref.watch(localeProvider);
+    final settings = ref.watch(settingsProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -33,15 +35,17 @@ class SettingsPage extends ConsumerWidget {
               _navItem(context, Icons.language_rounded, l.language, _localeLabel(locale, l),
                   () => _showLanguageDialog(context, ref, l)),
               _item(Icons.dark_mode_rounded, l.theme, 'Light'),
-              _toggle(Icons.notifications_rounded, l.notifications, true),
+              _toggle(Icons.notifications_rounded, l.notifications, settings.notifications,
+                  (v) => ref.read(settingsProvider.notifier).setNotifications(v)),
             ]),
             _section(l.dns, [
-              _item(Icons.dns_rounded, l.remoteDns, '8.8.8.8'),
-              _item(Icons.home_rounded, l.domesticDns, '223.5.5.5'),
-              _toggle(Icons.security_rounded, l.fakeDns, false),
+              _item(Icons.dns_rounded, l.remoteDns, settings.remoteDns),
+              _item(Icons.home_rounded, l.domesticDns, settings.domesticDns),
+              _toggle(Icons.security_rounded, l.fakeDns, settings.fakeDns,
+                  (v) => ref.read(settingsProvider.notifier).setFakeDns(v)),
             ]),
             _section(l.advanced, [
-              _item(Icons.speed_rounded, l.speedTestUrl, 'gstatic.com/generate_204'),
+              _item(Icons.speed_rounded, l.speedTestUrl, settings.speedTestUrl),
               _item(Icons.timer_rounded, l.autoUpdate, 'Every 24h'),
             ]),
             _section(l.debug, [
@@ -161,7 +165,7 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  Widget _toggle(IconData icon, String title, bool value) {
+  Widget _toggle(IconData icon, String title, bool value, ValueChanged<bool> onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -169,7 +173,7 @@ class SettingsPage extends ConsumerWidget {
           Icon(icon, size: 19, color: FlowGateTheme.textTertiary),
           const SizedBox(width: 14),
           Expanded(child: Text(title, style: const TextStyle(fontSize: 14, color: FlowGateTheme.textPrimary))),
-          Switch(value: value, onChanged: (_) {}),
+          Switch(value: value, onChanged: onChanged),
         ],
       ),
     );
