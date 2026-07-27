@@ -4,7 +4,7 @@ import '../service/log_service.dart';
 
 /// 配置组装器
 /// 将「节点 rawConfig」+「RulePipeline 路由规则」组装为最终 Xray config JSON
-/// 供 flutter_vless.startVless 使用
+/// 供 flutter_v2ray startV2Ray 使用
 class ConfigAssembler {
   /// 组装最终 Xray config
   /// [profileConfig] 节点的 rawConfig (getFullConfiguration 产物)

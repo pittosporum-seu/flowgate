@@ -48,7 +48,7 @@ class ProfileItem {
   final int? latencyMs;
   final int createdAt;
 
-  /// 完整的 Xray JSON config (来自 flutter_vless getFullConfiguration)
+  /// 完整的 Xray JSON config (来自 flutter_v2ray getFullConfiguration)
   /// 连接时直接使用，避免重复解析
   final String? rawConfig;
 

@@ -13,6 +13,8 @@ app/lib/generated_plugin_registrant.dart
 app/android/.gradle/
 app/android/local.properties
 app/android/key.properties
+app/android/build/
+app/android/app/libs/*.aar
 *.jks
 *.keystore
 

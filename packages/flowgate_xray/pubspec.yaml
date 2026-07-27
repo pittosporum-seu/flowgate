@@ -1,0 +1,25 @@
+name: flowgate_xray
+description: Flutter plugin wrapping libv2ray (Xray-core JNI in-process) for Android VPN.
+version: 0.0.1
+publish_to: 'none'
+
+environment:
+  sdk: ^3.6.2
+  flutter: '>=3.3.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.flowgate.xray
+        pluginClass: FlowgateXrayPlugin
