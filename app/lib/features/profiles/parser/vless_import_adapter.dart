@@ -12,6 +12,10 @@ class VlessImportAdapter {
   static ProfileItem? parseSingle(String raw) {
     try {
       final trimmed = raw.trim();
+      // hysteria2/hy2 链接需自行解析（flutter_v2ray 不支持）
+      if (trimmed.startsWith('hysteria2://') || trimmed.startsWith('hy2://')) {
+        return _parseHysteria2(trimmed);
+      }
       // 尝试作为分享链接解析
       final parsed = FlutterV2ray.parseFromURL(trimmed);
       return _toProfileItem(parsed);
@@ -94,6 +98,76 @@ class VlessImportAdapter {
     if (s.startsWith('{') || s.startsWith('[')) return false;
     // 标准 base64: [A-Za-z0-9+/=]  URL-safe: [A-Za-z0-9_-=]
     return RegExp(r'^[A-Za-z0-9+/=_\-\s]+$').hasMatch(s);
+  }
+
+  /// 解析 hysteria2:// 或 hy2:// 链接
+  /// 格式: hysteria2://password@server:port?params#remark
+  static ProfileItem? _parseHysteria2(String raw) {
+    try {
+      final uri = Uri.parse(raw);
+      final password = uri.userInfo;
+      final server = uri.host;
+      final port = uri.port;
+      if (server.isEmpty || port == 0) return null;
+
+      final remark = uri.fragment.isNotEmpty
+          ? Uri.decodeComponent(uri.fragment)
+          : 'Hysteria2 Node';
+
+      // 提取 TLS/传输参数
+      final sni = uri.queryParameters['sni'] ?? '';
+      final alpn = uri.queryParameters['alpn'] ?? '';
+      final insecure = uri.queryParameters['insecure'] == '1' ||
+          uri.queryParameters['allowInsecure'] == '1';
+      final obfs = uri.queryParameters['obfs'] ?? '';
+      final obfsPassword = uri.queryParameters['obfs-password'] ?? '';
+
+      // 构建 Xray hysteria2 outbound config
+      final tlsSettings = <String, dynamic>{
+        if (sni.isNotEmpty) 'serverName': sni,
+        'allowInsecure': insecure,
+        if (alpn.isNotEmpty) 'alpn': alpn.split(',').where((a) => a.isNotEmpty).toList(),
+      };
+
+      final outbound = <String, dynamic>{
+        'protocol': 'hysteria2',
+        'settings': {
+          'servers': [
+            {
+              'address': server,
+              'port': port,
+              'password': password,
+            }
+          ],
+        },
+        'streamSettings': {
+          'network': 'udp',
+          'security': 'tls',
+          'tlsSettings': tlsSettings,
+          if (obfs.isNotEmpty) 'obfsSettings': {
+            'type': obfs,
+            if (obfsPassword.isNotEmpty) 'password': obfsPassword,
+          },
+        },
+      };
+
+      final config = jsonEncode({
+        'outbounds': [outbound],
+      });
+
+      return ProfileItem(
+        id: '${DateTime.now().millisecondsSinceEpoch}_${_counter++}',
+        name: remark,
+        type: ProfileType.hysteria2,
+        server: server,
+        port: port,
+        password: password,
+        rawConfig: config,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      );
+    } catch (_) {
+      return null;
+    }
   }
 
   /// 解析原始 Xray JSON 配置
