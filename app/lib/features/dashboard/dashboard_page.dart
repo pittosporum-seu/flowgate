@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/state/app_provider.dart';
 import '../../core/state/app_state.dart';
+import '../../core/state/tab_provider.dart';
 import '../../core/theme.dart';
 import '../../gen_l10n/app_localizations.dart';
 import '../ai_assistant/ai_assistant_page.dart';
@@ -292,42 +293,46 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
   Widget _buildNodeCard(AppState app) {
     final l = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: FlowGateTheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: FlowGateTheme.line, width: 0.5),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: FlowGateTheme.primarySoft,
-              borderRadius: BorderRadius.circular(12),
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () => ref.read(tabIndexProvider.notifier).state = 1,
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: FlowGateTheme.surface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: FlowGateTheme.line, width: 0.5),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: FlowGateTheme.primarySoft,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.dns_rounded, color: FlowGateTheme.primary, size: 20),
             ),
-            child: const Icon(Icons.dns_rounded, color: FlowGateTheme.primary, size: 20),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l.currentNode,
-                    style: const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)),
-                const SizedBox(height: 3),
-                Text(app.currentNodeName ?? l.tapToSelect,
-                    style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: FlowGateTheme.textPrimary)),
-              ],
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l.currentNode,
+                      style: const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary)),
+                  const SizedBox(height: 3),
+                  Text(app.currentNodeName ?? l.tapToSelect,
+                      style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: FlowGateTheme.textPrimary)),
+                ],
+              ),
             ),
-          ),
-          const Icon(Icons.chevron_right_rounded, color: FlowGateTheme.textTertiary, size: 20),
-        ],
+            const Icon(Icons.chevron_right_rounded, color: FlowGateTheme.textTertiary, size: 20),
+          ],
+        ),
       ),
     );
   }
