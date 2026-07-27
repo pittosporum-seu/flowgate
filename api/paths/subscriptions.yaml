@@ -1,0 +1,120 @@
+# 订阅管理端点
+
+/subscriptions:
+  get:
+    summary: 列出所有订阅
+    operationId: listSubscriptions
+    tags: [Subscriptions]
+    responses:
+      '200':
+        description: 订阅列表
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '../schemas/subscription.yaml#/Subscription'
+  post:
+    summary: 添加订阅
+    operationId: addSubscription
+    tags: [Subscriptions]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/subscription.yaml#/SubscriptionCreateRequest'
+    responses:
+      '201':
+        description: 订阅已创建
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      $ref: '../schemas/subscription.yaml#/Subscription'
+
+/subscriptions/{id}:
+  get:
+    summary: 获取订阅详情
+    operationId: getSubscription
+    tags: [Subscriptions]
+    parameters:
+      - $ref: '../parameters/common.yaml#/PathId'
+    responses:
+      '200':
+        description: 订阅详情
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      $ref: '../schemas/subscription.yaml#/Subscription'
+      '404':
+        description: 订阅不存在
+  put:
+    summary: 更新订阅设置
+    operationId: updateSubscription
+    tags: [Subscriptions]
+    parameters:
+      - $ref: '../parameters/common.yaml#/PathId'
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/subscription.yaml#/SubscriptionUpdateRequest'
+    responses:
+      '200':
+        description: 已更新
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ApiResponse'
+      '404':
+        description: 订阅不存在
+  delete:
+    summary: 删除订阅
+    operationId: deleteSubscription
+    tags: [Subscriptions]
+    parameters:
+      - $ref: '../parameters/common.yaml#/PathId'
+      - $ref: '../parameters/common.yaml#/QueryDeleteNodes'
+    responses:
+      '200':
+        description: 已删除
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ApiResponse'
+      '404':
+        description: 订阅不存在
+
+/subscriptions/{id}/update:
+  post:
+    summary: 手动刷新订阅
+    operationId: refreshSubscription
+    tags: [Subscriptions]
+    description: 拉取订阅链接最新内容，增量同步节点（新增/更新/移除）
+    parameters:
+      - $ref: '../parameters/common.yaml#/PathId'
+    responses:
+      '200':
+        description: 刷新结果
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      $ref: '../schemas/subscription.yaml#/SubscriptionRefreshResult'
+      '404':
+        description: 订阅不存在

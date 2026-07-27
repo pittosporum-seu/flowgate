@@ -1,0 +1,135 @@
+# 节点相关数据模型
+
+Node:
+  type: object
+  required: [id, name, type, server, port]
+  properties:
+    id:
+      type: string
+      description: 唯一标识
+    name:
+      type: string
+      description: 节点名称
+    type:
+      type: string
+      enum: [vmess, vless, trojan, shadowsocks, socks, hysteria2]
+      description: 协议类型
+    server:
+      type: string
+      description: 服务器地址
+    port:
+      type: integer
+      description: 端口
+    password:
+      type: string
+      description: 密码 / UUID
+    method:
+      type: string
+      nullable: true
+      description: 加密方式（Shadowsocks）
+    sni:
+      type: string
+      nullable: true
+      description: TLS SNI
+    alpn:
+      type: string
+      nullable: true
+      description: ALPN 协议
+    network:
+      type: string
+      nullable: true
+      description: 传输层 (tcp / ws / grpc)
+    path:
+      type: string
+      nullable: true
+      description: WebSocket 路径
+    host:
+      type: string
+      nullable: true
+      description: HTTP Host 头
+    allowInsecure:
+      type: boolean
+      description: 跳过证书验证
+    subscriptionId:
+      type: string
+      nullable: true
+      description: 所属订阅 ID
+    latencyMs:
+      type: integer
+      nullable: true
+      description: 最近一次测速延迟 (ms)
+    createdAt:
+      type: integer
+      format: int64
+      description: 创建时间戳 (epoch ms)
+    rawConfig:
+      type: string
+      nullable: true
+      description: 原始 Xray JSON 配置
+
+NodeImportRequest:
+  type: object
+  required: [content]
+  properties:
+    content:
+      type: string
+      description: 导入内容（base64 编码 / 原始分享链接）
+    type:
+      type: string
+      enum: [base64, url, raw]
+      nullable: true
+      description: 内容类型（null 时自动检测）
+    subscriptionId:
+      type: string
+      nullable: true
+      description: 关联订阅 ID
+
+NodeImportResult:
+  type: object
+  properties:
+    imported:
+      type: integer
+      description: 成功导入数量
+    nodes:
+      type: array
+      items:
+        $ref: '../schemas/node.yaml#/Node'
+
+NodeTestResult:
+  type: object
+  properties:
+    nodeId:
+      type: string
+    delay:
+      type: integer
+      nullable: true
+      description: 延迟 ms（null 表示失败）
+    error:
+      type: string
+      nullable: true
+      description: 失败原因
+
+TestAllTask:
+  type: object
+  properties:
+    taskId:
+      type: string
+      description: 异步任务 ID
+    total:
+      type: integer
+      description: 待测节点总数
+
+TestAllProgress:
+  type: object
+  properties:
+    taskId:
+      type: string
+    completed:
+      type: integer
+      description: 已完成数量
+    total:
+      type: integer
+    results:
+      type: array
+      items:
+        $ref: '../schemas/node.yaml#/NodeTestResult'

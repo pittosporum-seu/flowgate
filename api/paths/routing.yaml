@@ -1,0 +1,38 @@
+# 路由规则端点
+
+/routing:
+  get:
+    summary: 获取路由规则
+    operationId: getRouting
+    tags: [Routing]
+    responses:
+      '200':
+        description: 当前路由配置
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      $ref: '../schemas/routing.yaml#/RoutingRules'
+  put:
+    summary: 更新路由规则（支持部分更新）
+    operationId: updateRouting
+    tags: [Routing]
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/routing.yaml#/RoutingUpdateRequest'
+    responses:
+      '200':
+        description: 已更新
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      $ref: '../schemas/routing.yaml#/RoutingRules'

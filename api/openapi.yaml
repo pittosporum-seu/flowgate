@@ -1,0 +1,147 @@
+# FlowGate Local API - OpenAPI 3.0 规范入口
+# 拆分结构：
+#   paths/       按领域拆分的端点定义
+#   schemas/     按领域拆分的数据模型
+#   parameters/  公共参数定义
+#
+# 验证: npx @redocly/cli bundle api/openapi.yaml -o api/bundled.yaml
+# 预览: npx @redocly/cli preview-docs api/openapi.yaml
+
+openapi: 3.0.3
+info:
+  title: FlowGate Local API
+  description: |
+    FlowGate VPN 客户端本地 RESTful API。
+
+    运行在 Android 设备 `127.0.0.1:19840`，供以下消费者平等调用：
+    - Flutter UI（前端）
+    - AI Agent / MCP Server
+    - curl / 自动化脚本
+
+    所有端点统一返回 `ApiResponse` 包装结构。
+  version: 1.0.0
+  contact:
+    name: pittosporum-seu
+    url: https://github.com/pittosporum-seu/flowgate
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://127.0.0.1:19840/api/v1
+    description: Android 本地 API Server (Ktor CIO)
+
+tags:
+  - name: VPN
+    description: VPN 连接控制与状态
+  - name: Nodes
+    description: 代理节点管理（CRUD / 导入 / 测速）
+  - name: Subscriptions
+    description: 订阅源管理（CRUD / 刷新）
+  - name: Routing
+    description: 路由规则配置
+  - name: System
+    description: 系统信息与诊断
+
+paths:
+  # ─── VPN ────────────────────────────────────────────────
+  /vpn/status:
+    $ref: './paths/vpn.yaml#/vpn/status'
+  /vpn/start:
+    $ref: './paths/vpn.yaml#/vpn/start'
+  /vpn/stop:
+    $ref: './paths/vpn.yaml#/vpn/stop'
+  /vpn/events:
+    $ref: './paths/vpn.yaml#/vpn/events'
+
+  # ─── Nodes ──────────────────────────────────────────────
+  /nodes:
+    $ref: './paths/nodes.yaml#/nodes'
+  /nodes/{id}:
+    $ref: './paths/nodes.yaml#/nodes/{id}'
+  /nodes/import:
+    $ref: './paths/nodes.yaml#/nodes/import'
+  /nodes/{id}/test:
+    $ref: './paths/nodes.yaml#/nodes/{id}/test'
+  /nodes/test-all:
+    $ref: './paths/nodes.yaml#/nodes/test-all'
+  /nodes/test-all/{taskId}:
+    $ref: './paths/nodes.yaml#/nodes/test-all/{taskId}'
+
+  # ─── Subscriptions ─────────────────────────────────────
+  /subscriptions:
+    $ref: './paths/subscriptions.yaml#/subscriptions'
+  /subscriptions/{id}:
+    $ref: './paths/subscriptions.yaml#/subscriptions/{id}'
+  /subscriptions/{id}/update:
+    $ref: './paths/subscriptions.yaml#/subscriptions/{id}/update'
+
+  # ─── Routing ───────────────────────────────────────────
+  /routing:
+    $ref: './paths/routing.yaml#/routing'
+
+  # ─── System ────────────────────────────────────────────
+  /health:
+    $ref: './paths/system.yaml#/health'
+  /system/info:
+    $ref: './paths/system.yaml#/system/info'
+  /system/logs:
+    $ref: './paths/system.yaml#/system/logs'
+
+components:
+  schemas:
+    # ─── 通用 ─────────────────────────────────────────────
+    ApiResponse:
+      $ref: './schemas/common.yaml#/ApiResponse'
+    PaginatedMeta:
+      $ref: './schemas/common.yaml#/PaginatedMeta'
+
+    # ─── VPN ──────────────────────────────────────────────
+    VpnStatus:
+      $ref: './schemas/vpn.yaml#/VpnStatus'
+    VpnStartRequest:
+      $ref: './schemas/vpn.yaml#/VpnStartRequest'
+    SseEvent:
+      $ref: './schemas/vpn.yaml#/SseEvent'
+
+    # ─── Nodes ────────────────────────────────────────────
+    Node:
+      $ref: './schemas/node.yaml#/Node'
+    NodeImportRequest:
+      $ref: './schemas/node.yaml#/NodeImportRequest'
+    NodeImportResult:
+      $ref: './schemas/node.yaml#/NodeImportResult'
+    NodeTestResult:
+      $ref: './schemas/node.yaml#/NodeTestResult'
+    TestAllTask:
+      $ref: './schemas/node.yaml#/TestAllTask'
+    TestAllProgress:
+      $ref: './schemas/node.yaml#/TestAllProgress'
+
+    # ─── Subscriptions ───────────────────────────────────
+    Subscription:
+      $ref: './schemas/subscription.yaml#/Subscription'
+    SubscriptionCreateRequest:
+      $ref: './schemas/subscription.yaml#/SubscriptionCreateRequest'
+    SubscriptionUpdateRequest:
+      $ref: './schemas/subscription.yaml#/SubscriptionUpdateRequest'
+    SubscriptionRefreshResult:
+      $ref: './schemas/subscription.yaml#/SubscriptionRefreshResult'
+
+    # ─── Routing ─────────────────────────────────────────
+    RoutingRules:
+      $ref: './schemas/routing.yaml#/RoutingRules'
+    RoutingRule:
+      $ref: './schemas/routing.yaml#/RoutingRule'
+    RoutingUpdateRequest:
+      $ref: './schemas/routing.yaml#/RoutingUpdateRequest'
+
+  parameters:
+    PathId:
+      $ref: './parameters/common.yaml#/PathId'
+    PathTaskId:
+      $ref: './parameters/common.yaml#/PathTaskId'
+    QueryLimit:
+      $ref: './parameters/common.yaml#/QueryLimit'
+    QueryDeleteNodes:
+      $ref: './parameters/common.yaml#/QueryDeleteNodes'

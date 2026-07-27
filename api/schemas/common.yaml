@@ -1,0 +1,29 @@
+# 通用响应包装
+# 所有 API 端点统一返回此结构
+
+ApiResponse:
+  type: object
+  properties:
+    ok:
+      type: boolean
+      description: 请求是否成功
+    data:
+      nullable: true
+      description: 业务数据（成功时）
+    error:
+      type: string
+      nullable: true
+      description: 错误信息（失败时）
+
+PaginatedMeta:
+  type: object
+  properties:
+    total:
+      type: integer
+      description: 总条目数
+    page:
+      type: integer
+      description: 当前页码
+    pageSize:
+      type: integer
+      description: 每页大小

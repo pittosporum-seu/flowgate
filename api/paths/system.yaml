@@ -1,0 +1,81 @@
+# 系统端点
+
+/health:
+  get:
+    summary: 健康检查
+    operationId: healthCheck
+    tags: [System]
+    responses:
+      '200':
+        description: Server 运行中
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ApiResponse'
+
+/system/info:
+  get:
+    summary: 系统信息
+    operationId: getSystemInfo
+    tags: [System]
+    responses:
+      '200':
+        description: 版本/平台/端口信息
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      type: object
+                      properties:
+                        version:
+                          type: string
+                          description: 应用版本号
+                        coreVersion:
+                          type: string
+                          description: Xray 核心版本
+                        platform:
+                          type: string
+                          description: 运行平台
+                        apiPort:
+                          type: integer
+                          description: API 监听端口
+
+/system/logs:
+  get:
+    summary: 获取最近日志
+    operationId: getLogs
+    tags: [System]
+    parameters:
+      - $ref: '../parameters/common.yaml#/QueryLimit'
+    responses:
+      '200':
+        description: 日志条目列表
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      type: object
+                      properties:
+                        logs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              timestamp:
+                                type: string
+                                format: date-time
+                              level:
+                                type: string
+                                enum: [DEBUG, INFO, WARN, ERROR]
+                              tag:
+                                type: string
+                              message:
+                                type: string
+                        total:
+                          type: integer

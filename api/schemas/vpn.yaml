@@ -1,0 +1,72 @@
+# VPN 相关数据模型
+
+VpnStatus:
+  type: object
+  properties:
+    state:
+      type: string
+      enum: [connected, connecting, disconnected, disconnecting]
+      description: 当前连接状态
+    duration:
+      type: string
+      example: "01:23:45"
+      description: 已连接时长 (HH:mm:ss)
+    uploadSpeed:
+      type: integer
+      format: int64
+      description: 上行速度 (bytes/s)
+    downloadSpeed:
+      type: integer
+      format: int64
+      description: 下行速度 (bytes/s)
+    uploadTotal:
+      type: integer
+      format: int64
+      description: 上行总流量 (bytes)
+    downloadTotal:
+      type: integer
+      format: int64
+      description: 下行总流量 (bytes)
+    nodeId:
+      type: string
+      nullable: true
+      description: 当前连接的节点 ID
+    nodeName:
+      type: string
+      nullable: true
+      description: 当前连接的节点名称
+
+VpnStartRequest:
+  type: object
+  properties:
+    nodeId:
+      type: string
+      description: 节点 ID（可选，使用已选节点）
+    config:
+      type: string
+      description: 完整 Xray JSON 配置
+    remark:
+      type: string
+      description: 连接备注名
+    proxyOnly:
+      type: boolean
+      default: false
+      description: 仅代理模式（不启用 TUN）
+
+SseEvent:
+  type: object
+  description: |
+    Server-Sent Events 推送事件。
+    事件类型：
+    - state-change: VPN 状态变化
+    - traffic: 流量统计（每秒）
+    - test-progress: 批量测速进度
+    - test-complete: 测速完成
+    - command: 控制指令
+  properties:
+    event:
+      type: string
+      enum: [state-change, traffic, test-progress, test-complete, command]
+    data:
+      type: string
+      description: JSON 编码的事件载荷

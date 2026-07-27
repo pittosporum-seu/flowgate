@@ -1,0 +1,162 @@
+# 节点管理端点
+
+/nodes:
+  get:
+    summary: 列出所有节点
+    operationId: listNodes
+    tags: [Nodes]
+    responses:
+      '200':
+        description: 节点列表
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      type: object
+                      properties:
+                        nodes:
+                          type: array
+                          items:
+                            $ref: '../schemas/node.yaml#/Node'
+                        total:
+                          type: integer
+  post:
+    summary: 添加单个节点
+    operationId: addNode
+    tags: [Nodes]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/node.yaml#/Node'
+    responses:
+      '201':
+        description: 节点已创建
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ApiResponse'
+
+/nodes/{id}:
+  get:
+    summary: 获取节点详情
+    operationId: getNode
+    tags: [Nodes]
+    parameters:
+      - $ref: '../parameters/common.yaml#/PathId'
+    responses:
+      '200':
+        description: 节点详情
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      $ref: '../schemas/node.yaml#/Node'
+      '404':
+        description: 节点不存在
+  delete:
+    summary: 删除节点
+    operationId: deleteNode
+    tags: [Nodes]
+    parameters:
+      - $ref: '../parameters/common.yaml#/PathId'
+    responses:
+      '200':
+        description: 已删除
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/common.yaml#/ApiResponse'
+      '404':
+        description: 节点不存在
+
+/nodes/import:
+  post:
+    summary: 批量导入节点
+    operationId: importNodes
+    tags: [Nodes]
+    description: 支持 base64 编码的分享链接、原始链接文本（vmess/vless/trojan/ss/socks/hysteria2）
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/node.yaml#/NodeImportRequest'
+    responses:
+      '200':
+        description: 导入结果
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      $ref: '../schemas/node.yaml#/NodeImportResult'
+
+/nodes/{id}/test:
+  post:
+    summary: 测试单节点延迟
+    operationId: testNode
+    tags: [Nodes]
+    parameters:
+      - $ref: '../parameters/common.yaml#/PathId'
+    responses:
+      '200':
+        description: 测速结果
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      $ref: '../schemas/node.yaml#/NodeTestResult'
+      '404':
+        description: 节点不存在
+
+/nodes/test-all:
+  post:
+    summary: 批量测速（异步）
+    operationId: testAllNodes
+    tags: [Nodes]
+    description: 启动异步批量测速任务，通过 taskId 查询进度，或通过 SSE 接收实时进度
+    responses:
+      '200':
+        description: 任务已启动
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      $ref: '../schemas/node.yaml#/TestAllTask'
+
+/nodes/test-all/{taskId}:
+  get:
+    summary: 查询批量测速进度
+    operationId: getTestProgress
+    tags: [Nodes]
+    parameters:
+      - $ref: '../parameters/common.yaml#/PathTaskId'
+    responses:
+      '200':
+        description: 测速进度
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../schemas/common.yaml#/ApiResponse'
+                - properties:
+                    data:
+                      $ref: '../schemas/node.yaml#/TestAllProgress'
+      '404':
+        description: 任务不存在或已过期

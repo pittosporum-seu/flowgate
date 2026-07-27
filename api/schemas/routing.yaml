@@ -1,0 +1,91 @@
+# 路由规则相关数据模型
+
+RoutingRules:
+  type: object
+  properties:
+    domainStrategy:
+      type: string
+      enum: [AsIs, IPIfNonMatch, IPOnDemand]
+      description: 域名解析策略
+    rules:
+      type: array
+      items:
+        $ref: '../schemas/routing.yaml#/RoutingRule'
+    bypassLan:
+      type: boolean
+      description: 绕过局域网
+    bypassChina:
+      type: boolean
+      description: 绕过中国大陆
+    proxyDomains:
+      type: array
+      items:
+        type: string
+      description: 强制代理域名列表
+    directDomains:
+      type: array
+      items:
+        type: string
+      description: 强制直连域名列表
+
+RoutingRule:
+  type: object
+  required: [id, outboundTag]
+  properties:
+    id:
+      type: string
+      description: 规则唯一标识
+    type:
+      type: string
+      default: field
+      description: 规则类型
+    outboundTag:
+      type: string
+      enum: [proxy, direct, block]
+      description: 出站标签
+    domain:
+      type: array
+      items:
+        type: string
+      description: 匹配域名列表
+    ip:
+      type: array
+      items:
+        type: string
+      description: 匹配 IP/CIDR 列表
+    port:
+      type: string
+      nullable: true
+      description: 匹配端口（如 "80,443" 或 "1000-2000"）
+    enabled:
+      type: boolean
+      default: true
+      description: 是否启用
+    priority:
+      type: integer
+      default: 0
+      description: 优先级（越小越先匹配）
+
+RoutingUpdateRequest:
+  type: object
+  description: 部分更新，仅传需要修改的字段
+  properties:
+    domainStrategy:
+      type: string
+      enum: [AsIs, IPIfNonMatch, IPOnDemand]
+    rules:
+      type: array
+      items:
+        $ref: '../schemas/routing.yaml#/RoutingRule'
+    bypassLan:
+      type: boolean
+    bypassChina:
+      type: boolean
+    proxyDomains:
+      type: array
+      items:
+        type: string
+    directDomains:
+      type: array
+      items:
+        type: string
