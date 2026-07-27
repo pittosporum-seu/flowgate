@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/profiles/model/profile_item.dart';
 import '../../features/profiles/profiles_provider.dart';
 import '../../features/routing/routing_provider.dart';
+import '../api/api_client.dart';
+import '../api/api_provider.dart';
 import '../engine/config_assembler.dart';
 import '../engine/vless_engine.dart';
 import '../service/log_service.dart';
@@ -12,14 +15,17 @@ import 'app_state.dart';
 
 /// AppState 的 Riverpod Notifier
 /// 通过 VlessEngine (flutter_v2ray, JNI in-process) 驱动真实代理核心
+/// 同时监听 Ktor API Server 的 SSE 事件流（AI/外部触发的状态变化）
 class AppNotifier extends Notifier<AppState> {
   static const _keyProfileId = 'persisted_profile_id';
   static const _keyNodeName = 'persisted_node_name';
   static const _connectTimeout = Duration(seconds: 20);
 
   VlessEngine get _engine => VlessEngine.instance;
+  FlowGateApiClient get _api => ref.read(apiClientProvider);
   final _log = LogService.instance;
   Timer? _connectWatchdog;
+  StreamSubscription<SseEvent>? _sseSubscription;
 
   // 本地精确计时：原生 CountDownTimer 用 seconds++ 累加会漂移（走时偏慢），
   // 改用连接起始时间戳 + 本地 1s 计时器，按墙钟差值计算精确时长
@@ -28,14 +34,71 @@ class AppNotifier extends Notifier<AppState> {
 
   @override
   AppState build() {
-    // 订阅核心状态变化
+    // 订阅核心状态变化（MethodChannel 回调）
     _engine.onStatus = _handleStatus;
+    // 订阅 Ktor SSE 事件流（AI/外部触发的状态变化）
+    _connectSse();
     ref.onDispose(() {
       _engine.onStatus = null;
       _connectWatchdog?.cancel();
       _stopDurationTicker();
+      _sseSubscription?.cancel();
     });
     return const AppState();
+  }
+
+  /// 连接 Ktor API Server 的 SSE 事件流
+  void _connectSse() {
+    _sseSubscription?.cancel();
+    _sseSubscription = _api.watchEvents().listen(
+      (event) {
+        if (event.type == 'state-change') {
+          _handleSseStateChange(event.data);
+        }
+      },
+      onError: (e) {
+        _log.debug('AppNotifier', 'SSE error: $e');
+        // SSE 断开后 5s 重连
+        Future.delayed(const Duration(seconds: 5), () {
+          if (_sseSubscription != null) _connectSse();
+        });
+      },
+      onDone: () {
+        _log.debug('AppNotifier', 'SSE stream closed, reconnecting...');
+        Future.delayed(const Duration(seconds: 5), () {
+          if (_sseSubscription != null) _connectSse();
+        });
+      },
+    );
+  }
+
+  /// 处理 SSE 推送的状态变化（由 AI/外部 API 触发）
+  void _handleSseStateChange(String jsonData) {
+    try {
+      final map = jsonDecode(jsonData) as Map<String, dynamic>;
+      final stateStr = map['state'] as String? ?? 'disconnected';
+      final newState = switch (stateStr) {
+        'connected' => VpnConnectionState.connected,
+        'connecting' => VpnConnectionState.connecting,
+        'disconnected' => VpnConnectionState.disconnected,
+        _ => VpnConnectionState.disconnected,
+      };
+      // 仅当状态确实不同时更新（避免与 MethodChannel 回调重复）
+      if (newState != state.connectionState) {
+        _log.info('AppNotifier', 'SSE state-change: ${state.connectionState.name} -> ${newState.name}');
+        if (newState == VpnConnectionState.connected) {
+          _startDurationTicker();
+        } else if (state.connectionState == VpnConnectionState.connected) {
+          _stopDurationTicker();
+        }
+        state = state.copyWith(
+          connectionState: newState,
+          durationSeconds: newState == VpnConnectionState.connected ? state.durationSeconds : 0,
+        );
+      }
+    } catch (e) {
+      _log.debug('AppNotifier', 'SSE parse error: $e');
+    }
   }
 
   /// 启动本地计时器：每秒按墙钟差值刷新已连接时长

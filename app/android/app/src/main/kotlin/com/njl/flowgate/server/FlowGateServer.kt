@@ -39,6 +39,8 @@ class FlowGateServer(
     private var server: ApplicationEngine? = null
     private var resolvedPort: Int = 0
     val logBuffer = LogBuffer()
+    val dataStore = DataStore(context)
+    val testService = NodeTestService(logBuffer)
 
     private val prefs: SharedPreferences
         get() = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -125,6 +127,15 @@ class FlowGateServer(
             // VPN control
             vpnRoutes(stateProvider)
 
+            // Node management (CRUD + import + test)
+            nodeRoutes(dataStore, testService, logBuffer)
+
+            // Subscription management
+            subscriptionRoutes(dataStore, logBuffer)
+
+            // Routing rules
+            routingRoutes(dataStore, logBuffer)
+
             // System info
             systemRoutes(resolvedPort, logBuffer)
         }
@@ -135,6 +146,7 @@ class FlowGateServer(
      */
     fun stop() {
         logBuffer.add("INFO", TAG, "Stopping API server...")
+        testService.destroy()
         server?.stop(1000, 2000)
         server = null
         resolvedPort = 0
