@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/state/tab_provider.dart';
 import '../../features/dashboard/dashboard_page.dart';
 import '../../features/profiles/profiles_page.dart';
 import '../../features/routing/routing_page.dart';
@@ -6,17 +8,10 @@ import '../../features/settings/settings_page.dart';
 import '../../gen_l10n/app_localizations.dart';
 
 /// App 导航骨架 - 手机底部导航 / 桌面侧边导航
-class AppShell extends StatefulWidget {
+class AppShell extends ConsumerWidget {
   const AppShell({super.key});
 
-  @override
-  State<AppShell> createState() => _AppShellState();
-}
-
-class _AppShellState extends State<AppShell> {
-  int _currentIndex = 0;
-
-  final _pages = const [
+  static const _pages = [
     DashboardPage(),
     ProfilesPage(),
     RoutingPage(),
@@ -36,19 +31,20 @@ class _AppShellState extends State<AppShell> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = ref.watch(tabIndexProvider);
     final isWide = MediaQuery.of(context).size.width >= 600;
-    if (isWide) return _buildWideLayout();
-    return _buildNarrowLayout();
+    if (isWide) return _buildWideLayout(context, ref, currentIndex);
+    return _buildNarrowLayout(context, ref, currentIndex);
   }
 
-  Widget _buildNarrowLayout() {
+  Widget _buildNarrowLayout(BuildContext context, WidgetRef ref, int currentIndex) {
     final labels = _labels(context);
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      body: IndexedStack(index: currentIndex, children: _pages),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (i) => setState(() => _currentIndex = i),
+        selectedIndex: currentIndex,
+        onDestinationSelected: (i) => ref.read(tabIndexProvider.notifier).state = i,
         destinations: List.generate(
           4,
           (i) => NavigationDestination(
@@ -61,14 +57,14 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
-  Widget _buildWideLayout() {
+  Widget _buildWideLayout(BuildContext context, WidgetRef ref, int currentIndex) {
     final labels = _labels(context);
     return Scaffold(
       body: Row(
         children: [
           NavigationRail(
-            selectedIndex: _currentIndex,
-            onDestinationSelected: (i) => setState(() => _currentIndex = i),
+            selectedIndex: currentIndex,
+            onDestinationSelected: (i) => ref.read(tabIndexProvider.notifier).state = i,
             labelType: NavigationRailLabelType.all,
             minWidth: 72,
             destinations: List.generate(
@@ -81,7 +77,7 @@ class _AppShellState extends State<AppShell> {
             ),
           ),
           const VerticalDivider(thickness: 0.5, width: 1),
-          Expanded(child: IndexedStack(index: _currentIndex, children: _pages)),
+          Expanded(child: IndexedStack(index: currentIndex, children: _pages)),
         ],
       ),
     );
