@@ -53,6 +53,7 @@
     }
   },
   "deleteNode": "删除节点",
+  "editNode": "编辑节点",
   "deleteNodeConfirm": "确定删除节点「{name}」吗？",
   "@deleteNodeConfirm": {
     "placeholders": {

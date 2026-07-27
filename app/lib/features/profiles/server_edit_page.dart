@@ -56,19 +56,37 @@ class _ServerEditPageState extends ConsumerState<ServerEditPage> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final profile = ProfileItem(
-      id: widget.existing?.id ??
-          '${DateTime.now().millisecondsSinceEpoch}_manual',
-      name: _name.text.trim(),
-      type: _type,
-      server: _server.text.trim(),
-      port: int.tryParse(_port.text.trim()) ?? 0,
-      password: _password.text.trim(),
-      sni: _sni.text.trim().isEmpty ? null : _sni.text.trim(),
-      network: _network,
-      path: _path.text.trim().isEmpty ? null : _path.text.trim(),
-      createdAt: widget.existing?.createdAt ?? DateTime.now().millisecondsSinceEpoch,
-    );
+    final port = int.tryParse(_port.text.trim()) ?? 0;
+    final sni = _sni.text.trim().isEmpty ? null : _sni.text.trim();
+    final path = _path.text.trim().isEmpty ? null : _path.text.trim();
+
+    final ProfileItem profile;
+    if (isEditing) {
+      // 编辑：保留 rawConfig/subscriptionId/latencyMs 等关键字段，仅覆盖表单项
+      profile = widget.existing!.copyWith(
+        name: _name.text.trim(),
+        type: _type,
+        server: _server.text.trim(),
+        port: port,
+        password: _password.text.trim(),
+        sni: sni,
+        network: _network,
+        path: path,
+      );
+    } else {
+      profile = ProfileItem(
+        id: '${DateTime.now().millisecondsSinceEpoch}_manual',
+        name: _name.text.trim(),
+        type: _type,
+        server: _server.text.trim(),
+        port: port,
+        password: _password.text.trim(),
+        sni: sni,
+        network: _network,
+        path: path,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      );
+    }
 
     await ref.read(profilesProvider.notifier).add(profile);
     if (mounted) Navigator.of(context).pop();

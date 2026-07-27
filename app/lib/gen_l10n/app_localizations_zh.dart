@@ -151,6 +151,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deleteNode => '删除节点';
 
   @override
+  String get editNode => '编辑节点';
+
+  @override
   String deleteNodeConfirm(String name) {
     return '确定删除节点「$name」吗？';
   }

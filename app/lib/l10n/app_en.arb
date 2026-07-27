@@ -63,6 +63,7 @@
     }
   },
   "deleteNode": "Delete Node",
+  "editNode": "Edit Node",
   "deleteNodeConfirm": "Delete node \"{name}\"?",
   "@deleteNodeConfirm": {
     "placeholders": {
