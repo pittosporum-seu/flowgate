@@ -8,6 +8,7 @@ enum ProfileType {
   shadowsocks,
   socks,
   hysteria2,
+  wireguard,
 }
 
 extension ProfileTypeExt on ProfileType {
@@ -18,6 +19,7 @@ extension ProfileTypeExt on ProfileType {
         ProfileType.shadowsocks => 'SS',
         ProfileType.socks => 'SOCKS',
         ProfileType.hysteria2 => 'HY2',
+        ProfileType.wireguard => 'WG',
       };
 
   String get scheme => switch (this) {
@@ -27,6 +29,7 @@ extension ProfileTypeExt on ProfileType {
         ProfileType.shadowsocks => 'ss://',
         ProfileType.socks => 'socks://',
         ProfileType.hysteria2 => 'hysteria2://',
+        ProfileType.wireguard => 'wireguard://',
       };
 }
 
