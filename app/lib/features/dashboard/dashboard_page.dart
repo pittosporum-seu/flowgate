@@ -5,6 +5,7 @@ import '../../core/state/app_provider.dart';
 import '../../core/state/app_state.dart';
 import '../../core/theme.dart';
 import '../../gen_l10n/app_localizations.dart';
+import '../ai_assistant/ai_assistant_page.dart';
 
 /// Dashboard - 连接控制 + 实时流量监控
 class DashboardPage extends ConsumerStatefulWidget {
@@ -110,7 +111,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         const Spacer(),
         IconButton(
           icon: const Icon(Icons.smart_toy_rounded, color: FlowGateTheme.textTertiary),
-          onPressed: () {},
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const AiAssistantPage()),
+          ),
         ),
       ],
     );
