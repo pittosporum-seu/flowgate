@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
 import '../../../core/service/log_service.dart';
 import '../model/profile_item.dart';
+import 'clash_yaml_parser.dart';
 
 /// 基于 flutter_v2ray 的导入适配器
 /// 支持 vmess/vless/trojan/ss/socks 单链接 + base64 订阅批量解码
@@ -33,11 +34,16 @@ class VlessImportAdapter {
   }
 
   /// 批量解析订阅内容，自动去重
-  /// 支持：base64 编码的链接列表、纯文本链接列表、单条 JSON
+  /// 支持：base64 编码的链接列表、纯文本链接列表、单条 JSON、Clash YAML
   static List<ProfileItem> parseBatch(String content, {String? subscriptionId}) {
     final trimmed = content.trim();
     final results = <ProfileItem>[];
     final seen = <String>{};
+
+    // Clash YAML 格式检测（优先级最高）
+    if (ClashYamlParser.isClashYaml(trimmed)) {
+      return ClashYamlParser.parse(trimmed, subscriptionId: subscriptionId);
+    }
 
     // 尝试 base64 解码（订阅链接通常返回 base64）
     String decoded = trimmed;

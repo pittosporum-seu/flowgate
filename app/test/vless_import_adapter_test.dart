@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flowgate/features/profiles/model/profile_item.dart';
 import 'package:flowgate/features/profiles/parser/vless_import_adapter.dart';
+import 'package:flowgate/features/profiles/parser/clash_yaml_parser.dart';
 
 void main() {
   group('VlessImportAdapter - representative links', () {
@@ -184,6 +185,136 @@ PublicKey = peerKey456=
         // ignore: avoid_print
         print('  - ${p.name} | ${p.server}:${p.port}');
       }
+    });
+  });
+
+  group('ClashYamlParser', () {
+    test('isClashYaml detects proxies keyword', () {
+      expect(ClashYamlParser.isClashYaml('proxies:\n  - name: test'), isTrue);
+      expect(ClashYamlParser.isClashYaml('{"proxies": []}'), isFalse);
+      expect(ClashYamlParser.isClashYaml('vmess://abc'), isFalse);
+    });
+
+    test('parses trojan proxy', () {
+      const yaml = '''
+proxies:
+  - name: My Trojan
+    type: trojan
+    server: 1.2.3.4
+    port: 443
+    password: pass123
+    sni: example.com
+    skip-cert-verify: true
+''';
+      final results = ClashYamlParser.parse(yaml);
+      expect(results.length, 1);
+      expect(results[0].type, ProfileType.trojan);
+      expect(results[0].server, '1.2.3.4');
+      expect(results[0].port, 443);
+      expect(results[0].name, 'My Trojan');
+      expect(results[0].rawConfig, contains('trojan'));
+    });
+
+    test('parses vmess proxy with ws', () {
+      const yaml = '''
+proxies:
+  - name: VMess WS
+    type: vmess
+    server: cdn.example.com
+    port: 443
+    uuid: a3482e88-686a-4a58-8126-99c9034e4b09
+    alterId: 0
+    cipher: auto
+    network: ws
+    tls: true
+    ws-opts:
+      path: /v2ray
+      headers:
+        Host: cdn.example.com
+''';
+      final results = ClashYamlParser.parse(yaml);
+      expect(results.length, 1);
+      expect(results[0].type, ProfileType.vmess);
+      expect(results[0].rawConfig, contains('wsSettings'));
+      expect(results[0].rawConfig, contains('/v2ray'));
+    });
+
+    test('parses vless with reality', () {
+      const yaml = '''
+proxies:
+  - name: VLESS Reality
+    type: vless
+    server: 5.6.7.8
+    port: 443
+    uuid: test-uuid-123
+    network: tcp
+    tls: true
+    flow: xtls-rprx-vision
+    reality-opts:
+      public-key: abc123pubkey
+      short-id: deadbeef
+    servername: www.microsoft.com
+''';
+      final results = ClashYamlParser.parse(yaml);
+      expect(results.length, 1);
+      expect(results[0].type, ProfileType.vless);
+      expect(results[0].rawConfig, contains('reality'));
+      expect(results[0].rawConfig, contains('xtls-rprx-vision'));
+    });
+
+    test('parses shadowsocks proxy', () {
+      const yaml = '''
+proxies:
+  - name: SS Node
+    type: ss
+    server: 10.0.0.1
+    port: 8388
+    password: sspass
+    cipher: aes-256-gcm
+''';
+      final results = ClashYamlParser.parse(yaml);
+      expect(results.length, 1);
+      expect(results[0].type, ProfileType.shadowsocks);
+      expect(results[0].rawConfig, contains('aes-256-gcm'));
+    });
+
+    test('parses multiple proxies and skips unsupported', () {
+      const yaml = '''
+proxies:
+  - name: Trojan1
+    type: trojan
+    server: 1.1.1.1
+    port: 443
+    password: p1
+  - name: Unknown
+    type: snell
+    server: 2.2.2.2
+    port: 443
+  - name: SS1
+    type: ss
+    server: 3.3.3.3
+    port: 8388
+    password: p2
+    cipher: chacha20-ietf-poly1305
+''';
+      final results = ClashYamlParser.parse(yaml);
+      expect(results.length, 2); // snell skipped
+      expect(results[0].type, ProfileType.trojan);
+      expect(results[1].type, ProfileType.shadowsocks);
+    });
+
+    test('parseBatch detects clash yaml automatically', () {
+      const yaml = '''
+proxies:
+  - name: AutoDetect
+    type: trojan
+    server: 9.9.9.9
+    port: 443
+    password: detect
+''';
+      final results = VlessImportAdapter.parseBatch(yaml);
+      expect(results.length, 1);
+      expect(results[0].name, 'AutoDetect');
     });
   });
 }
