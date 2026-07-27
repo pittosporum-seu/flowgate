@@ -34,8 +34,8 @@ class SubscriptionsNotifier extends Notifier<List<SubscriptionItem>> {
 
   /// 添加订阅：拉取 URL → 解析节点 → 入库（节点打上 subscriptionId）
   Future<int> addSubscription(String url) async {
-    final content = await SubscriptionFetcher.fetch(url);
-    final nodes = VlessImportAdapter.parseBatch(content);
+    final result = await SubscriptionFetcher.fetchWithMeta(url);
+    final nodes = VlessImportAdapter.parseBatch(result.body);
     if (nodes.isEmpty) {
       _log.warn('Subscriptions', 'addSubscription: no nodes parsed from $url');
       return 0;
@@ -47,6 +47,10 @@ class SubscriptionsNotifier extends Notifier<List<SubscriptionItem>> {
       url: url,
       name: _deriveName(url, nodes.length),
       lastUpdated: DateTime.now().millisecondsSinceEpoch,
+      upload: result.upload,
+      download: result.download,
+      total: result.total,
+      expire: result.expire,
     );
 
     // 节点打上订阅标记
@@ -65,8 +69,8 @@ class SubscriptionsNotifier extends Notifier<List<SubscriptionItem>> {
     final sub = _subRepo.getById(id);
     if (sub == null) return 0;
 
-    final content = await SubscriptionFetcher.fetch(sub.url);
-    final nodes = VlessImportAdapter.parseBatch(content);
+    final result = await SubscriptionFetcher.fetchWithMeta(sub.url);
+    final nodes = VlessImportAdapter.parseBatch(result.body);
     if (nodes.isEmpty) {
       _log.warn('Subscriptions', 'refreshSubscription: no nodes parsed for ${sub.name}');
       return 0;
@@ -84,8 +88,14 @@ class SubscriptionsNotifier extends Notifier<List<SubscriptionItem>> {
     final tagged = nodes.map((n) => n.copyWith(subscriptionId: id)).toList();
     await _profileRepo.saveAll(tagged);
 
-    // 更新订阅时间
-    await _subRepo.save(sub.copyWith(lastUpdated: DateTime.now().millisecondsSinceEpoch));
+    // 更新订阅时间 + 元数据
+    await _subRepo.save(sub.copyWith(
+      lastUpdated: DateTime.now().millisecondsSinceEpoch,
+      upload: result.upload,
+      download: result.download,
+      total: result.total,
+      expire: result.expire,
+    ));
 
     _log.info('Subscriptions', 'refreshSubscription: ${nodes.length} nodes for ${sub.name}');
     refresh();

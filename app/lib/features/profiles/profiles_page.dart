@@ -460,55 +460,144 @@ class _SubscriptionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 12, bottom: 4),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          InkWell(
-            borderRadius: BorderRadius.circular(8),
-            onTap: onToggle,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedRotation(
-                    turns: expanded ? 0.25 : 0,
-                    duration: const Duration(milliseconds: 150),
-                    child: const Icon(Icons.chevron_right,
-                        size: 18, color: FlowGateTheme.textTertiary),
-                  ),
-                  const SizedBox(width: 2),
-                  const Icon(Icons.link, size: 14, color: FlowGateTheme.secondary),
-                  const SizedBox(width: 6),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 160),
-                    child: Text(
-                      sub.name.isEmpty ? sub.id : sub.name,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: FlowGateTheme.textSecondary,
+          Row(
+            children: [
+              InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: onToggle,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AnimatedRotation(
+                        turns: expanded ? 0.25 : 0,
+                        duration: const Duration(milliseconds: 150),
+                        child: const Icon(Icons.chevron_right,
+                            size: 18, color: FlowGateTheme.textTertiary),
                       ),
-                    ),
+                      const SizedBox(width: 2),
+                      const Icon(Icons.link, size: 14, color: FlowGateTheme.secondary),
+                      const SizedBox(width: 6),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 160),
+                        child: Text(
+                          sub.name.isEmpty ? sub.id : sub.name,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: FlowGateTheme.textSecondary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '$count',
+                        style: const TextStyle(
+                            fontSize: 12, color: FlowGateTheme.textTertiary),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '$count',
-                    style: const TextStyle(
-                        fontSize: 12, color: FlowGateTheme.textTertiary),
-                  ),
-                ],
+                ),
               ),
-            ),
+              const Spacer(),
+              _miniIcon(Icons.bolt_outlined, onTestSpeed),
+              _miniIcon(Icons.refresh, onRefresh),
+              _miniIcon(Icons.edit_outlined, onRename),
+              _miniIcon(Icons.delete_outline, onDelete),
+            ],
           ),
-          const Spacer(),
-          _miniIcon(Icons.bolt_outlined, onTestSpeed),
-          _miniIcon(Icons.refresh, onRefresh),
-          _miniIcon(Icons.edit_outlined, onRename),
-          _miniIcon(Icons.delete_outline, onDelete),
+          // 流量元数据展示
+          if (sub.total > 0) ..._buildUsageInfo(context),
         ],
       ),
     );
+  }
+
+  List<Widget> _buildUsageInfo(BuildContext context) {
+    final usedStr = _formatBytes(sub.used);
+    final totalStr = _formatBytes(sub.total);
+    final ratio = sub.usageRatio;
+    final barColor = ratio > 0.9
+        ? FlowGateTheme.danger
+        : ratio > 0.7
+            ? Colors.orange
+            : FlowGateTheme.secondary;
+
+    return [
+      const SizedBox(height: 4),
+      Padding(
+        padding: const EdgeInsets.only(left: 26),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 流量进度条
+            ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: SizedBox(
+                height: 4,
+                width: 120,
+                child: LinearProgressIndicator(
+                  value: ratio.clamp(0.0, 1.0),
+                  backgroundColor: FlowGateTheme.line,
+                  valueColor: AlwaysStoppedAnimation<Color>(barColor),
+                ),
+              ),
+            ),
+            const SizedBox(height: 3),
+            Row(
+              children: [
+                Text(
+                  '$usedStr / $totalStr',
+                  style: const TextStyle(
+                      fontSize: 10, color: FlowGateTheme.textTertiary),
+                ),
+                if (sub.expire > 0) ...[
+                  const SizedBox(width: 10),
+                  Icon(
+                    sub.isExpired ? Icons.event_busy : Icons.event,
+                    size: 11,
+                    color: sub.isExpired
+                        ? FlowGateTheme.danger
+                        : FlowGateTheme.textTertiary,
+                  ),
+                  const SizedBox(width: 3),
+                  Text(
+                    _formatExpire(sub.expire),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: sub.isExpired
+                          ? FlowGateTheme.danger
+                          : FlowGateTheme.textTertiary,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    ];
+  }
+
+  static String _formatBytes(int bytes) {
+    if (bytes >= 1073741824) {
+      return '${(bytes / 1073741824).toStringAsFixed(1)} GB';
+    } else if (bytes >= 1048576) {
+      return '${(bytes / 1048576).toStringAsFixed(1)} MB';
+    } else if (bytes >= 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    }
+    return '$bytes B';
+  }
+
+  static String _formatExpire(int timestamp) {
+    final dt = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
   }
 
   Widget _miniIcon(IconData icon, VoidCallback onTap) {
