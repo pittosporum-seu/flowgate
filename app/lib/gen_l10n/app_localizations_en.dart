@@ -162,6 +162,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nodeDeleted => 'Node deleted';
 
   @override
+  String get addNode => 'Add Node';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get protocol => 'Protocol';
+
+  @override
+  String get fieldName => 'Name';
+
+  @override
+  String get nodeNameHint => 'My Node';
+
+  @override
+  String get required => 'Required';
+
+  @override
+  String get fieldServer => 'Server';
+
+  @override
+  String get fieldPort => 'Port';
+
+  @override
+  String get invalidPort => 'Invalid port';
+
+  @override
+  String get fieldUuid => 'UUID';
+
+  @override
+  String get fieldPassword => 'Password';
+
+  @override
+  String get passwordHint => 'uuid or password';
+
+  @override
+  String get fieldNetwork => 'Network';
+
+  @override
+  String get sniOptional => 'SNI (optional)';
+
+  @override
+  String get wsPathOptional => 'WS Path (optional)';
+
+  @override
   String refreshedNodes(int count) {
     return 'Refreshed $count node(s)';
   }

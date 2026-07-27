@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme.dart';
+import '../../gen_l10n/app_localizations.dart';
 import 'model/profile_item.dart';
 import 'profiles_provider.dart';
 
@@ -94,9 +95,10 @@ class _ServerEditPageState extends ConsumerState<ServerEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Node' : 'Add Node'),
+        title: Text(isEditing ? l.editNode : l.addNode),
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
           onPressed: () => Navigator.of(context).pop(),
@@ -104,7 +106,7 @@ class _ServerEditPageState extends ConsumerState<ServerEditPage> {
         actions: [
           TextButton(
             onPressed: _save,
-            child: const Text('Save', style: TextStyle(fontWeight: FontWeight.w700)),
+            child: Text(l.save, style: const TextStyle(fontWeight: FontWeight.w700)),
           ),
           const SizedBox(width: 8),
         ],
@@ -115,7 +117,7 @@ class _ServerEditPageState extends ConsumerState<ServerEditPage> {
           padding: const EdgeInsets.all(24),
           children: [
             // 协议类型
-            _label('Protocol'),
+            _label(l.protocol),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
@@ -134,12 +136,12 @@ class _ServerEditPageState extends ConsumerState<ServerEditPage> {
               }).toList(),
             ),
             const SizedBox(height: 20),
-            _label('Name'),
+            _label(l.fieldName),
             const SizedBox(height: 8),
             TextFormField(
               controller: _name,
-              decoration: const InputDecoration(hintText: 'My Node'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              decoration: InputDecoration(hintText: l.nodeNameHint),
+              validator: (v) => (v == null || v.trim().isEmpty) ? l.required : null,
             ),
             const SizedBox(height: 20),
             Row(
@@ -149,12 +151,12 @@ class _ServerEditPageState extends ConsumerState<ServerEditPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _label('Server'),
+                      _label(l.fieldServer),
                       const SizedBox(height: 8),
                       TextFormField(
                         controller: _server,
                         decoration: const InputDecoration(hintText: 'example.com'),
-                        validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                        validator: (v) => (v == null || v.trim().isEmpty) ? l.required : null,
                       ),
                     ],
                   ),
@@ -165,16 +167,16 @@ class _ServerEditPageState extends ConsumerState<ServerEditPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _label('Port'),
+                      _label(l.fieldPort),
                       const SizedBox(height: 8),
                       TextFormField(
                         controller: _port,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(hintText: '443'),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'Required';
+                          if (v == null || v.trim().isEmpty) return l.required;
                           final p = int.tryParse(v.trim());
-                          return (p == null || p <= 0 || p > 65535) ? 'Invalid' : null;
+                          return (p == null || p <= 0 || p > 65535) ? l.invalidPort : null;
                         },
                       ),
                     ],
@@ -183,15 +185,15 @@ class _ServerEditPageState extends ConsumerState<ServerEditPage> {
               ],
             ),
             const SizedBox(height: 20),
-            _label(_type == ProfileType.vmess || _type == ProfileType.vless ? 'UUID' : 'Password'),
+            _label(_type == ProfileType.vmess || _type == ProfileType.vless ? l.fieldUuid : l.fieldPassword),
             const SizedBox(height: 8),
             TextFormField(
               controller: _password,
-              decoration: const InputDecoration(hintText: 'uuid or password'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              decoration: InputDecoration(hintText: l.passwordHint),
+              validator: (v) => (v == null || v.trim().isEmpty) ? l.required : null,
             ),
             const SizedBox(height: 20),
-            _label('Network'),
+            _label(l.fieldNetwork),
             const SizedBox(height: 8),
             SegmentedButton<String>(
               segments: const [
@@ -203,12 +205,12 @@ class _ServerEditPageState extends ConsumerState<ServerEditPage> {
               onSelectionChanged: (s) => setState(() => _network = s.first),
             ),
             const SizedBox(height: 20),
-            _label('SNI (optional)'),
+            _label(l.sniOptional),
             const SizedBox(height: 8),
             TextFormField(controller: _sni, decoration: const InputDecoration(hintText: 'sni.example.com')),
             if (_network == 'ws') ...[
               const SizedBox(height: 20),
-              _label('WS Path (optional)'),
+              _label(l.wsPathOptional),
               const SizedBox(height: 8),
               TextFormField(controller: _path, decoration: const InputDecoration(hintText: '/ws')),
             ],

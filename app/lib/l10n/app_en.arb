@@ -71,6 +71,22 @@
     }
   },
   "nodeDeleted": "Node deleted",
+
+  "addNode": "Add Node",
+  "save": "Save",
+  "protocol": "Protocol",
+  "fieldName": "Name",
+  "nodeNameHint": "My Node",
+  "required": "Required",
+  "fieldServer": "Server",
+  "fieldPort": "Port",
+  "invalidPort": "Invalid port",
+  "fieldUuid": "UUID",
+  "fieldPassword": "Password",
+  "passwordHint": "uuid or password",
+  "fieldNetwork": "Network",
+  "sniOptional": "SNI (optional)",
+  "wsPathOptional": "WS Path (optional)",
   "refreshedNodes": "Refreshed {count} node(s)",
   "@refreshedNodes": {
     "placeholders": {
