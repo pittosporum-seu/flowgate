@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/state/locale_provider.dart';
 import '../../core/theme.dart';
 import '../../gen_l10n/app_localizations.dart';
@@ -9,6 +11,8 @@ import 'settings_provider.dart';
 /// Settings - 现代简约设置页
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
+
+  static const _repoUrl = 'https://github.com/pittosporum-seu/flowgate';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,8 +63,10 @@ class SettingsPage extends ConsumerWidget {
                   () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LogPage()))),
             ]),
             _section(l.about, [
-              _item(Icons.info_outline_rounded, l.version, 'FlowGate 0.0.1'),
-              _item(Icons.code_rounded, l.sourceCode, 'github.com/pittosporum-seu'),
+              _versionItem(l),
+              _item(Icons.code_rounded, l.sourceCode, 'github.com/pittosporum-seu',
+                  onTap: () => launchUrl(Uri.parse(_repoUrl),
+                      mode: LaunchMode.externalApplication)),
             ]),
           ],
         ),
@@ -126,6 +132,20 @@ class SettingsPage extends ConsumerWidget {
         ),
         const SizedBox(height: 24),
       ],
+    );
+  }
+
+  /// 版本号行（动态读取包信息）
+  Widget _versionItem(AppLocalizations l) {
+    return FutureBuilder<PackageInfo>(
+      future: PackageInfo.fromPlatform(),
+      builder: (context, snapshot) {
+        final info = snapshot.data;
+        final version = info == null
+            ? 'FlowGate'
+            : 'FlowGate ${info.version}+${info.buildNumber}';
+        return _item(Icons.info_outline_rounded, l.version, version);
+      },
     );
   }
 
