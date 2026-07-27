@@ -137,7 +137,7 @@ class FlowGateServer(
             routingRoutes(dataStore, logBuffer)
 
             // System info
-            systemRoutes(resolvedPort, logBuffer)
+            systemRoutes({ resolvedPort }, logBuffer)
         }
     }
 

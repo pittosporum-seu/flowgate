@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentLinkedDeque
 /**
  * System info and diagnostic endpoints.
  */
-fun Route.systemRoutes(port: Int, logBuffer: LogBuffer) {
+fun Route.systemRoutes(portProvider: () -> Int, logBuffer: LogBuffer) {
 
     get("/api/v1/system/info") {
         call.respond(HttpStatusCode.OK, ApiResponse(
@@ -20,7 +20,7 @@ fun Route.systemRoutes(port: Int, logBuffer: LogBuffer) {
                 version = "0.1.0",
                 coreVersion = "Xray (via flutter_v2ray)",
                 platform = "android",
-                apiPort = port
+                apiPort = portProvider()
             )
         ))
     }
