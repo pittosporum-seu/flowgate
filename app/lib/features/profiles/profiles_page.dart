@@ -9,6 +9,7 @@ import '../qr_scan/qr_scan_page.dart';
 import 'model/profile_item.dart';
 import 'model/subscription_item.dart';
 import 'profiles_provider.dart';
+import 'server_edit_page.dart';
 import 'subscriptions/subscriptions_provider.dart';
 
 /// M3 节点管理页：搜索 + 分组（可折叠/改名）+ 节点（测速）
@@ -287,6 +288,14 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
               ),
             ),
             ListTile(
+              leading: const Icon(Icons.edit_outlined, color: FlowGateTheme.textSecondary),
+              title: Text(l10n.editNode),
+              onTap: () {
+                Navigator.pop(ctx);
+                _editNode(p);
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.delete_outline, color: FlowGateTheme.danger),
               title: Text(l10n.deleteNode,
                   style: const TextStyle(color: FlowGateTheme.danger)),
@@ -298,6 +307,13 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
           ],
         ),
       ),
+    );
+  }
+
+  /// 编辑节点
+  void _editNode(ProfileItem p) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ServerEditPage(existing: p)),
     );
   }
 

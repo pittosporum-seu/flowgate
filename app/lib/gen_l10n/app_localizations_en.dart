@@ -151,6 +151,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteNode => 'Delete Node';
 
   @override
+  String get editNode => 'Edit Node';
+
+  @override
   String deleteNodeConfirm(String name) {
     return 'Delete node \"$name\"?';
   }

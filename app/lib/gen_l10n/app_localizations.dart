@@ -371,6 +371,12 @@ abstract class AppLocalizations {
   /// **'Delete Node'**
   String get deleteNode;
 
+  /// No description provided for @editNode.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Node'**
+  String get editNode;
+
   /// No description provided for @deleteNodeConfirm.
   ///
   /// In en, this message translates to:
