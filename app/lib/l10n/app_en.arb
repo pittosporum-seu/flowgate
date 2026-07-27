@@ -143,5 +143,7 @@
   "@qrImportSuccess": {"placeholders": {"name": {"type": "String"}}},
   "qrImportMultiple": "Imported {count} nodes",
   "@qrImportMultiple": {"placeholders": {"count": {"type": "int"}}},
-  "qrImportFailed": "Import failed"
+  "qrImportFailed": "Import failed",
+
+  "pasteFromClipboard": "Paste from clipboard"
 }

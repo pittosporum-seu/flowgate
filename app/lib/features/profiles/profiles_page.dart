@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../core/state/app_provider.dart';
 import '../../core/theme.dart';
 import '../../gen_l10n/app_localizations.dart';
@@ -166,6 +168,7 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
                                       .read(appProvider.notifier)
                                       .selectProfile(p),
                                   onTestSpeed: () => _testSpeed(p),
+                                  onShare: () => _shareNode(p),
                                 ),
                           ],
                         // 手动节点组
@@ -186,6 +189,7 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
                                     .read(appProvider.notifier)
                                     .selectProfile(p),
                                 onTestSpeed: () => _testSpeed(p),
+                                onShare: () => _shareNode(p),
                               ),
                         ],
                       ],
@@ -252,6 +256,12 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const QrScanPage()),
     );
+  }
+
+  void _shareNode(ProfileItem p) {
+    // 导出为分享链接（优先用 rawConfig，否则用基本信息）
+    final content = p.rawConfig ?? '${p.type.scheme}://${p.server}:${p.port}#${Uri.encodeComponent(p.name)}';
+    Share.share(content, subject: p.name);
   }
 
   /// 按分组测速：只测该分组内的节点
@@ -330,6 +340,24 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
                   decoration: InputDecoration(
                     labelText: l10n.rawConfig,
                     border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      final data = await Clipboard.getData('text/plain');
+                      if (data?.text != null && data!.text!.isNotEmpty) {
+                        _rawController.text = data.text!;
+                      }
+                    },
+                    icon: const Icon(Icons.paste, size: 16),
+                    label: Text(l10n.pasteFromClipboard),
+                    style: TextButton.styleFrom(
+                      foregroundColor: FlowGateTheme.primary,
+                      textStyle: const TextStyle(fontSize: 12),
+                    ),
                   ),
                 ),
               ],
@@ -700,12 +728,14 @@ class _NodeRow extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
   final VoidCallback onTestSpeed;
+  final VoidCallback onShare;
 
   const _NodeRow({
     required this.profile,
     required this.selected,
     required this.onTap,
     required this.onTestSpeed,
+    required this.onShare,
   });
 
   Color _latencyColor(int ms) {
@@ -782,6 +812,21 @@ class _NodeRow extends StatelessWidget {
                     ),
                   ),
                 const SizedBox(width: 4),
+                // 分享按钮
+                InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: onShare,
+                  child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Icon(
+                      Icons.share_outlined,
+                      size: 17,
+                      color: selected
+                          ? FlowGateTheme.primary
+                          : FlowGateTheme.textTertiary,
+                    ),
+                  ),
+                ),
                 // 测速按钮
                 InkWell(
                   borderRadius: BorderRadius.circular(8),
