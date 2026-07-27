@@ -34,6 +34,59 @@ void main() {
     });
   });
 
+  group('VlessImportAdapter - hysteria2', () {
+    test('parses a hysteria2:// link', () {
+      const link =
+          'hysteria2://mypassword@10.0.0.1:443?sni=example.com&insecure=1#My%20HY2';
+      final p = VlessImportAdapter.parseSingle(link);
+      expect(p, isNotNull);
+      expect(p!.type, ProfileType.hysteria2);
+      expect(p.server, '10.0.0.1');
+      expect(p.port, 443);
+      expect(p.password, 'mypassword');
+      expect(p.name, 'My HY2');
+      expect(p.rawConfig, isNotNull);
+      expect(p.rawConfig, contains('hysteria2'));
+      expect(p.rawConfig, contains('example.com'));
+    });
+
+    test('parses a hy2:// link', () {
+      const link = 'hy2://pass123@192.168.1.1:8443#HY2%20Short';
+      final p = VlessImportAdapter.parseSingle(link);
+      expect(p, isNotNull);
+      expect(p!.type, ProfileType.hysteria2);
+      expect(p.server, '192.168.1.1');
+      expect(p.port, 8443);
+      expect(p.password, 'pass123');
+      expect(p.name, 'HY2 Short');
+    });
+
+    test('parses hysteria2 with obfs params', () {
+      const link =
+          'hysteria2://secret@1.2.3.4:443?obfs=salamander&obfs-password=obfspass&sni=cdn.com#Obfs%20Node';
+      final p = VlessImportAdapter.parseSingle(link);
+      expect(p, isNotNull);
+      expect(p!.type, ProfileType.hysteria2);
+      expect(p.rawConfig, contains('salamander'));
+      expect(p.rawConfig, contains('obfspass'));
+    });
+
+    test('hysteria2 default name when no fragment', () {
+      const link = 'hysteria2://pass@1.2.3.4:443';
+      final p = VlessImportAdapter.parseSingle(link);
+      expect(p, isNotNull);
+      expect(p!.name, 'Hysteria2 Node');
+    });
+
+    test('batch parse includes hysteria2 links', () {
+      const content = 'trojan://t@1.1.1.1:443#TrojanNode\nhysteria2://h@2.2.2.2:443#HY2Node';
+      final results = VlessImportAdapter.parseBatch(content);
+      expect(results.length, 2);
+      expect(results.any((p) => p.type == ProfileType.hysteria2), isTrue);
+      expect(results.any((p) => p.type == ProfileType.trojan), isTrue);
+    });
+  });
+
   group('VlessImportAdapter - real subscription file', () {
     test('parses base64 trojan subscription (if fixture present)', () {
       final file = File('test/sub_raw.txt');
