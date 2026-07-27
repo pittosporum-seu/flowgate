@@ -324,4 +324,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errConnectTimeout => 'Connection timed out, check node or network';
+
+  @override
+  String get qrScanTitle => 'Scan to Import';
+
+  @override
+  String get qrScanHint => 'Align QR code within frame to scan';
+
+  @override
+  String get qrProcessing => 'Processing...';
+
+  @override
+  String get qrNoNodeDetected => 'No valid node link detected';
+
+  @override
+  String qrImportSuccess(String name) {
+    return 'Imported: $name';
+  }
+
+  @override
+  String qrImportMultiple(int count) {
+    return 'Imported $count nodes';
+  }
+
+  @override
+  String get qrImportFailed => 'Import failed';
 }

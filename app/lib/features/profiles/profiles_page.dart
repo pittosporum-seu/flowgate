@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/state/app_provider.dart';
 import '../../core/theme.dart';
 import '../../gen_l10n/app_localizations.dart';
+import '../qr_scan/qr_scan_page.dart';
 import 'model/profile_item.dart';
 import 'model/subscription_item.dart';
 import 'profiles_provider.dart';
@@ -82,6 +83,12 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
                     Icons.bolt_outlined,
                     l10n.testAllSpeeds,
                     _testAll,
+                  ),
+                  const SizedBox(width: 8),
+                  _headerIconButton(
+                    Icons.qr_code_scanner,
+                    l10n.qrScanTitle,
+                    _openQrScan,
                   ),
                   const SizedBox(width: 8),
                   _headerIconButton(
@@ -239,6 +246,12 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
     ));
     // 后台串行测速，结果逐个写回
     await ref.read(appProvider.notifier).testAllDelays();
+  }
+
+  void _openQrScan() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const QrScanPage()),
+    );
   }
 
   /// 按分组测速：只测该分组内的节点
