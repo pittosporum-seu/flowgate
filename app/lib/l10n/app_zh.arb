@@ -128,5 +128,7 @@
   "@qrImportSuccess": {"placeholders": {"name": {"type": "String"}}},
   "qrImportMultiple": "已导入 {count} 个节点",
   "@qrImportMultiple": {"placeholders": {"count": {"type": "int"}}},
-  "qrImportFailed": "导入失败"
+  "qrImportFailed": "导入失败",
+
+  "pasteFromClipboard": "从剪贴板粘贴"
 }
