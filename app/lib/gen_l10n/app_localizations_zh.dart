@@ -324,4 +324,29 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get errConnectTimeout => '连接超时，请检查节点或网络';
+
+  @override
+  String get qrScanTitle => '扫码导入';
+
+  @override
+  String get qrScanHint => '将二维码放入框内自动识别';
+
+  @override
+  String get qrProcessing => '正在处理...';
+
+  @override
+  String get qrNoNodeDetected => '未识别到有效的节点链接';
+
+  @override
+  String qrImportSuccess(String name) {
+    return '已导入: $name';
+  }
+
+  @override
+  String qrImportMultiple(int count) {
+    return '已导入 $count 个节点';
+  }
+
+  @override
+  String get qrImportFailed => '导入失败';
 }

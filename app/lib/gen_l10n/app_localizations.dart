@@ -712,6 +712,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connection timed out, check node or network'**
   String get errConnectTimeout;
+
+  /// No description provided for @qrScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan to Import'**
+  String get qrScanTitle;
+
+  /// No description provided for @qrScanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Align QR code within frame to scan'**
+  String get qrScanHint;
+
+  /// No description provided for @qrProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get qrProcessing;
+
+  /// No description provided for @qrNoNodeDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'No valid node link detected'**
+  String get qrNoNodeDetected;
+
+  /// No description provided for @qrImportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported: {name}'**
+  String qrImportSuccess(String name);
+
+  /// No description provided for @qrImportMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {count} nodes'**
+  String qrImportMultiple(int count);
+
+  /// No description provided for @qrImportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Import failed'**
+  String get qrImportFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
