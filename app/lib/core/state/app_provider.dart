@@ -176,13 +176,13 @@ class AppNotifier extends Notifier<AppState> {
     final profile = _selectedProfile();
     if (profile == null) {
       _log.warn('AppNotifier', 'connect: no node selected');
-      state = state.copyWith(errorMessage: 'No node selected');
+      state = state.copyWith(errorMessage: 'errNoNodeSelected');
       return;
     }
     final rawConfig = profile.rawConfig;
     if (rawConfig == null || rawConfig.isEmpty) {
       _log.warn('AppNotifier', 'connect: node config missing for ${profile.name}');
-      state = state.copyWith(errorMessage: 'Node config missing');
+      state = state.copyWith(errorMessage: 'errNodeConfigMissing');
       return;
     }
 
@@ -229,7 +229,7 @@ class AppNotifier extends Notifier<AppState> {
           _log.error('AppNotifier', 'connect timeout after ${_connectTimeout.inSeconds}s');
           state = state.copyWith(
             connectionState: VpnConnectionState.error,
-            errorMessage: '连接超时，请检查节点或网络',
+            errorMessage: 'errConnectTimeout',
           );
           // 清理未成功的连接
           _engine.disconnect().catchError((_) {});
@@ -275,6 +275,7 @@ class AppNotifier extends Notifier<AppState> {
     state = state.copyWith(
       selectedProfileId: profile.id,
       currentNodeName: profile.name,
+      errorMessage: null,
     );
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyProfileId, profile.id);

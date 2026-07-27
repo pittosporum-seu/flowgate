@@ -315,4 +315,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get noLogFile => '无可用日志文件';
+
+  @override
+  String get errNoNodeSelected => '请先选择一个节点';
+
+  @override
+  String get errNodeConfigMissing => '节点配置缺失，请重新导入';
+
+  @override
+  String get errConnectTimeout => '连接超时，请检查节点或网络';
 }

@@ -135,6 +135,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }
 
   Widget _buildError(String message) {
+    final l = AppLocalizations.of(context);
+    // 将错误 key 解析为本地化字符串；非 key 则原样显示
+    final displayText = switch (message) {
+      'errNoNodeSelected' => l.errNoNodeSelected,
+      'errNodeConfigMissing' => l.errNodeConfigMissing,
+      'errConnectTimeout' => l.errConnectTimeout,
+      _ => message,
+    };
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
@@ -147,7 +155,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           const Icon(Icons.error_outline_rounded, color: FlowGateTheme.danger, size: 18),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(message,
+            child: Text(displayText,
                 style: const TextStyle(fontSize: 12, color: FlowGateTheme.danger)),
           ),
         ],

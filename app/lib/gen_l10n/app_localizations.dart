@@ -694,6 +694,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No log file available'**
   String get noLogFile;
+
+  /// No description provided for @errNoNodeSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a node first'**
+  String get errNoNodeSelected;
+
+  /// No description provided for @errNodeConfigMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Node config missing, please re-import'**
+  String get errNodeConfigMissing;
+
+  /// No description provided for @errConnectTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timed out, check node or network'**
+  String get errConnectTimeout;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

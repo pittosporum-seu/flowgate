@@ -315,4 +315,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noLogFile => 'No log file available';
+
+  @override
+  String get errNoNodeSelected => 'Please select a node first';
+
+  @override
+  String get errNodeConfigMissing => 'Node config missing, please re-import';
+
+  @override
+  String get errConnectTimeout => 'Connection timed out, check node or network';
 }
