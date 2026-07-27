@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/service/log_service.dart';
+import 'core/service/subscription_auto_updater.dart';
 import 'core/state/app_provider.dart';
 import 'core/state/locale_provider.dart';
 import 'core/theme.dart';
@@ -78,6 +79,10 @@ class _FlowGateAppState extends ConsumerState<FlowGateApp> {
     Future.microtask(() => ref.read(routingProvider.notifier).restore());
     // 恢复语言设置 (i18n)
     Future.microtask(() => ref.read(localeProvider.notifier).restore());
+    // 订阅自动更新（延迟 5s 等待 UI 就绪）
+    Future.delayed(const Duration(seconds: 5), () {
+      SubscriptionAutoUpdater.checkAndRefresh(ref);
+    });
   }
 
   @override
