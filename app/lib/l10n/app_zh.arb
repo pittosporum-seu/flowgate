@@ -61,6 +61,22 @@
     }
   },
   "nodeDeleted": "节点已删除",
+
+  "addNode": "添加节点",
+  "save": "保存",
+  "protocol": "协议",
+  "fieldName": "名称",
+  "nodeNameHint": "我的节点",
+  "required": "必填",
+  "fieldServer": "服务器",
+  "fieldPort": "端口",
+  "invalidPort": "无效端口",
+  "fieldUuid": "UUID",
+  "fieldPassword": "密码",
+  "passwordHint": "uuid 或密码",
+  "fieldNetwork": "传输协议",
+  "sniOptional": "SNI（可选）",
+  "wsPathOptional": "WS 路径（可选）",
   "refreshedNodes": "已刷新 {count} 个节点",
   "@refreshedNodes": {
     "placeholders": {

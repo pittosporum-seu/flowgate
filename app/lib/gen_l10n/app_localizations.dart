@@ -389,6 +389,96 @@ abstract class AppLocalizations {
   /// **'Node deleted'**
   String get nodeDeleted;
 
+  /// No description provided for @addNode.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Node'**
+  String get addNode;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @protocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol'**
+  String get protocol;
+
+  /// No description provided for @fieldName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get fieldName;
+
+  /// No description provided for @nodeNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'My Node'**
+  String get nodeNameHint;
+
+  /// No description provided for @required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get required;
+
+  /// No description provided for @fieldServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Server'**
+  String get fieldServer;
+
+  /// No description provided for @fieldPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Port'**
+  String get fieldPort;
+
+  /// No description provided for @invalidPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid port'**
+  String get invalidPort;
+
+  /// No description provided for @fieldUuid.
+  ///
+  /// In en, this message translates to:
+  /// **'UUID'**
+  String get fieldUuid;
+
+  /// No description provided for @fieldPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get fieldPassword;
+
+  /// No description provided for @passwordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'uuid or password'**
+  String get passwordHint;
+
+  /// No description provided for @fieldNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network'**
+  String get fieldNetwork;
+
+  /// No description provided for @sniOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'SNI (optional)'**
+  String get sniOptional;
+
+  /// No description provided for @wsPathOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'WS Path (optional)'**
+  String get wsPathOptional;
+
   /// No description provided for @refreshedNodes.
   ///
   /// In en, this message translates to:

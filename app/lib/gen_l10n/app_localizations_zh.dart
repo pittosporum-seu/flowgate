@@ -162,6 +162,51 @@ class AppLocalizationsZh extends AppLocalizations {
   String get nodeDeleted => '节点已删除';
 
   @override
+  String get addNode => '添加节点';
+
+  @override
+  String get save => '保存';
+
+  @override
+  String get protocol => '协议';
+
+  @override
+  String get fieldName => '名称';
+
+  @override
+  String get nodeNameHint => '我的节点';
+
+  @override
+  String get required => '必填';
+
+  @override
+  String get fieldServer => '服务器';
+
+  @override
+  String get fieldPort => '端口';
+
+  @override
+  String get invalidPort => '无效端口';
+
+  @override
+  String get fieldUuid => 'UUID';
+
+  @override
+  String get fieldPassword => '密码';
+
+  @override
+  String get passwordHint => 'uuid 或密码';
+
+  @override
+  String get fieldNetwork => '传输协议';
+
+  @override
+  String get sniOptional => 'SNI（可选）';
+
+  @override
+  String get wsPathOptional => 'WS 路径（可选）';
+
+  @override
   String refreshedNodes(int count) {
     return '已刷新 $count 个节点';
   }
