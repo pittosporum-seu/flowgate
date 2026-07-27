@@ -52,6 +52,14 @@
       "name": {"type": "String"}
     }
   },
+  "deleteNode": "删除节点",
+  "deleteNodeConfirm": "确定删除节点「{name}」吗？",
+  "@deleteNodeConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "nodeDeleted": "节点已删除",
   "refreshedNodes": "已刷新 {count} 个节点",
   "@refreshedNodes": {
     "placeholders": {

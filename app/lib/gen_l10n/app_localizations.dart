@@ -365,6 +365,24 @@ abstract class AppLocalizations {
   /// **'Delete subscription \"{name}\" and all its nodes?'**
   String deleteSubscriptionConfirm(String name);
 
+  /// No description provided for @deleteNode.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Node'**
+  String get deleteNode;
+
+  /// No description provided for @deleteNodeConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete node \"{name}\"?'**
+  String deleteNodeConfirm(String name);
+
+  /// No description provided for @nodeDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Node deleted'**
+  String get nodeDeleted;
+
   /// No description provided for @refreshedNodes.
   ///
   /// In en, this message translates to:

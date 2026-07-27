@@ -148,6 +148,17 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get deleteNode => '删除节点';
+
+  @override
+  String deleteNodeConfirm(String name) {
+    return '确定删除节点「$name」吗？';
+  }
+
+  @override
+  String get nodeDeleted => '节点已删除';
+
+  @override
   String refreshedNodes(int count) {
     return '已刷新 $count 个节点';
   }

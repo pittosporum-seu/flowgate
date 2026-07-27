@@ -148,6 +148,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get deleteNode => 'Delete Node';
+
+  @override
+  String deleteNodeConfirm(String name) {
+    return 'Delete node \"$name\"?';
+  }
+
+  @override
+  String get nodeDeleted => 'Node deleted';
+
+  @override
   String refreshedNodes(int count) {
     return 'Refreshed $count node(s)';
   }

@@ -169,6 +169,7 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
                                       .selectProfile(p),
                                   onTestSpeed: () => _testSpeed(p),
                                   onShare: () => _shareNode(p),
+                                  onLongPress: () => _showNodeMenu(p),
                                 ),
                           ],
                         // 手动节点组
@@ -190,6 +191,7 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
                                     .selectProfile(p),
                                 onTestSpeed: () => _testSpeed(p),
                                 onShare: () => _shareNode(p),
+                                onLongPress: () => _showNodeMenu(p),
                               ),
                         ],
                       ],
@@ -262,6 +264,66 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
     // 导出为分享链接（优先用 rawConfig，否则用基本信息）
     final content = p.rawConfig ?? '${p.type.scheme}://${p.server}:${p.port}#${Uri.encodeComponent(p.name)}';
     Share.share(content, subject: p.name);
+  }
+
+  /// 节点长按菜单
+  void _showNodeMenu(ProfileItem p) {
+    final l10n = AppLocalizations.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                p.name,
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: FlowGateTheme.textSecondary),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: FlowGateTheme.danger),
+              title: Text(l10n.deleteNode,
+                  style: const TextStyle(color: FlowGateTheme.danger)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _deleteNode(p);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _deleteNode(ProfileItem p) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteNode),
+        content: Text(l10n.deleteNodeConfirm(p.name)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l10n.cancel)),
+          FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l10n.delete)),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await ref.read(profilesProvider.notifier).remove(p.id);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.nodeDeleted), duration: const Duration(seconds: 1)),
+    );
   }
 
   /// 按分组测速：只测该分组内的节点
@@ -729,6 +791,7 @@ class _NodeRow extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onTestSpeed;
   final VoidCallback onShare;
+  final VoidCallback onLongPress;
 
   const _NodeRow({
     required this.profile,
@@ -736,6 +799,7 @@ class _NodeRow extends StatelessWidget {
     required this.onTap,
     required this.onTestSpeed,
     required this.onShare,
+    required this.onLongPress,
   });
 
   Color _latencyColor(int ms) {
@@ -754,6 +818,7 @@ class _NodeRow extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
           onTap: onTap,
+          onLongPress: onLongPress,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
