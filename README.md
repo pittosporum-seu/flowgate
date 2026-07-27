@@ -14,9 +14,9 @@
 
 ## 截图
 
-| 仪表盘 | 节点列表 | 路由规则 |
+| 节点列表 | 路由规则 | 设置 |
 |--------|--------|--------|
-| ![dashboard](docs/screenshots/dashboard.png) | ![nodes](docs/screenshots/nodes.png) | ![routing](docs/screenshots/routing.png) |
+| ![nodes](docs/screenshots/nodes.png) | ![routing](docs/screenshots/routing.png) | ![settings](docs/screenshots/settings.png) |
 
 ## 目录结构
 
