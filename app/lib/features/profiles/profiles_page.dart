@@ -181,6 +181,7 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
                             expanded: isExpanded(_manualGroupId),
                             onToggle: () => _toggleGroup(_manualGroupId),
                             onTestSpeed: () => _testGroup(bySub[null]!),
+                            onAdd: _addNode,
                           ),
                           if (isExpanded(_manualGroupId))
                             for (final p in bySub[null]!)
@@ -307,6 +308,13 @@ class _ProfilesPageState extends ConsumerState<ProfilesPage> {
           ],
         ),
       ),
+    );
+  }
+
+  /// 手动添加节点
+  void _addNode() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const ServerEditPage()),
     );
   }
 
@@ -738,6 +746,7 @@ class _GroupHeader extends StatelessWidget {
   final bool expanded;
   final VoidCallback onToggle;
   final VoidCallback onTestSpeed;
+  final VoidCallback? onAdd;
 
   const _GroupHeader({
     required this.title,
@@ -745,6 +754,7 @@ class _GroupHeader extends StatelessWidget {
     required this.expanded,
     required this.onToggle,
     required this.onTestSpeed,
+    this.onAdd,
   });
 
   @override
@@ -783,6 +793,16 @@ class _GroupHeader extends StatelessWidget {
                     const TextStyle(fontSize: 12, color: FlowGateTheme.textTertiary),
               ),
               const Spacer(),
+              if (onAdd != null)
+                InkWell(
+                  borderRadius: BorderRadius.circular(6),
+                  onTap: onAdd,
+                  child: const Padding(
+                    padding: EdgeInsets.all(5),
+                    child: Icon(Icons.add,
+                        size: 16, color: FlowGateTheme.textTertiary),
+                  ),
+                ),
               InkWell(
                 borderRadius: BorderRadius.circular(6),
                 onTap: onTestSpeed,
