@@ -62,6 +62,14 @@
       "name": {"type": "String"}
     }
   },
+  "deleteNode": "Delete Node",
+  "deleteNodeConfirm": "Delete node \"{name}\"?",
+  "@deleteNodeConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "nodeDeleted": "Node deleted",
   "refreshedNodes": "Refreshed {count} node(s)",
   "@refreshedNodes": {
     "placeholders": {
