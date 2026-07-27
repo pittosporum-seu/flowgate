@@ -1,0 +1,16 @@
+{
+  "name": "flowgate-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for FlowGate VPN - allows AI agents to control VPN via REST API",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "flowgate-mcp": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}
