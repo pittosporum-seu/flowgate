@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flowgate/features/profiles/model/profile_item.dart';
 import 'package:flowgate/features/profiles/parser/vless_import_adapter.dart';
 import 'package:flowgate/features/profiles/parser/clash_yaml_parser.dart';
+import 'package:flowgate/features/profiles/parser/singbox_json_parser.dart';
 
 void main() {
   group('VlessImportAdapter - representative links', () {
@@ -315,6 +316,127 @@ proxies:
       final results = VlessImportAdapter.parseBatch(yaml);
       expect(results.length, 1);
       expect(results[0].name, 'AutoDetect');
+    });
+  });
+
+  group('SingboxJsonParser', () {
+    test('isSingboxJson detects outbounds with type', () {
+      const json = '{"outbounds": [{"type": "trojan", "server": "1.1.1.1", "server_port": 443}]}';
+      expect(SingboxJsonParser.isSingboxJson(json), isTrue);
+      expect(SingboxJsonParser.isSingboxJson('{"proxies": []}'), isFalse);
+      expect(SingboxJsonParser.isSingboxJson('vmess://abc'), isFalse);
+    });
+
+    test('parses trojan outbound', () {
+      const json = '''
+{
+  "outbounds": [
+    {
+      "type": "trojan",
+      "tag": "My Trojan",
+      "server": "1.2.3.4",
+      "server_port": 443,
+      "password": "pass123",
+      "tls": {"server_name": "example.com", "insecure": true}
+    }
+  ]
+}
+''';
+      final results = SingboxJsonParser.parse(json);
+      expect(results.length, 1);
+      expect(results[0].type, ProfileType.trojan);
+      expect(results[0].server, '1.2.3.4');
+      expect(results[0].port, 443);
+      expect(results[0].name, 'My Trojan');
+      expect(results[0].rawConfig, contains('trojan'));
+    });
+
+    test('parses vless with reality', () {
+      const json = '''
+{
+  "outbounds": [
+    {
+      "type": "vless",
+      "tag": "VLESS Reality",
+      "server": "5.6.7.8",
+      "server_port": 443,
+      "uuid": "test-uuid",
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "server_name": "www.microsoft.com",
+        "reality": {"enabled": true, "public_key": "abc123", "short_id": "dead"}
+      }
+    }
+  ]
+}
+''';
+      final results = SingboxJsonParser.parse(json);
+      expect(results.length, 1);
+      expect(results[0].type, ProfileType.vless);
+      expect(results[0].rawConfig, contains('reality'));
+      expect(results[0].rawConfig, contains('xtls-rprx-vision'));
+    });
+
+    test('parses shadowsocks outbound', () {
+      const json = '''
+{
+  "outbounds": [
+    {
+      "type": "shadowsocks",
+      "tag": "SS Node",
+      "server": "10.0.0.1",
+      "server_port": 8388,
+      "password": "sspass",
+      "method": "aes-256-gcm"
+    }
+  ]
+}
+''';
+      final results = SingboxJsonParser.parse(json);
+      expect(results.length, 1);
+      expect(results[0].type, ProfileType.shadowsocks);
+      expect(results[0].rawConfig, contains('aes-256-gcm'));
+    });
+
+    test('skips direct/block outbounds', () {
+      const json = '''
+{
+  "outbounds": [
+    {"type": "direct", "tag": "direct"},
+    {"type": "block", "tag": "block"},
+    {
+      "type": "trojan",
+      "tag": "Real Node",
+      "server": "1.1.1.1",
+      "server_port": 443,
+      "password": "p"
+    }
+  ]
+}
+''';
+      final results = SingboxJsonParser.parse(json);
+      expect(results.length, 1);
+      expect(results[0].name, 'Real Node');
+    });
+
+    test('parseBatch detects sing-box json automatically', () {
+      const json = '''
+{
+  "outbounds": [
+    {
+      "type": "shadowsocks",
+      "tag": "AutoDetect SS",
+      "server": "9.9.9.9",
+      "server_port": 8388,
+      "password": "detect",
+      "method": "chacha20-ietf-poly1305"
+    }
+  ]
+}
+''';
+      final results = VlessImportAdapter.parseBatch(json);
+      expect(results.length, 1);
+      expect(results[0].name, 'AutoDetect SS');
     });
   });
 }
