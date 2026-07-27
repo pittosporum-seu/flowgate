@@ -16,6 +16,13 @@ class VlessImportAdapter {
       if (trimmed.startsWith('hysteria2://') || trimmed.startsWith('hy2://')) {
         return _parseHysteria2(trimmed);
       }
+      // wireguard:// 链接或 .conf 格式
+      if (trimmed.startsWith('wireguard://') || trimmed.startsWith('wg://')) {
+        return _parseWireguardUrl(trimmed);
+      }
+      if (_isWireguardConf(trimmed)) {
+        return _parseWireguardConf(trimmed);
+      }
       // 尝试作为分享链接解析
       final parsed = FlutterV2ray.parseFromURL(trimmed);
       return _toProfileItem(parsed);
@@ -170,6 +177,201 @@ class VlessImportAdapter {
     }
   }
 
+  // ─── WireGuard ──────────────────────────────────────────────────────────
+
+  /// 判断是否为 WireGuard .conf 格式
+  static bool _isWireguardConf(String s) {
+    return s.contains('[Interface]') && s.contains('[Peer]');
+  }
+
+  /// 解析 wireguard:// 或 wg:// URL
+  /// 格式: wireguard://base64(conf)#remark 或 wireguard://privateKey@server:port?params#remark
+  static ProfileItem? _parseWireguardUrl(String raw) {
+    try {
+      final uri = Uri.parse(raw);
+      final remark = uri.fragment.isNotEmpty
+          ? Uri.decodeComponent(uri.fragment)
+          : 'WireGuard Node';
+
+      // 尝试 base64 编码的 conf 格式: wireguard://base64conf#remark
+      if (uri.host.isEmpty || uri.host.contains('=')) {
+        final b64 = raw.replaceFirst(RegExp(r'^wireguard://|^wg://'), '');
+        final hashIdx = b64.indexOf('#');
+        final encoded = hashIdx >= 0 ? b64.substring(0, hashIdx) : b64;
+        try {
+          final conf = utf8.decode(base64Decode(encoded));
+          if (_isWireguardConf(conf)) {
+            final item = _parseWireguardConf(conf);
+            if (item != null && remark != 'WireGuard Node') {
+              return ProfileItem(
+                id: item.id,
+                name: remark,
+                type: item.type,
+                server: item.server,
+                port: item.port,
+                password: item.password,
+                rawConfig: item.rawConfig,
+                createdAt: item.createdAt,
+              );
+            }
+            return item;
+          }
+        } catch (_) {}
+      }
+
+      // URL 参数格式: wireguard://privateKey@server:port?params#remark
+      final privateKey = uri.userInfo;
+      final server = uri.host;
+      final port = uri.port;
+      if (server.isEmpty || port == 0 || privateKey.isEmpty) return null;
+
+      final publicKey = uri.queryParameters['publickey'] ?? uri.queryParameters['publicKey'] ?? '';
+      final presharedKey = uri.queryParameters['presharedkey'] ?? uri.queryParameters['presharedKey'] ?? '';
+      final allowedIps = uri.queryParameters['allowedips'] ?? uri.queryParameters['allowedIps'] ?? '0.0.0.0/0';
+      final address = uri.queryParameters['address'] ?? '';
+      final mtu = uri.queryParameters['mtu'] ?? '1420';
+
+      final config = _buildWireguardXrayConfig(
+        privateKey: privateKey,
+        address: address,
+        peerPublicKey: publicKey,
+        presharedKey: presharedKey,
+        server: server,
+        port: port,
+        allowedIps: allowedIps.split(',').map((s) => s.trim()).toList(),
+        mtu: int.tryParse(mtu) ?? 1420,
+      );
+
+      return ProfileItem(
+        id: '${DateTime.now().millisecondsSinceEpoch}_${_counter++}',
+        name: remark,
+        type: ProfileType.wireguard,
+        server: server,
+        port: port,
+        password: privateKey,
+        rawConfig: config,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// 解析 WireGuard .conf 文件格式
+  static ProfileItem? _parseWireguardConf(String conf) {
+    try {
+      final lines = conf.split(RegExp(r'[\r\n]+'));
+      String privateKey = '';
+      String address = '';
+      String peerPublicKey = '';
+      String presharedKey = '';
+      String endpoint = '';
+      List<String> allowedIps = ['0.0.0.0/0'];
+      int mtu = 1420;
+      String section = '';
+
+      for (final line in lines) {
+        final trimmed = line.trim();
+        if (trimmed.startsWith('#') || trimmed.isEmpty) continue;
+        if (trimmed == '[Interface]') { section = 'interface'; continue; }
+        if (trimmed == '[Peer]') { section = 'peer'; continue; }
+
+        final eqIdx = trimmed.indexOf('=');
+        if (eqIdx < 0) continue;
+        final key = trimmed.substring(0, eqIdx).trim().toLowerCase();
+        final value = trimmed.substring(eqIdx + 1).trim();
+
+        if (section == 'interface') {
+          switch (key) {
+            case 'privatekey': privateKey = value;
+            case 'address': address = value.split(',').first.trim();
+            case 'mtu': mtu = int.tryParse(value) ?? 1420;
+          }
+        } else if (section == 'peer') {
+          switch (key) {
+            case 'publickey': peerPublicKey = value;
+            case 'presharedkey': presharedKey = value;
+            case 'endpoint': endpoint = value;
+            case 'allowedips': allowedIps = value.split(',').map((s) => s.trim()).toList();
+          }
+        }
+      }
+
+      if (privateKey.isEmpty || endpoint.isEmpty) return null;
+
+      // 解析 endpoint (host:port)
+      final lastColon = endpoint.lastIndexOf(':');
+      if (lastColon < 0) return null;
+      String server;
+      int port;
+      if (endpoint.startsWith('[')) {
+        // IPv6: [::1]:51820
+        final bracket = endpoint.indexOf(']');
+        server = endpoint.substring(1, bracket);
+        port = int.tryParse(endpoint.substring(bracket + 2)) ?? 0;
+      } else {
+        server = endpoint.substring(0, lastColon);
+        port = int.tryParse(endpoint.substring(lastColon + 1)) ?? 0;
+      }
+      if (port == 0) return null;
+
+      final config = _buildWireguardXrayConfig(
+        privateKey: privateKey,
+        address: address,
+        peerPublicKey: peerPublicKey,
+        presharedKey: presharedKey,
+        server: server,
+        port: port,
+        allowedIps: allowedIps,
+        mtu: mtu,
+      );
+
+      return ProfileItem(
+        id: '${DateTime.now().millisecondsSinceEpoch}_${_counter++}',
+        name: 'WireGuard $server',
+        type: ProfileType.wireguard,
+        server: server,
+        port: port,
+        password: privateKey,
+        rawConfig: config,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// 构建 Xray wireguard outbound JSON config
+  static String _buildWireguardXrayConfig({
+    required String privateKey,
+    required String address,
+    required String peerPublicKey,
+    required String presharedKey,
+    required String server,
+    required int port,
+    required List<String> allowedIps,
+    required int mtu,
+  }) {
+    final peer = <String, dynamic>{
+      'publicKey': peerPublicKey,
+      if (presharedKey.isNotEmpty) 'preSharedKey': presharedKey,
+      'endpoint': '$server:$port',
+      'allowedIPs': allowedIps,
+    };
+
+    final outbound = <String, dynamic>{
+      'protocol': 'wireguard',
+      'settings': {
+        'secretKey': privateKey,
+        if (address.isNotEmpty) 'address': address.split(',').map((s) => s.trim()).toList(),
+        'peers': [peer],
+        'mtu': mtu,
+      },
+    };
+
+    return jsonEncode({'outbounds': [outbound]});
+  }
+
   /// 解析原始 Xray JSON 配置
   static ProfileItem? _parseRawJson(String raw, {String? subscriptionId}) {
     try {
@@ -280,6 +482,7 @@ class VlessImportAdapter {
       'shadowsocks' => ProfileType.shadowsocks,
       'socks' => ProfileType.socks,
       'hysteria2' || 'hy2' => ProfileType.hysteria2,
+      'wireguard' => ProfileType.wireguard,
       _ => ProfileType.vmess,
     };
   }

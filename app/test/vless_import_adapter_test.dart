@@ -87,6 +87,83 @@ void main() {
     });
   });
 
+  group('VlessImportAdapter - wireguard', () {
+    test('parses wireguard .conf format', () {
+      const conf = '''
+[Interface]
+PrivateKey = YKkRBEr2LmWEj1B3r+WGn9S8V0Ux5T6q7dF8g9h0i1j=
+Address = 10.0.0.2/32
+DNS = 1.1.1.1
+MTU = 1280
+
+[Peer]
+PublicKey = xTIBA5r5U0qt4j7dF8g9h0i1j2k3l4m5n6o7p8q9r0s=
+PresharedKey = abcd1234efgh5678ijkl9012mnop3456qrst7890uvwx=
+Endpoint = 5.6.7.8:51820
+AllowedIPs = 0.0.0.0/0, ::/0
+''';
+      final p = VlessImportAdapter.parseSingle(conf);
+      expect(p, isNotNull);
+      expect(p!.type, ProfileType.wireguard);
+      expect(p.server, '5.6.7.8');
+      expect(p.port, 51820);
+      expect(p.password, 'YKkRBEr2LmWEj1B3r+WGn9S8V0Ux5T6q7dF8g9h0i1j=');
+      expect(p.rawConfig, contains('wireguard'));
+      expect(p.rawConfig, contains('5.6.7.8:51820'));
+      expect(p.rawConfig, contains('xTIBA5r5U0qt4j7dF8g9h0i1j2k3l4m5n6o7p8q9r0s='));
+    });
+
+    test('parses wireguard:// URL format', () {
+      const link = 'wireguard://myPrivateKey@10.0.0.1:51820?publickey=peerPubKey123&allowedips=0.0.0.0/0&address=10.0.0.2/32#My%20WG';
+      final p = VlessImportAdapter.parseSingle(link);
+      expect(p, isNotNull);
+      expect(p!.type, ProfileType.wireguard);
+      expect(p.server, '10.0.0.1');
+      expect(p.port, 51820);
+      expect(p.name, 'My WG');
+      expect(p.rawConfig, contains('wireguard'));
+      expect(p.rawConfig, contains('peerPubKey123'));
+    });
+
+    test('parses wg:// short scheme', () {
+      const link = 'wg://secretKey@192.168.1.1:51820?publickey=abc123#ShortWG';
+      final p = VlessImportAdapter.parseSingle(link);
+      expect(p, isNotNull);
+      expect(p!.type, ProfileType.wireguard);
+      expect(p.name, 'ShortWG');
+    });
+
+    test('wireguard conf with IPv6 endpoint', () {
+      const conf = '''
+[Interface]
+PrivateKey = testKey123=
+Address = fd00::2/128
+
+[Peer]
+PublicKey = peerKey456=
+Endpoint = [2001:db8::1]:51820
+AllowedIPs = ::/0
+''';
+      final p = VlessImportAdapter.parseSingle(conf);
+      expect(p, isNotNull);
+      expect(p!.type, ProfileType.wireguard);
+      expect(p.server, '2001:db8::1');
+      expect(p.port, 51820);
+    });
+
+    test('returns null for invalid wireguard conf (no endpoint)', () {
+      const conf = '''
+[Interface]
+PrivateKey = testKey123=
+
+[Peer]
+PublicKey = peerKey456=
+''';
+      final p = VlessImportAdapter.parseSingle(conf);
+      expect(p, isNull);
+    });
+  });
+
   group('VlessImportAdapter - real subscription file', () {
     test('parses base64 trojan subscription (if fixture present)', () {
       final file = File('test/sub_raw.txt');
