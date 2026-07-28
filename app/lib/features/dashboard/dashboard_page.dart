@@ -61,7 +61,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               _buildHeader(),
               const SizedBox(height: 32),
               _ConnectButton(state: app.connectionState),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
+              _buildLiveSpeed(app),
+              const SizedBox(height: 8),
               _buildDuration(app),
               if (app.errorMessage != null) ...[
                 const SizedBox(height: 16),
@@ -118,6 +120,47 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           ),
         ),
       ],
+    );
+  }
+
+  /// 实时上下行速率（大字展示）
+  Widget _buildLiveSpeed(AppState app) {
+    final running = app.isRunning;
+    final down = running ? formatSpeed(app.traffic.downlinkSpeed) : '--';
+    final up = running ? formatSpeed(app.traffic.uplinkSpeed) : '--';
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.arrow_downward_rounded,
+              size: 18,
+              color: running ? FlowGateTheme.success : FlowGateTheme.textTertiary),
+          const SizedBox(width: 4),
+          Text(
+            down,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: running ? FlowGateTheme.success : FlowGateTheme.textTertiary,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+          const SizedBox(width: 24),
+          Icon(Icons.arrow_upward_rounded,
+              size: 18,
+              color: running ? FlowGateTheme.secondary : FlowGateTheme.textTertiary),
+          const SizedBox(width: 4),
+          Text(
+            up,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: running ? FlowGateTheme.secondary : FlowGateTheme.textTertiary,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
