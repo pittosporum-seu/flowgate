@@ -276,7 +276,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           ),
           const SizedBox(height: 16),
           SizedBox(
-            height: 120,
+            height: 160,
             child: _upHistory.length < 2
                 ? Center(
                     child: Text(l.connectToSeeTraffic,
@@ -304,22 +304,42 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         LineChartBarData(
           spots: downSpots,
           isCurved: true,
-          curveSmoothness: 0.2,
+          curveSmoothness: 0.35,
           color: FlowGateTheme.success,
-          barWidth: 2,
+          barWidth: 2.5,
+          isStrokeCapRound: true,
           dotData: const FlDotData(show: false),
           belowBarData: BarAreaData(
             show: true,
-            color: FlowGateTheme.success.withValues(alpha: 0.12),
+            gradient: LinearGradient(
+              colors: [
+                FlowGateTheme.success.withValues(alpha: 0.28),
+                FlowGateTheme.success.withValues(alpha: 0.0),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
         ),
         LineChartBarData(
           spots: upSpots,
           isCurved: true,
-          curveSmoothness: 0.2,
+          curveSmoothness: 0.35,
           color: FlowGateTheme.secondary,
-          barWidth: 2,
+          barWidth: 2.5,
+          isStrokeCapRound: true,
           dotData: const FlDotData(show: false),
+          belowBarData: BarAreaData(
+            show: true,
+            gradient: LinearGradient(
+              colors: [
+                FlowGateTheme.secondary.withValues(alpha: 0.22),
+                FlowGateTheme.secondary.withValues(alpha: 0.0),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
         ),
       ],
     );
