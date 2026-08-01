@@ -435,7 +435,7 @@ class _ConnectButtonState extends ConsumerState<_ConnectButton>
     );
     _pulse = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 3000),
     );
     _syncControllers();
   }
@@ -637,13 +637,16 @@ class _MetricCard extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: iconColor),
           const SizedBox(height: 10),
-          Text(unit.isEmpty ? value : '$value $unit',
-              style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: FlowGateTheme.textPrimary),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(unit.isEmpty ? value : '$value $unit',
+                style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: FlowGateTheme.textPrimary),
+                maxLines: 1),
+          ),
           const SizedBox(height: 2),
           Text(label,
               style: const TextStyle(fontSize: 11, color: FlowGateTheme.textTertiary),
