@@ -94,6 +94,7 @@ class AppNotifier extends Notifier<AppState> {
         state = state.copyWith(
           connectionState: newState,
           durationSeconds: newState == VpnConnectionState.connected ? state.durationSeconds : 0,
+          errorMessage: newState == VpnConnectionState.connected ? null : state.errorMessage,
         );
       }
     } catch (e) {
